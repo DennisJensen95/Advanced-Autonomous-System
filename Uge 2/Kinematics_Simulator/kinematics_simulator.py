@@ -91,7 +91,7 @@ class Kinematics():
 kin = Kinematics()
 pose = (0, 0, 0)
 robotpar = (0.26, 0.035, 0.035)
-ts = 0.005
+ts = 0.01
 wheelspeed = (2.86, 2.86)
 
 pose_vec = []
@@ -131,21 +131,25 @@ if state == 'hexagon':
 
 # Start
 if state == 'star':
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
-    kin.turn(108 * np.pi / 180, 0.1)
-    kin.go_forward(1, 1)
+    kin.go_forward(1,1)
+    kin.turn(108*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(-36*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(108*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(-36*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(108*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(-36*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(108*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(-36*np.pi/180,0.1)
+    kin.go_forward(1,1)
+    kin.turn(108*np.pi/180,0.1)
+    kin.go_forward(1,1)
 
 kin.print_drive()
 
