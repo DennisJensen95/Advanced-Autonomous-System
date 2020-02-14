@@ -10,8 +10,10 @@ class Kinematics():
         self.robot_parameters = None
         self.wheelspeed = None
         self.pose_vec = []
+        self.theta_vec = []
+        self.ts = None
 
-    def XiDifferentialDrive(self, theta, r_r, r_l, vel_r, vel_l, w, ts):
+    def XiDifferentialDrive(self, theta, r_r, r_l, w, ts):
         # Theis' udregning differential drive
         vel_r = self.vel_r / self.robot_parameters[1]
         vel_l = self.vel_l / self.robot_parameters[2]
@@ -39,8 +41,9 @@ class Kinematics():
         w, r_r, r_l = robotpar
         w_vel_r, w_vel_l = wheelspeed
         self.last_pose = pose
-        pose = np.array(pose) + self.XiDifferentialDrive(cur_theta, r_r, r_l, w_vel_r, w_vel_l, w, ts)
+        pose = np.array(pose) + self.XiDifferentialDrive(cur_theta, r_r, r_l, w, ts)
         self.cur_pose = pose
+        self.theta_vec.append(self.cur_pose[2])
         return pose
 
     def GoForward(self, dist, speed):
@@ -61,6 +64,13 @@ class Kinematics():
             plt.plot(point[0], point[1], 'bo')
 
         plt.grid()
+
+    def PlotTheta(self):
+        plt.figure()
+        time = np.arange(0, len(self.theta_vec)*self.ts, self.ts)
+        plt.plot(time, self.theta_vec, 'r-')
+
+    def ShowPlots(self):
         plt.show()
 
     def Turn(self, radians, speed):
@@ -80,11 +90,26 @@ class Kinematics():
                 pose = self.KinUpdate()
                 self.pose_vec.append(pose)
 
-    def Move2Pose(self):
+    def Move2Pose(self, inputPose, vel, turning_vel):
         """
         Moving to pose
         :return:
         """
+        targetPose = self.cur_pose + inputPose
+        turningAngle = np.arctan2(targetPose[0], targetPose[1])
+        rho, alpha, beta = self.TransformToPolarCoordinates(targetPose[0], targetPose[1], targetPose[2])
+        self.Turn(turningAngle, turning_vel)
+        self.GoForward(rho, vel)
+        self.Turn(beta, vel)
+
+    def TransformToPolarCoordinates(self, delta_x, delta_y, theta):
+        rho = np.sqrt(delta_x**2 + delta_y**2)
+        alpha = - theta + np.arctan2(delta_y, delta_x)
+        beta = -theta - alpha
+
+        return rho, alpha, beta
+
+
 
 
 kin = Kinematics()
@@ -100,7 +125,7 @@ kin.robot_parameters = robotpar
 kin.ts = ts
 kin.wheelspeed = wheelspeed
 
-state = 'star'
+state = 'Neither'
 
 # Square
 if state == 'square':
@@ -150,5 +175,9 @@ if state == 'star':
     kin.Turn(108*np.pi/180,0.1)
     kin.GoForward(1,1)
 
+kin.Move2Pose(np.array([0.5, 0.5, -np.pi/2]), 1, 1)
+
 kin.PrintDrive()
+kin.PlotTheta()
+kin.ShowPlots()
 
