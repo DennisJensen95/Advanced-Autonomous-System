@@ -11,14 +11,7 @@ class Kinematics():
         self.wheelspeed = None
         self.pose_vec = []
 
-    def xi_three_wheels(self, theta, r_r, r_l, vel_r, vel_l, w, ts):
-        rolling_constraint_front = np.sin(b) * np.sin(theta) * r_r * vel_r * ts
-        sliding_constraint_front = np.sin(theta) * np.sin(b) * r_r * vel_r * ts
-        sliding_constraint_back = - r_r * vel_r * np.cos(b) / w * ts
-
-        return np.array([rolling_constraint_front, sliding_constraint_front, sliding_constraint_back])
-
-    def xi_differential_drive(self, theta, r_r, r_l, vel_r, vel_l, w, ts):
+    def XiDifferentialDrive(self, theta, r_r, r_l, vel_r, vel_l, w, ts):
         # Theis' udregning differential drive
         vel_r = self.vel_r / self.robot_parameters[1]
         vel_l = self.vel_l / self.robot_parameters[2]
@@ -29,7 +22,7 @@ class Kinematics():
 
         return np.array([rolling_constraint_front, sliding_constraint_front, sliding_constraint_back])
 
-    def kin_update(self, pose=None, robotpar=None, ts=None, wheelspeed=None):
+    def KinUpdate(self, pose=None, robotpar=None, ts=None, wheelspeed=None):
         pose = self.cur_pose if pose == None else pose
         self.cur_pose = pose
 
@@ -46,11 +39,11 @@ class Kinematics():
         w, r_r, r_l = robotpar
         w_vel_r, w_vel_l = wheelspeed
         self.last_pose = pose
-        pose = np.array(pose) + self.xi_differential_drive(cur_theta, r_r, r_l, w_vel_r, w_vel_l, w, ts)
+        pose = np.array(pose) + self.XiDifferentialDrive(cur_theta, r_r, r_l, w_vel_r, w_vel_l, w, ts)
         self.cur_pose = pose
         return pose
 
-    def go_forward(self, dist, speed):
+    def GoForward(self, dist, speed):
         self.vel_r = speed
         self.vel_l = speed
         self.start_pose = self.cur_pose
@@ -59,10 +52,10 @@ class Kinematics():
             if dist_gone >= dist:
                 break
             else:
-                pose = self.kin_update()
+                pose = self.KinUpdate()
                 self.pose_vec.append(pose)
 
-    def print_drive(self):
+    def PrintDrive(self):
         plt.figure()
         for point in self.pose_vec:
             plt.plot(point[0], point[1], 'bo')
@@ -70,7 +63,7 @@ class Kinematics():
         plt.grid()
         plt.show()
 
-    def turn(self, radians, speed):
+    def Turn(self, radians, speed):
         if radians > 0:
             self.vel_r = speed
             self.vel_l = -speed
@@ -80,12 +73,18 @@ class Kinematics():
 
         start_theta = self.cur_pose[2]
         while True:
-            turned_angle_rad = abs(self.cur_pose[2] - start_theta)
-            if turned_angle_rad >= abs(radians):
+            Turned_angle_rad = abs(self.cur_pose[2] - start_theta)
+            if Turned_angle_rad >= abs(radians):
                 break
             else:
-                pose = self.kin_update()
+                pose = self.KinUpdate()
                 self.pose_vec.append(pose)
+
+    def Move2Pose(self):
+        """
+        Moving to pose
+        :return:
+        """
 
 
 kin = Kinematics()
@@ -105,51 +104,51 @@ state = 'star'
 
 # Square
 if state == 'square':
-    kin.go_forward(1, 2)
-    kin.turn(np.pi / 2, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 2, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 2, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 2, 1)
+    kin.GoForward(1, 2)
+    kin.Turn(np.pi / 2, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 2, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 2, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 2, 1)
 
 # Hexagon
 if state == 'hexagon':
-    kin.go_forward(1, 2)
-    kin.turn(np.pi / 3, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 3, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 3, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 3, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 3, 1)
-    kin.go_forward(1, 3)
-    kin.turn(np.pi / 3, 1)
+    kin.GoForward(1, 2)
+    kin.Turn(np.pi / 3, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 3, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 3, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 3, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 3, 1)
+    kin.GoForward(1, 3)
+    kin.Turn(np.pi / 3, 1)
 
 # Start
 if state == 'star':
-    kin.go_forward(1,1)
-    kin.turn(108*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(-36*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(108*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(-36*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(108*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(-36*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(108*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(-36*np.pi/180,0.1)
-    kin.go_forward(1,1)
-    kin.turn(108*np.pi/180,0.1)
-    kin.go_forward(1,1)
+    kin.GoForward(1,1)
+    kin.Turn(108*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(-36*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(108*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(-36*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(108*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(-36*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(108*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(-36*np.pi/180,0.1)
+    kin.GoForward(1,1)
+    kin.Turn(108*np.pi/180,0.1)
+    kin.GoForward(1,1)
 
-kin.print_drive()
+kin.PrintDrive()
 
