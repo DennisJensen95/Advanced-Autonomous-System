@@ -1,0 +1,58 @@
+%%%Exercise 4
+% Problem 3
+
+pi=3.141592
+
+%where the robot should go
+xin = 0.5
+yin = 0.5
+thin = pi/2
+
+%controller
+kr = 0.3
+ka = 0.8
+kb = -0.15
+
+%vehicle parameters
+r_wheel = 0.035
+w_b = 0.26
+
+%Calculate variables%
+
+set "$odox" 0
+set "$odoy" 0
+set "$odoth" 0
+
+%log parameters
+log "$time" "$odox" "$odoy" "$odoth"
+
+vel = 1
+
+label "driveLoop"
+
+	xtar = xin - $odox
+	ytar = yin - $odoy
+	thtar = thin - $odoth
+
+	invtrans xtar ytar thtar $odox $odoy $odoth %coordinate transformation
+
+	rho = sqrt($res0*$res0+$res1*$res1)
+	alpha = -$odoth + atan2(-$res1,-$res0)
+	beta = thtar - alpha
+	
+	rhod = -kr*rho*cos(alpha)
+	alpd = kr*sin(alpha) - ka*alpha - kb*beta
+	betd = -kr*sin(alpha)
+	
+	vr = 1/2*(w_b*alpd + 2*rhod)
+	vl = -1/2*(w_b*alpd - 2*rhod)
+	
+	motorcmds vl vr
+	
+	if(rho<0.01) "endDrive"
+	if(thtar < 0.02) "endDrive"
+	
+	goto "driveLoop"
+	
+label "endDrive"
+stop
