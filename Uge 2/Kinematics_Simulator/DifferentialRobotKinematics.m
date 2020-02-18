@@ -33,10 +33,9 @@ elseif DriveOption == 3
     PrintDrive(3)
 end
     
-input = [1/2;1/2;-pi/2];
-Move2Pose(input, 1, 0.1);
-PrintDrive(1);
-PrintTheta();
+input = [0;0;pi/2];
+Move2PoseController(input)
+PrintDrive(0.7);
 
 
 % Move2PoseController(input);
@@ -71,7 +70,7 @@ function poseUpdate = DiffKinematics()
 
     poseUpdate(1) = (cos(theta)*(rl*vl + rr*vr))/2*ts;
     poseUpdate(2) = (sin(theta)*(rl*vl + rr*vr))/2*ts;
-    poseUpdate(3) = (-rl*vl + rr*vr)/w*ts;
+    poseUpdate(3) = -(-rl*vl + rr*vr)/w*ts;
 end
 
 function GoForward(distance, speed)
@@ -118,6 +117,7 @@ function PrintDrive(ax)
     plot(pose_vec(1,:),pose_vec(2,:), '-r', 'LineWidth', 3)
     hold on
     plot(pose_vec(1,end),pose_vec(2,end), 'or', 'LineWidth', 3)
+    quiver(pose_vec(1,end),pose_vec(2,end), cos(pose_vec(3,end))/3, sin(pose_vec(3,end))/3, 'LineWidth', 3,'Color','k','MaxHeadSize',0.8)
     grid on
     title('Robot movement')
     xlabel('x [m]')
@@ -174,43 +174,55 @@ function Move2PoseController(input)
         yT = poseT(2);
         
         rho = sqrt(xT^2 + yT^2);
-        alpha = -pose(3) + atan2(-yT,-xT);
-        beta = -pose(3) - alpha;
+        alpha = -poseT(3) + atan2(-yT,-xT);
+        alpha = atan2(sin(alpha),cos(alpha));
+        beta = -poseT(3) - alpha;
+        beta = atan2(sin(beta),cos(beta));
         
         v = kvals(1)*rho;
-        omega = kvals(2)*alpha + kvals(2)*beta;
-        if alpha > -pi/2 && alpha <= pi/2
-            sys = [-cos(alpha), 0; 
-                sin(alpha)/rho, -1; 
-                -sin(alpha)/rho, 0];
-        else
-            sys = [cos(alpha), 0; 
-                -sin(alpha)/rho, -1; 
-                sin(alpha)/rho, 0];
+        omega = kvals(2)*alpha + kvals(3)*beta;
+        
+        if v < 0.005 && omega < 0.005
+            fprintf('Speed too low. Ending simulation...\n');
+            break;
         end
-        yy = sys*[v;omega];
+       
+        wheelspeed(1) = (2*v-omega*robotpar(1))/(2*robotpar(2));
+        wheelspeed(2) = (2*v+omega*robotpar(1))/(2*robotpar(3));
         
-        rhod = yy(1);
-        alpd = yy(2);
-        betd = yy(3);
+        d_error = norm(pose(1:2)-target(1:2));
+        a_error = pi - abs(abs(pose(3) - thTw) - pi);
         
-        vel_ang = -alpd;% - betd;
-        vel_lin = rhod;
+        if d_error < 0.01 && a_error < 0.02
+            fprintf('Destination reached\n');
+            break;
+        else
+            KinUpdate();
+        end
         
-        wheelspeed(1) = 1/2/robotpar(2)*(robotpar(1)*vel_ang+2*vel_lin);
-        wheelspeed(2) = -1/2/robotpar(3)*(robotpar(1)*vel_ang-2*vel_lin);
-
-%         wheelspeed(1) = -vel_ang*robotpar(1)/2+vel_lin;
-%         wheelspeed(2) = vel_ang*robotpar(1)/2+vel_lin;
-        
-        KinUpdate();
-        
-        if k > 3000
+        if k > 5000
             fprintf('Maximum iterations reached\n');
             break
         end
         k = k + 1;
     end
+    
+    
+    %         if alpha > -pi/2 && alpha <= pi/2
+%             sys = [-cos(alpha), 0; 
+%                 sin(alpha)/rho, -1; 
+%                 -sin(alpha)/rho, 0];
+%         else
+%             sys = [cos(alpha), 0; 
+%                 -sin(alpha)/rho, -1; 
+%                 sin(alpha)/rho, 0];
+%         end
+%         yy = sys*[v;omega];
+%         
+%         rhod = yy(1);
+%         alpd = yy(2);
+%         betd = yy(3);
+    
 end
 
 function SquareDrive()
