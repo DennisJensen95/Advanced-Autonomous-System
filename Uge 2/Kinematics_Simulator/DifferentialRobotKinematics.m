@@ -33,9 +33,10 @@ elseif DriveOption == 3
     PrintDrive(3)
 end
     
-input = [0;0;pi/2];
+input = [0;1;-pi/2];
+% Move2Pose(input,1,0.1);
 Move2PoseController(input)
-PrintDrive(0.7);
+PrintDrive(norm(input(1:2))*1.5);
 
 
 % Move2PoseController(input);
@@ -66,11 +67,17 @@ function poseUpdate = DiffKinematics()
     rr = robotpar(2);
     rl = robotpar(3);
 
-    poseUpdate = zeros(3,1);
-
-    poseUpdate(1) = (cos(theta)*(rl*vl + rr*vr))/2*ts;
-    poseUpdate(2) = (sin(theta)*(rl*vl + rr*vr))/2*ts;
-    poseUpdate(3) = -(-rl*vl + rr*vr)/w*ts;
+    R = [cos(theta), sin(theta),0;
+        -sin(theta),cos(theta),0;
+        0,0,1];
+    A = [1,0,w/2;
+        1,0,-w/2;
+        0,1,0];
+    b = [rr*vr;
+        rl*vl;
+        0];
+    
+    poseUpdate = inv(R)*inv(A)*b*ts;
 end
 
 function GoForward(distance, speed)
@@ -113,6 +120,10 @@ end
 function PrintDrive(ax)
     global pose_vec
 
+    if ax == 0
+        ax = 1;
+    end
+    
     figure(1)
     plot(pose_vec(1,:),pose_vec(2,:), '-r', 'LineWidth', 3)
     hold on
@@ -123,6 +134,7 @@ function PrintDrive(ax)
     xlabel('x [m]')
     ylabel('y [m]')
     axis([-ax,ax,-ax,ax])
+    hold off
 end
 
 function PrintTheta()
@@ -147,7 +159,9 @@ function Move2Pose(input, vel, turn_vel)
     
     rho = norm(target(1:2));
     alpha = -pose(3) + atan2(target(2),target(1));
+    alpha = atan2(sin(alpha),cos(alpha));
     beta = target(3)-alpha;
+    beta = atan2(sin(beta),cos(beta));
     
     Turn(alpha,turn_vel);
     GoForward(rho,vel);
@@ -182,22 +196,32 @@ function Move2PoseController(input)
         v = kvals(1)*rho;
         omega = kvals(2)*alpha + kvals(3)*beta;
         
-        if v < 0.005 && omega < 0.005
-            fprintf('Speed too low. Ending simulation...\n');
+        
+        if v < 0.005 && abs(omega)/robotpar(2) < 0.005
+            fprintf('Speed too low. Ending simulation at step %d...\n',k);
             break;
         end
        
-        wheelspeed(1) = (2*v-omega*robotpar(1))/(2*robotpar(2));
-        wheelspeed(2) = (2*v+omega*robotpar(1))/(2*robotpar(3));
+        wheelspeed(2) = (2*v-omega*robotpar(1))/(2*robotpar(2));
+        wheelspeed(1) = (2*v+omega*robotpar(1))/(2*robotpar(3));
+        
+%         if wheelspeed(1)/robotpar(2) < 0.005 && wheelspeed(2)/robotpar(3)
+%             fprintf('Speed too low. Ending simulation at step %d...\n',k);
+%             break;
+%         end
         
         d_error = norm(pose(1:2)-target(1:2));
         a_error = pi - abs(abs(pose(3) - thTw) - pi);
         
         if d_error < 0.01 && a_error < 0.02
-            fprintf('Destination reached\n');
+            fprintf('Destination reached at step %d\n', k);
             break;
         else
             KinUpdate();
+        end
+        
+        if mod(k,50) == 0
+            PrintDrive(norm(input(1:2))*1.5);
         end
         
         if k > 5000
