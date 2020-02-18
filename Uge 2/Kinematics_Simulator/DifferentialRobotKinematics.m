@@ -2,12 +2,12 @@ clear
 clc
 close all
 %% Initialization
-global pose
-global ts
-global wheelspeed
-global robotpar
-global pose_vec
-global kvals
+global pose %current pose
+global ts %sampling time
+global wheelspeed % [angular velocity right wheel, angular velocity left wheel]
+global robotpar % [wheel separation, radius right wheel,radius left wheel]
+global pose_vec %pose log
+global kvals % [k_rho, k_alpha, k_beta]
 
 
 pose = [0;0;0];
@@ -17,13 +17,28 @@ robotpar = [0.26, 0.035, 0.035];
 pose_vec = [0;0;0];
 kvals = [0.3,0.8,-0.15];
 
+
+DriveOption = 4; %1: square, 2: hexagon, 3: star, 4: neither
+
 %% Perform action
 
-input = [1/2;1/2;-pi/2];
+if DriveOption == 1
+    SquareDrive();
+elseif DriveOption == 2
+    HexaDrive();
+elseif DriveOption == 3
+    StarDrive();
+end
+if DriveOption ~= 4
+    PrintDrive();
+end
+    
+% input = [1/2;1/2;-pi/2];
 
-% GoForward(3,1)
-Move2PoseController(input);
-PrintDrive()
+
+
+% Move2PoseController(input);
+
 
 
 %% functions
@@ -72,6 +87,28 @@ function GoForward(distance, speed)
     end
 end
 
+function Turn(angle, speed)
+    global wheelspeed
+    global robotpar
+    global pose
+    
+    if angle > 0
+        wheelspeed(1) = speed/robotpar(2);
+        wheelspeed(2) = -speed/robotpar(3);
+    else
+        wheelspeed(1) = -speed/robotpar(2);
+        wheelspeed(2) = speed/robotpar(3);
+    end
+    
+    start_angle = pose(3);
+    turned_angle = 0;
+    while abs(turned_angle) < abs(angle)
+        KinUpdate();
+        turned_angle = pi - abs(abs(pose(3) - start_angle) - pi);
+    end
+
+end
+
 function PrintDrive()
     global pose_vec
 
@@ -79,11 +116,11 @@ function PrintDrive()
     plot(pose_vec(1,:),pose_vec(2,:), '-r', 'LineWidth', 3)
     hold on
     plot(pose_vec(1,end),pose_vec(2,end), 'or', 'LineWidth', 3)
-    grid
+    grid on
     title('Robot movement')
     xlabel('x [m]')
     ylabel('y [m]')
-    axis([-1,1,-1,1])
+    axis([-3,3,-3,3])
 end
 
 function Move2PoseController(input)
@@ -143,4 +180,52 @@ function Move2PoseController(input)
         end
         k = k + 1;
     end
+end
+
+function SquareDrive()
+    GoForward(1, 2)
+    Turn(pi / 2, 1)
+    GoForward(1, 3)
+    Turn(pi / 2, 1)
+    GoForward(1, 3)
+    Turn(pi / 2, 1)
+    GoForward(1, 3)
+    Turn(pi / 2, 1)
+end
+
+function HexaDrive()
+    GoForward(1, 2)
+    Turn(pi / 3, 1)
+    GoForward(1, 3)
+    Turn(pi / 3, 1)
+    GoForward(1, 3)
+    Turn(pi / 3, 1)
+    GoForward(1, 3)
+    Turn(pi / 3, 1)
+    GoForward(1, 3)
+    Turn(pi / 3, 1)
+    GoForward(1, 3)
+    Turn(pi / 3, 1)
+end
+
+function StarDrive()
+    GoForward(1,1)
+    Turn(108*pi/180,0.1)
+    GoForward(1,1)
+    Turn(-36*pi/180,0.1)
+    GoForward(1,1)
+    Turn(108*pi/180,0.1)
+    GoForward(1,1)
+    Turn(-36*pi/180,0.1)
+    GoForward(1,1)
+    Turn(108*pi/180,0.1)
+    GoForward(1,1)
+    Turn(-36*pi/180,0.1)
+    GoForward(1,1)
+    Turn(108*pi/180,0.1)
+    GoForward(1,1)
+    Turn(-36*pi/180,0.1)
+    GoForward(1,1)
+    Turn(108*pi/180,0.1)
+    GoForward(1,1)
 end
