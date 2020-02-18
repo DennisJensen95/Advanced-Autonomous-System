@@ -28,29 +28,33 @@ log "$time" "$odox" "$odoy" "$odoth"
 
 vel = 1
 
-label "driveLoop"
+xtar = xin - $odox
+ytar = yin - $odoy
+thtar = thin - $odoth
 
-	xtar = xin - $odox
-	ytar = yin - $odoy
-	thtar = thin - $odoth
+label "driveLoop"
 
 	invtrans xtar ytar thtar $odox $odoy $odoth %coordinate transformation
 
 	rho = sqrt($res0*$res0+$res1*$res1)
-	alpha = -$odoth + atan2(-$res1,-$res0)
-	beta = thtar - alpha
+	alpha = -$res2 + atan2(-$res1,-$res0)
+	alpha = atan2(sin(alpha),cos(alpha))
+	beta = -$res2 - alpha
+	beta = atan2(sin(beta),cos(beta))
 	
-	rhod = -kr*rho*cos(alpha)
-	alpd = kr*sin(alpha) - ka*alpha - kb*beta
-	betd = -kr*sin(alpha)
+	v = kp*rho
+	omega = ka*alpha + kb*beta
 	
-	vr = 1/2*(w_b*alpd + 2*rhod)
-	vl = -1/2*(w_b*alpd - 2*rhod)
+	vr = (2*v-omega*w_b)/(2*r_wheel)
+	vl = (2*v+omega*w_b)/(2*r_wheel)
 	
 	motorcmds vl vr
 	
-	if(rho<0.01) "endDrive"
-	if(thtar < 0.02) "endDrive"
+	d_error = sqrt(($odox-xtar)*($odox-xtar) + ($odoy-ytar)*($odoy-ytar))
+	a_error = pi - abs(abs($odoth - thtar) - pi)
+	
+	if(d_error < 0.01) "endDrive"
+	if(a_error < 0.02) "endDrive"
 	
 	goto "driveLoop"
 	
