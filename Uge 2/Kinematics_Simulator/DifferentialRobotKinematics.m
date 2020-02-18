@@ -24,17 +24,19 @@ DriveOption = 4; %1: square, 2: hexagon, 3: star, 4: neither
 
 if DriveOption == 1
     SquareDrive();
+    PrintDrive(1.5);
 elseif DriveOption == 2
     HexaDrive();
+    PrintDrive(2)
 elseif DriveOption == 3
     StarDrive();
-end
-if DriveOption ~= 4
-    PrintDrive();
+    PrintDrive(3)
 end
     
-% input = [1/2;1/2;-pi/2];
-
+input = [1/2;1/2;-pi/2];
+Move2Pose(input, 1, 0.1);
+PrintDrive(1);
+PrintTheta();
 
 
 % Move2PoseController(input);
@@ -69,7 +71,7 @@ function poseUpdate = DiffKinematics()
 
     poseUpdate(1) = (cos(theta)*(rl*vl + rr*vr))/2*ts;
     poseUpdate(2) = (sin(theta)*(rl*vl + rr*vr))/2*ts;
-    poseUpdate(3) = (rl*vl - rr*vr)/w*ts;
+    poseUpdate(3) = (-rl*vl + rr*vr)/w*ts;
 end
 
 function GoForward(distance, speed)
@@ -109,7 +111,7 @@ function Turn(angle, speed)
 
 end
 
-function PrintDrive()
+function PrintDrive(ax)
     global pose_vec
 
     figure(1)
@@ -120,7 +122,36 @@ function PrintDrive()
     title('Robot movement')
     xlabel('x [m]')
     ylabel('y [m]')
-    axis([-3,3,-3,3])
+    axis([-ax,ax,-ax,ax])
+end
+
+function PrintTheta()
+    global pose_vec
+    global ts
+    
+    time = linspace(0,(length(pose_vec)-1)*ts,length(pose_vec));
+    
+    figure(2)
+    plot(time,pose_vec(3,:)*180/pi,'r','LineWidth',3)
+    grid on
+    title('Robot heading')
+    ylabel('Heading [degree]')
+    xlabel('Time [s]')
+    
+end
+
+function Move2Pose(input, vel, turn_vel)
+    global pose
+    
+    target = input - pose;
+    
+    rho = norm(target(1:2));
+    alpha = -pose(3) + atan2(target(2),target(1));
+    beta = target(3)-alpha;
+    
+    Turn(alpha,turn_vel);
+    GoForward(rho,vel);
+    Turn(beta,turn_vel);    
 end
 
 function Move2PoseController(input)
