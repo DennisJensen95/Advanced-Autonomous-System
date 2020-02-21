@@ -1,0 +1,41 @@
+%%%Exercise 4
+% Problem 3
+
+pi=3.141592
+
+%where the robot should go
+xin = 2
+yin = -2
+thin = pi/2
+
+%Calculate variables%
+
+set "$odox" 0
+set "$odoy" 0
+set "$odoth" 0
+
+%log parameters
+log "$time" "$odox" "$odoy" "$odoth" "xtar" "$res0" $res1" $res2"
+vel = 1
+
+
+xtar = xin - $odox
+ytar = yin - $odoy
+thtar = thin - $odoth
+
+rho = sqrt(xtar*xtar+ytar*ytar)
+alpha = -$odoth + atan2(ytar,xtar)
+beta = thtar - alpha
+
+invtrans xtar ytar thtar $odox $odoy $odoth %coordinate transformation
+
+stringcat "results are =" $res0 $res1 $res2
+
+%Perform movement%
+turn alpha "rad"
+fwd rho @v vel
+turn beta "rad"
+
+stringcat "results are =" $res0 $res1 $res2
+
+stop
