@@ -73,12 +73,10 @@ legend('Pose 1', 'Pose 2', 'Pose 3','Wall')
 clear lines1 lines2 lines3 lines4 colStr width pose_lx pose_ly pose_lz pose_l
 
 %% problem 5
-% clear
-% close all
 
-x = linspace(-5,5,10);
-y = -x-3;
-% y = ones(1,length(x))*3;
+y = linspace(2,5,10);
+% y = -x-3;
+x = ones(1,length(y))*2.5;
 
 % figure(1)
 % plot(x,y,'ro')
@@ -87,11 +85,14 @@ y = -x-3;
 
 points = [x;y];
 
-polLine = lsqline(points)
+polLine = lsqline(points);
 
-carLine = polar2carth(polLine')
+carLine = polar2carth(polLine');
 
-clear x y points
+fprintf('Line parameter (alpha,r): \t(%.2f,%.2f)\n', polLine(1),polLine(2));
+fprintf('Line parameter (x,y): \t\t(%.2f,%.2f)\n\n', carLine(1),carLine(2));
+
+clear x y points polLine carLine
 
 %% problem 6
 
@@ -158,10 +159,19 @@ linepar3 = lsqline([x3;y3]);
 fprintf('Line parameters -> scan 3 (alpha, r):\n\t1: (%.2f, %.2f)\n\t2: (%.2f, %.2f)\n\t3: (%.2f, %.2f)\n\n',...
     linepar1(1),linepar1(2),linepar2(1),linepar2(2),linepar3(1),linepar3(2))
 
-clear x1 x2 x3 y1 y2 y3 a b coefficients linepar1 linepar2 linepar3
+clear x1 x2 x3 y1 y2 y3 a b coefficients
 
 %% problem 8
 
+pose = poses(:,3);
+
+linepar1new = transline(linepar1,pose);
+linepar2new = transline(linepar2,pose);
+linepar3new = transline(linepar3,pose);
+
+fprintf('Converting scan 3 to world coordinates...\n');
+fprintf('Line parameters -> scan 3 (alpha, r):\n\t1: (%.2f, %.2f)\n\t2: (%.2f, %.2f)\n\t3: (%.2f, %.2f)\n\n',...
+    linepar1new(1),linepar1new(2),linepar2new(1),linepar2new(2),linepar3new(1),linepar3new(2))
 
 
 %% functions
@@ -204,14 +214,16 @@ function line=lsqline(points)
     line = [alpha,r]; 
 end
 
-% function lineparW = transline(lineparL, poseL)
-%     aL = lineparL(1);
-%     rL = lineparL(2);
-%     
-%     xL = poseL(1);
-%     yL = poseL(2);
-%     thL = poseL(3);
-%     
-%     aW = aL + thL;
-%     rW
-% end
+function lineparW = transline(lineparL, poseL)
+    aL = lineparL(1);
+    rL = lineparL(2);
+    
+    xL = poseL(1);
+    yL = poseL(2);
+    thL = poseL(3);
+    
+    aW = aL + thL;
+    rW = rL + [cos(aW),sin(aW)]*[xL,yL]';
+    
+    lineparW = [aW, rW];
+end
