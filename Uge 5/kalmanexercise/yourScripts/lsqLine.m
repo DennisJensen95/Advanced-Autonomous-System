@@ -1,15 +1,12 @@
-function line = lsqLine(edges)
-    % line = LSQLINE(edges) extract a line described in (alpha,r)
-    % parameters from a set of edges
-    
-    n = length(edges);
-    xmean = mean(edges(1,:));
-    ymean = mean(edges(2,:));
-    sumx = sum(edges(1,:));
-    sumy = sum(edges(2,:));
-    sumx2 = sum(edges(1,:).^2);
-    sumy2 = sum(edges(2,:).^2);
-    sumxy = sum(edges(1,:).*edges(2,:));
+function line=lsqLine(points)
+    n = length(points);
+    xmean = mean(points(1,:));
+    ymean = mean(points(2,:));
+    sumx = sum(points(1,:));
+    sumy = sum(points(2,:));
+    sumx2 = points(1,:)*points(1,:)';
+    sumy2 = points(2,:)*points(2,:)';
+    sumxy = points(1,:)*points(2,:)';
     
     alpha = 1/2*atan2((2*sumx*sumy-2*n*sumxy),(sumx^2-sumy^2-n*sumx2+n*sumy2));
     
@@ -24,5 +21,5 @@ function line = lsqLine(edges)
         end
     end
     
-    line = [alpha,r];
+    line = [alpha,r]; 
 end
