@@ -82,7 +82,7 @@ for iter = 1:noOfIter
         hold on
         handles = [];
         for worldIndex = 1:noOfWorldLines
-            [projLine, lineCov]=projectToLaser(worldLines(1:2,worldIndex),pose,poseCov);
+            [projLine lineCov]=projectToLaser(worldLines(1:2,worldIndex),pose,poseCov);
             handles(1) = plotLine(projLine,'b');
         end
 
@@ -101,7 +101,7 @@ for iter = 1:noOfIter
         hold on
         handles = [];
         for worldIndex = 1:noOfWorldLines
-            [projLine, lineCov]=projectToLaser(worldLines(1:2,worldIndex),pose,poseCov);
+            [projLine lineCov]=projectToLaser(worldLines(1:2,worldIndex),pose,poseCov);
             plot(projLine(1),projLine(2),'x');
             h = plot_gaussian_ellipsoid(projLine,lineCov);
             handles(2) = h;

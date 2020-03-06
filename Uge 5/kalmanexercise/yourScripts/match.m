@@ -7,9 +7,9 @@ function [ matchResult ] = match( pose, poseCov, worldLines, laserLines )
 %       pose: The estimated robot pose given as [x,y,theta]
 %       poseCov: The estimated covariance matrix of the robot pose
 %       worldLines: Known world lines in world coordinates, given as
-%       [alpha;r] for each line. Number of columns = number of lines
+%       [alpha;r] for each line. Number of rows = number of lines
 %       laserLines: Lines extracted from the laser scan. Given as [alpha;r]
-%       for each line. Number of columns = number of lines
+%       for each line. Number of rows = number of lines
 %
 %       matchResult: A (5xnoOfWorldLines) matrix whose columns are 
 %       individual pairs of line matches. It is structured as follows:
@@ -40,7 +40,7 @@ function [ matchResult ] = match( pose, poseCov, worldLines, laserLines )
         [ projectedLines(1:2,i), lineCov(:,:,i) ] = projectToLaser(worldLines(:,i),pose,poseCov);
         lineCov(:,:,i) = lineCov(:,:,i)+sigRJ;
     end
-
+    
     for i = 1:noOfWorldLines
         for j = 1:noOfLaserLines
             innovation = laserLines(:,j) - projectedLines(:,i);

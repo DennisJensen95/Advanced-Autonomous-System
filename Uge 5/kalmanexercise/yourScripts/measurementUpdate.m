@@ -17,7 +17,7 @@ function [ poseOut, poseCovOut ] = measurementUpdate( poseIn, poseCovIn, matchRe
 %       
 %       poseOut: The updated robot pose estimate
 %       poseCovOut: The updated estimate of the robot pose covariance 
-%       matrix 
+%       matrix
 
     % Constants
     % The laser scanner pose in the robot frame is read globally(lsrRelpose)
@@ -32,7 +32,7 @@ function [ poseOut, poseCovOut ] = measurementUpdate( poseIn, poseCovIn, matchRe
     sigR = zeros(2*N,2*N);
 
     for i = 1:2:2*N
-        sigR(i:(i+1),i:(i+1))=sigRJ;
+        sigR(i:(i+1),i:(i+1))=sigRJ; %big sigma_R with all covariance matrices for world lines (ex9)
     end
     
     noOfWorldLines = length(matchResult(1:2,:));
@@ -46,20 +46,20 @@ function [ poseOut, poseCovOut ] = measurementUpdate( poseIn, poseCovIn, matchRe
         if matchResult(5,i) > 0
 %             [projectedLine, lineCov] = projectToLaser(matchResult(1:2,i),poseIn, poseCovIn);
             
-            H(index:(index+1),:) = [0,0,-1;-cos(matchResult(1,i)),-sin(matchResult(1,i)),0];
-            innovations(index:(index+1)) = matchResult(3:4,i);
+            H(index:(index+1),:) = [0,0,-1;-cos(matchResult(1,i)),-sin(matchResult(1,i)),0]; %nabla h (complete version from ex9)
+            innovations(index:(index+1)) = matchResult(3:4,i); % extract innovations
             index = index + 2;
         end
     end
     
     
-    sigmaIN = H*poseCovIn*(H.')+sigR;
+    sigmaIN = H*poseCovIn*(H.')+sigR; %innovation covariance, in ex9 
     
-    K = poseCovIn*(H.')*inv(sigmaIN);
+    K = poseCovIn*(H.')*inv(sigmaIN); %Kalman gain, p. 336 eq 5.86
     
-    poseOut = poseIn + K*innovations;
+    poseOut = poseIn + K*innovations; % update position estimate p.335 eq. 5.84
     
-    poseCovOut = poseCovIn - K*sigmaIN*(K.');
+    poseCovOut = poseCovIn - K*sigmaIN*(K.'); %update covariance p. 335 eq. 5.85
 
 %     poseOut = poseIn;
 %     poseCovOut = poseCovIn;
