@@ -1,0 +1,31 @@
+%%%%%%%%%%%%%%% Exercise 11 %%%%%%%%%%%%%%%%%%
+%
+% Problem 1
+%
+
+xlaser = 0.26 %laser offset in x-direction
+
+% start pose and covariance
+laser "setinitpose x=0.95 y=1.0 th=0"
+laser "setinitcov Cx=0.01 Cy=0.01 Cth=0.01"
+
+% laser update call
+laser "localize"
+
+xl = $l0
+yl = $l1
+thl = $l2
+
+x = (cos($odoth)*xl - sin($odoth)*yl) + $odox
+y = (sin($odoth)*xl + cos($odoth)*yl) + $odoy
+th = thl + $odoth
+
+
+eval xl
+eval yl
+eval thl
+
+
+eval x
+eval y
+eval th
