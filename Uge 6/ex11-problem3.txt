@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%% Exercise 11 %%%%%%%%%%%%%%%%%%
 %
-% Problem 2
+% Problem 3
 %
 
 % SET N NUMBER OF LOOPS
@@ -33,8 +33,7 @@ xlaser = 0.26 %laser offset in x-direction
 % start pose and covariance
 laser "setinitpose x=0.9 y=0.9 th=0"
 laser "setinitcov Cx=0.004 Cy=0.004 Cth=0.01"
-
-laser "localize"
+laser "push t='1.0' cmd='localize'"
 
 %go to first corner
 turn 45
@@ -60,7 +59,11 @@ xc = cornerX[i]
 yc = cornerY[i]
 thc = cornerTh[i]
 
-drive xc yc thc : ($targetdist <0.25)
+stop
+wait 0.5
+laser "localize"
+ignoreobstacles
+drivew xc yc thc : ($targetdist <0.25)
 
 
 if (i+n == N+3) "complete"
