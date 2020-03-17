@@ -1,0 +1,70 @@
+%%%%%%%%%%%%%%% Exercise 11 %%%%%%%%%%%%%%%%%%
+%
+% Problem 2
+%
+
+% SET N NUMBER OF LOOPS
+N = 2
+
+pi = 3.1415927
+
+%box corners
+array "cornerX" 4
+array "cornerY" 4
+array "cornerTh" 4
+
+cornerX[0] = 1.4
+cornerX[1] = 0.4
+cornerX[2] = 0.4
+cornerX[3] = 1.4
+
+cornerY[0] = 1.4
+cornerY[1] = 1.4
+cornerY[2] = 0.4
+cornerY[3] = 0.4
+
+cornerTh[0] = pi
+cornerTh[1] = -pi/2
+cornerTh[2] = 0
+cornerTh[3] = pi/2
+
+xlaser = 0.26 %laser offset in x-direction
+
+% start pose and covariance
+laser "setinitpose x=0.9 y=0.9 th=0"
+laser "setinitcov Cx=0.004 Cy=0.004 Cth=0.01"
+
+%go to first corner
+turn 45
+fwd 0.71 @v0.3 @a0.5
+turn 135
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% START CORNER DRIVE LOOP
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%loop count
+n = 0
+
+label "setIterator"
+n = n + 1
+i = -1
+
+label "cornerDrive"
+i=i+1
+
+xc = cornerX[i]
+yc = cornerY[i]
+thc = cornerTh[i]
+
+drive xc yc thc : ($targetdist <0.25)
+
+
+if (i+n == N+3) "complete"
+if (i==3) "setIterator"
+
+goto "cornerDrive"
+
+
+label "complete"
