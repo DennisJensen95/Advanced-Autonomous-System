@@ -16,7 +16,7 @@ xl = $l0
 yl = $l1
 thl = $l2
 
-x = (cos($odoth)*xl - sin($odoth)*yl) + $odox
+x = (cos($odoth)*xl - sin($odoth)*yl) + ($odox+xlaser)
 y = (sin($odoth)*xl + cos($odoth)*yl) + $odoy
 th = thl + $odoth
 
