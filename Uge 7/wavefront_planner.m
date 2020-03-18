@@ -12,6 +12,7 @@ queue = {};
 map = zeros(10,10);
 map(1:7,3) = ones(7,1);
 map(3:10) = ones(8,1);
+map(3:10,6) = ones(8,1);
 map(goal(1),goal(2)) = 2; %goal
 map(start(1),start(2)) = -1; %start
 
@@ -19,12 +20,29 @@ PrintMap()
 
 %% Main
 
+grid_size = 0.05;
+
 Makewave(goal, start);
-route = FindRoute(start);
+[route,mission] = FindRoute(start, grid_size);
 PrintRoute(route);
+
+CreateSMR(mission);
 
 
 %% Functions
+function CreateSMR(mission)
+
+    x = mission(:,1);
+    y = mission(:,2);
+    th = mission(:,3);
+
+    fid = fopen( 'ex12-problem6', 'wt' );
+    for i = 1:length(mission)
+        fprintf(fid, 'drive %.2f %.2f %.2f : ($targetdist<0.01)\n', x(i), y(i), th(i));
+    end
+    fclose(fid);
+end
+
 function PrintRoute(route)
     global map
     [m,n] = size(route);
@@ -36,7 +54,7 @@ function PrintRoute(route)
             if map(i,j) == 1
                 fprintf('* ');
             elseif map(i,j) == 2
-                fprintf('G');
+                fprintf('G ');
             elseif route(i,j) == 0
                 fprintf('0 ');
             elseif route(i,j) == 1
@@ -53,11 +71,12 @@ function PrintRoute(route)
     end
 end
 
-function routeMap = FindRoute(start)
+function [routeMap, mission] = FindRoute(start,grid_size)
 %FINDROUTE FUNCTION
     global map
     
     routeMap = zeros(size(map));
+    mission = [];
     
     cp = start;
     while true
@@ -65,12 +84,33 @@ function routeMap = FindRoute(start)
         [dx, val] = FindMin(nbs,cp);
         routeMap = AddMapSyntax(routeMap,dx,cp);
         
+        mission = [mission; FindPose(dx,cp,grid_size)];
+        
         if val == 2
             break;
         end
         
         cp = cp+dx;
     end
+end
+
+function pose = FindPose(dx,cp,grid_size)
+    global map
+    
+    point = cp+dx;
+    
+    pose = zeros(1,3);
+    
+    [m,n]=size(map);
+    [x,y]=meshgrid(0:grid_size:((m-1)*grid_size),0:grid_size:((n-1)*grid_size));
+    x=x+0.025;
+    y=flipud(y)+0.025;
+    
+    pose(1) = x(point(1),point(2));
+    pose(2) = y(point(1),point(2));
+    pose(3) = atan2(-dx(1),dx(2))*180/pi;
+    
+    
 end
 
 function map = AddMapSyntax(map, dx, point)
