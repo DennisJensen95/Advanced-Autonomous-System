@@ -18,7 +18,7 @@ map(start(1),start(2)) = -1; %start
 
 PrintMap()
 
-%% Main
+%% Main - problem 6
 
 grid_size = 0.05;
 
@@ -26,17 +26,51 @@ Makewave(goal, start);
 [route,mission] = FindRoute(start, grid_size);
 PrintRoute(route);
 
-CreateSMR(mission);
+CreateSMR(mission,6);
 
+%% Main - problem 7
+queue = {};
+
+box = ones(9,9);
+box([1,9],[1,2,8,9]) = 0;
+box([2,8],[1,9]) = 0;
+
+figure(1)
+goal = [21,1];
+start = [21,51];
+map = zeros(uint8(2.05/0.05), uint8(2.55/0.05));
+map(17:25,22:30) = box;
+
+subplot(2,1,1)
+imshow(map)
+
+
+map = imdilate(map,strel('sphere',5));
+subplot(2,1,2)
+imshow(map)
+
+map(goal(1),goal(2)) = 2; %goal
+map(start(1),start(2)) = -1; %start
+
+PrintMap();
+
+grid_size = 0.05;
+
+Makewave(goal, start);
+[route,mission] = FindRoute(start, grid_size);
+PrintRoute(route);
+
+CreateSMR(mission,7);
 
 %% Functions
-function CreateSMR(mission)
+function CreateSMR(mission, num)
 
     x = mission(:,1);
     y = mission(:,2);
     th = mission(:,3);
-
-    fid = fopen( 'ex12-problem6', 'wt' );
+    
+    name = sprintf('ex12-problem%d',num);
+    fid = fopen( name, 'wt' );
     for i = 1:length(mission)
         fprintf(fid, 'drive %.2f %.2f %.2f : ($targetdist<0.01)\n', x(i), y(i), th(i));
     end
@@ -102,7 +136,7 @@ function pose = FindPose(dx,cp,grid_size)
     pose = zeros(1,3);
     
     [m,n]=size(map);
-    [x,y]=meshgrid(0:grid_size:((m-1)*grid_size),0:grid_size:((n-1)*grid_size));
+    [x,y]=meshgrid(0:grid_size:((n-1)*grid_size),0:grid_size:((m-1)*grid_size));
     x=x+0.025;
     y=flipud(y)+0.025;
     
