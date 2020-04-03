@@ -97,7 +97,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       printVec(r);
 
       // Transform to world coordinates
+      vector<double> line;
+      lsqline(x,y,line);
       
+      printf("Laser coordinates:\n");
+      printVec(line);
 
     }
   }
@@ -154,3 +158,43 @@ void UFunczoneobst::printVec(vector<double> & result){
   cout << endl;
 }
 
+bool UFunczoneobst::lsqline(vector<double> x, vector<double> y, vector<double> &line){
+  int n = x.size();
+
+  if (n != 0){
+    double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
+    sumx = accumulate( x.begin(), x.end(), 0.0); 
+    sumy = accumulate( y.begin(), y.end(), 0.0);
+
+    xmean = sumx/(double)n;
+    ymean = sumy/(double)n;
+    
+    sumx2 = 0;
+    sumy2 = 0;
+    sumxy = 0;
+    for (int i = 0; i<n; i++){
+      sumx2 += x[i]*x[i];
+      sumy2 += y[i]*y[i];
+      sumxy += x[i]*y[i];
+    }
+
+    double a = 1/2*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
+    double r = xmean*cos(a) + ymean*sin(a);
+
+    if (r<0){
+      r = abs(r);
+      if (a<0){
+        a += PI;
+      } else {
+        a -= PI
+      }
+    }
+
+    line.push_back(a);
+    line.push_back(r);
+
+    return true;
+  }
+
+  return false;
+}
