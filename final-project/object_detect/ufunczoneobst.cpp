@@ -40,7 +40,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   const int MRL = 500;
   char reply[MRL];
   bool ask4help;
-  bool detectObject;
+  bool detectObject = false;
+  bool zoneobst = false;
   const int MVL = 30;
   char value[MVL];
   ULaserData * data;
@@ -53,7 +54,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   double zone[9];
   // check for parameters - one parameter is tested for - 'help'
   ask4help = msg->tag.getAttValue("help", value, MVL);
-  detectObject = msg->tag.getAttValue("detect object", value, MVL);
+  detectObject = msg->tag.getAttValue("detect", value, MVL);
+  zoneobst = msg->tag.getAttValue("zoneobst", value, MVL);
   if (ask4help)
   { // create the reply in XML-like (html - like) format
     sendHelpStart(msg, "zoneobst");
@@ -67,15 +69,21 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   else if (detectObject)
   {
     data = getScan(msg, (ULaserData*)extra); 
-    if (data->isValid())
+    if (data->isValid()) 
+    {
       minRange = 1000;
       imax = data->getRangeCnt();
       delta = imax/400;
-      printf("Git is awesome, go home Martin.\n")
+      printf("Git is awesome, go home Martin.\n");
+    } else 
+    {
+      printf("Git is awesome, go home Martin.\n");
     }
   }
-  else
+  else if (zoneobst)
   { // do some action and send a reply
+    printf("Git is awesome, go home Martin.\n");
+    printf("detectObject: %d\n", detectObject);
     data = getScan(msg, (ULaserData*)extra);
     //
     if (data->isValid())
@@ -109,6 +117,10 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
     }
     else
       sendWarning(msg, "No scandata available");
+  }
+  else 
+  {
+    printf("\n\nWhy is this not working? Martin...\n\n");
   }
   // return true if the function is handled with a positive result
   // used if scanpush or push has a count of positive results
