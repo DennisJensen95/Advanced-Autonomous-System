@@ -91,15 +91,24 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
           j++;
         }
       }
-      printVec(r);
+      //printVec(r);
 
       // Transform to world coordinates
       vector<double> line;
       bool state = lsqline(x,y,line);
       
-      printf("Laser coordinates:\n");
-      printVec(line);
+      vector<double> poseR, poseW;
+      poseR.push_back(2.0);
+      poseR.push_back(1.0);
+      poseR.push_back(-1.57);
 
+      poseW = transform(poseR);
+
+      vector<double> lineW;
+      lineW = transline(line, poseW);
+
+      printf("Laser coordinates:\n");
+      printVec(lineW);
     }
   }
   else
@@ -198,4 +207,27 @@ bool UFunczoneobst::lsqline(vector<double> x, vector<double> y, vector<double> &
   }
 
   return false;
+}
+
+vector<double> UFunczoneobst::transline(vector<double> lineL, vector <double> poseW){
+  /*
+  * lineL = [aL, rL]
+  * poseW = [xL, yL, thL]^W
+  */
+  vector<double> lineW;
+
+  lineW.push_back(lineL[0] + poseW[2]);
+  lineW.push_back(lineL[1] + ( cos(lineW[0])*poseW[0] + sin(lineW[0])*poseW[1] ));
+
+  return lineW;
+}
+
+vector<double> UFunczoneobst::transform(vector<double> poseR){
+  vector<double> poseW;
+
+  poseW.push_back(cos(poseR[2]) * 0.26 + poseR[0]);
+  poseW.push_back(sin(poseR[2]) * 0.26 + poseR[1]);
+  poseW.push_back(poseR[2]);
+
+  return poseW;
 }

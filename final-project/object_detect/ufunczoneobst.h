@@ -60,6 +60,8 @@ public:
   private:
     void printVec(vector<double> & result);
     bool lsqline(vector<double> x, vector<double> y, vector<double> &line);
+    vector<double> transline(vector<double> lineL, vector <double> poseW);
+    vector<double> transform(vector<double> poseR);
 };
 
 
