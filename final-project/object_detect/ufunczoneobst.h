@@ -26,6 +26,7 @@
 
 using namespace std;
 
+#define PI 3.14159265;
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ public:
   
   private:
     void printVec(vector<double> & result);
-    bool lsqline(vector<double> x, vector<double> y, vector<double> &line)
+    bool lsqline(vector<double> x, vector<double> y, vector<double> &line);
 };
 
 

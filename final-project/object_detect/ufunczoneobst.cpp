@@ -53,9 +53,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   // double minAngle = 0.0; // degrees
   // double d,robotwidth;
   double zone[9];
-  int laserCount = 200;
-  double laserRange[200];
-  double laserAngle[200];
   // check for parameters - one parameter is tested for - 'help'
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
@@ -85,7 +82,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       {
         // printf("Dist: %.2f, AngleDeg: %.2f\n", )
         double range = data->getRangeMeter(i);
-        if (range > 0.020 && range < 1.500)
+        if (range > 0.020 && range < 4.000)
         {
           r.push_back(range);
           th.push_back(data->getAngleRad(i));
@@ -98,7 +95,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
       // Transform to world coordinates
       vector<double> line;
-      lsqline(x,y,line);
+      bool state = lsqline(x,y,line);
       
       printf("Laser coordinates:\n");
       printVec(line);
@@ -163,8 +160,12 @@ bool UFunczoneobst::lsqline(vector<double> x, vector<double> y, vector<double> &
 
   if (n != 0){
     double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
-    sumx = accumulate( x.begin(), x.end(), 0.0); 
-    sumy = accumulate( y.begin(), y.end(), 0.0);
+
+    for (int j = 0; j < n; j++) 
+    {
+      sumx += x[j];
+      sumy += y[j];
+    }
 
     xmean = sumx/(double)n;
     ymean = sumy/(double)n;
