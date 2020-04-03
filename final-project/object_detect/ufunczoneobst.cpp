@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "ufunczoneobst.h"
 
+
 #ifdef LIBRARY_OPEN_NEEDED
 
 /**
@@ -43,6 +44,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   bool detectObject = false;
   const int MVL = 30;
   char value[MVL];
+  vector <int> g1;
   ULaserData * data;
   //
   int i,j,imax;
@@ -66,11 +68,34 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   }
   else if (detectObject)
   {
-    data = getScan(msg, (ULaserData*)extra); 
+    data = getScan(msg, (ULaserData*)extra);
+
+    // Get laser data 
     if (data->isValid()) 
     {
-      vector<vector<double>> vec( 4 , vector<int> (data->getRangeCnt(), 0)); 
-      polar2carth(data, coord);
+      vector<double> r;
+      vector<double> th;
+      vector<double> x;
+      vector<double> y;
+      int j = 0;
+      for (int i = 0; i<data->getRangeCnt(); i++)
+      {
+        // printf("Dist: %.2f, AngleDeg: %.2f\n", )
+        double range = data->getRangeMeter(i);
+        if (range > 0.020 && range < 1.500)
+        {
+          r.push_back(range);
+          th.push_back(data->getAngleRad(i));
+          x.push_back(cos(th[j])*r[j]);
+          y.push_back(sin(th[j])*r[j]);
+          j++;
+        }
+      }
+      printVec(r);
+
+      // Transform to world coordinates
+      
+
     }
 
   }
@@ -120,22 +145,9 @@ void UFunczoneobst::createBaseVar()
   var_zone = addVarA("zone", "0 0 0 0 0 0 0 0 0", "d", "Value of each laser zone. Updated by zoneobst.");
 }
 
-void UFunczoneobst::polar2carth(ULaserData *p, vector<vector<double>> &coord){  
-  for (i = 0; i < p->getRangeCnt(); i++) {
-    r = p->getRangeMeter(i);
-    if (r > 0.1 && r < 0.75) {
-
-      coord[i][0] = r; //radius
-      coord[i][1] = p->getAngleRad(i); //angle
-      coord[i][2] = r*cos(coord[i][1]); //x
-      coord[i][3] = r*sin(coord[i][1]); //y
-
-      //printf("Laser: r = %f , th =  %f , x = %f , y = %f\n", scan.r[i], scan.th[i], scan.x[i], scan.y[i]);
-    } else {
-      coord[i][0] = -1; //radius
-      coord[i][1] = p->getAngleRad(i); //angle
-      coord[i][2] = -1; //x
-      coord[i][3] = -1; //y
+void UFunczoneobst::printVec(vector<double> & result){
+    for (unsigned int i = 0; i < result.size(); i++) {
+        cout << result.at(i) << ' ';
     }
-  }
+  cout << endl;
 }

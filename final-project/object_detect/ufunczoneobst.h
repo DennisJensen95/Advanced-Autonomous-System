@@ -21,8 +21,10 @@
 #define UFUNC_MRCOBST_H
 
 #include <cstdlib>
-
+#include <vector>
 #include <ulms4/ufunclaserbase.h>
+
+using namespace std;
 
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -49,11 +51,12 @@ public:
   Must return true if the function is handled -
   otherwise the client will get a failed - reply */
   virtual bool handleCommand(UServerInMsg * msg, void * extra);
+  void printVec(vector<double> & result);
 
   protected:
     void createBaseVar();
     UVariable *var_zone;
-    void polar2carth(vector<vector<double>> pol, vector<vector<double>> &coord);
+    void polar2carth(ULaserData *p, vector<vector<double>> &coord);
 };
 
 
