@@ -49,10 +49,11 @@ public:
   Must return true if the function is handled -
   otherwise the client will get a failed - reply */
   virtual bool handleCommand(UServerInMsg * msg, void * extra);
-  
+
   protected:
     void createBaseVar();
     UVariable *var_zone;
+    void polar2carth(vector<vector<double>> pol, vector<vector<double>> &coord);
 };
 
 

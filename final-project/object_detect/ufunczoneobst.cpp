@@ -69,10 +69,10 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
     data = getScan(msg, (ULaserData*)extra); 
     if (data->isValid()) 
     {
-      minRange = 1000;
-      imax = data->getRangeCnt();
-      delta = imax/400;
-    } 
+      vector<vector<double>> vec( 4 , vector<int> (data->getRangeCnt(), 0)); 
+      polar2carth(data, coord);
+    }
+
   }
   else
   { // do some action and send a reply
@@ -118,4 +118,24 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 void UFunczoneobst::createBaseVar()
 { // add also a global variable (global on laser scanner server) with latest data
   var_zone = addVarA("zone", "0 0 0 0 0 0 0 0 0", "d", "Value of each laser zone. Updated by zoneobst.");
+}
+
+void UFunczoneobst::polar2carth(ULaserData *p, vector<vector<double>> &coord){  
+  for (i = 0; i < p->getRangeCnt(); i++) {
+    r = p->getRangeMeter(i);
+    if (r > 0.1 && r < 0.75) {
+
+      coord[i][0] = r; //radius
+      coord[i][1] = p->getAngleRad(i); //angle
+      coord[i][2] = r*cos(coord[i][1]); //x
+      coord[i][3] = r*sin(coord[i][1]); //y
+
+      //printf("Laser: r = %f , th =  %f , x = %f , y = %f\n", scan.r[i], scan.th[i], scan.x[i], scan.y[i]);
+    } else {
+      coord[i][0] = -1; //radius
+      coord[i][1] = p->getAngleRad(i); //angle
+      coord[i][2] = -1; //x
+      coord[i][3] = -1; //y
+    }
+  }
 }
