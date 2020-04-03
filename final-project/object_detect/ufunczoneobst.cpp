@@ -53,6 +53,9 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   // double minAngle = 0.0; // degrees
   // double d,robotwidth;
   double zone[9];
+  int laserCount = 200;
+  double laserRange[200];
+  double laserAngle[200];
   // check for parameters - one parameter is tested for - 'help'
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
@@ -97,7 +100,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       
 
     }
-
   }
   else
   { // do some action and send a reply
@@ -151,3 +153,4 @@ void UFunczoneobst::printVec(vector<double> & result){
     }
   cout << endl;
 }
+
