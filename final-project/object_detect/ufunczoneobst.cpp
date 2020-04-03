@@ -67,16 +67,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   else if (detectObject)
   {
     data = getScan(msg, (ULaserData*)extra); 
-
     if (data->isValid())
-    {
       minRange = 1000;
       imax = data->getRangeCnt();
       delta = imax/400;
-      for (j=0; j < 9; j++) 
-      {
-        
-      }
+      printf("Git is awesome, go home Martin.\n")
     }
   }
   else
