@@ -115,12 +115,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       
       if (state){
 	      vector<double> poseR, poseW;
-	      poseR.push_back(2.0);
-	      poseR.push_back(1.0);
-	      poseR.push_back(-1.57);
-	      //poseR.push_back(x);
-	      //poseR.push_back(y);
-	      //poseR.push_back(th);
+	      //poseR.push_back(2.0);
+	      //poseR.push_back(1.0);
+	      //poseR.push_back(-1.57);
+	      poseR.push_back(x);
+	      poseR.push_back(y);
+	      poseR.push_back(th);
 
 	      poseW = transform(poseR);
 
