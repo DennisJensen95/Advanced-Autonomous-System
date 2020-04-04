@@ -43,6 +43,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   bool ask4help;
   bool detectObject = false;
   const int MVL = 30;
+  char val[MRL];
   char value[MVL];
   vector <int> g1;
   ULaserData * data;
