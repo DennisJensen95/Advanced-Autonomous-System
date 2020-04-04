@@ -213,6 +213,9 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       printf("i = %d\n", i);
     }
 
+    vector<double> temp = lsqline(x,y);
+    line.push_back(temp[0]);
+    line.push_back(temp[1]);
     return true;
   }
   return false;
