@@ -210,7 +210,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
     
     for(int i = 0; i<lineMat.size(); i++){
-      printf("i = %d\n", i);
+      printf("Line %d:\t\talpha=%.2f\tr=%.2f\n", i, lineMat[i][0], lineMat[i][1]);
     }
 
     vector<double> temp = lsqline(x,y);
