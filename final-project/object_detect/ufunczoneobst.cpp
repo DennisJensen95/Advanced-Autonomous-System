@@ -114,7 +114,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
       // Transform to world coordinates
       vector<double> line;
-      bool state = lsqline(x,y,line);
+      bool state = DoLsqLineProcessing(x,y,line);
       
       if (state){
 	      vector<double> poseR, poseW;
