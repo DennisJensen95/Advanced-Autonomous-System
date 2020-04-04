@@ -191,49 +191,72 @@ void UFunczoneobst::printVec(vector<double> & result){
   cout << endl;
 }
 
-bool UFunczoneobst::lsqline(vector<double> x, vector<double> y, vector<double> &line){
+bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &line){
   int n = x.size();
+  int parts = 3;
+  int delta = n/parts;
 
-  if (n != 0){
-    double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
+  if (n > parts*2){
+    vector<vector<double>> lineMat;
 
-    for (int j = 0; j < n; j++) 
-    {
-      sumx += x[j];
-      sumy += y[j];
-    }
-
-    xmean = sumx/(double)n;
-    ymean = sumy/(double)n;
-    
-    sumx2 = 0;
-    sumy2 = 0;
-    sumxy = 0;
-    for (int i = 0; i<n; i++){
-      sumx2 += x[i]*x[i];
-      sumy2 += y[i]*y[i];
-      sumxy += x[i]*y[i];
-    }
-
-    double a = 1/2*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
-    double r = xmean*cos(a) + ymean*sin(a);
-
-    if (r<0){
-      r = abs(r);
-      if (a<0){
-        a += PI;
-      } else {
-        a -= PI
+    for (int i = 0; i<parts; i++){
+      vector<double> tempX, tempY, tempL;
+      for (int j = 0+(int)(i*delta); j < (int)((i+1)*delta); j++){
+        tempX.push_back(x[j]);
+        tempY.push_back(y[j]);
       }
+      lineMat.push_back(lsqline(tempX,tempY));
     }
 
-    line.push_back(a);
-    line.push_back(r);
+    
+    for(int i = 0; i<lineMat.size(); i++){
+      print(i);
+    }
 
     return true;
   }
-
   return false;
+}
+
+vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
+  int n = x.size();
+  double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
+
+  for (int j = 0; j < n; j++) 
+  {
+    sumx += x[j];
+    sumy += y[j];
+  }
+
+  xmean = sumx/(double)n;
+  ymean = sumy/(double)n;
+  
+  sumx2 = 0;
+  sumy2 = 0;
+  sumxy = 0;
+  for (int i = 0; i<n; i++){
+    sumx2 += x[i]*x[i];
+    sumy2 += y[i]*y[i];
+    sumxy += x[i]*y[i];
+  }
+
+  double a = 1/2*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
+  double r = xmean*cos(a) + ymean*sin(a);
+
+  if (r<0){
+    r = abs(r);
+    if (a<0){
+      a += PI;
+    } else {
+      a -= PI
+    }
+  }
+
+  vector<double> line;
+  line.push_back(a);
+  line.push_back(r);
+
+  return line;
 }
 
 vector<double> UFunczoneobst::transline(vector<double> lineL, vector <double> poseW){
