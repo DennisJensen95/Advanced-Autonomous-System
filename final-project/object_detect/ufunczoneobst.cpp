@@ -98,13 +98,16 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       {
         // printf("Dist: %.2f, AngleDeg: %.2f\n", )
         double range = data->getRangeMeter(i);
+        double angle = data->getAngleRad(i);
         if (range > 0.020 && range < 1.500)
         {
-          r.push_back(range);
-          th.push_back(data->getAngleRad(i));
-          x.push_back(cos(th[j])*r[j]);
-          y.push_back(sin(th[j])*r[j]);
-          j++;
+          if(angle > -20*PI/180 && angle < 20*PI/180){
+            r.push_back(range);
+            th.push_back(data->getAngleRad(i));
+            x.push_back(cos(th[j])*r[j]);
+            y.push_back(sin(th[j])*r[j]);
+            j++;
+          }
         }
       }
       //printVec(r);
