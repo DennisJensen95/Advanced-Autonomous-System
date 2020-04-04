@@ -248,7 +248,7 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
     if (a<0){
       a += PI;
     } else {
-      a -= PI
+      a -= PI;
     }
   }
 
