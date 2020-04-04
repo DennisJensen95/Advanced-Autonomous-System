@@ -48,9 +48,9 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   vector <int> g1;
   ULaserData * data;
   //
-  double x = 0;
-  double y = 0;
-  double th = 0;
+  double xo = 0;
+  double yo = 0;
+  double tho = 0;
   //
   int i,j,imax;
   double r,delta;
@@ -63,13 +63,13 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   detectObject = msg->tag.getAttValue("detect", value, MVL);
 
   if (msg->tag.getAttValue("x", val, MVL)) {
-		x = strtod(val, NULL);
+		xo = strtod(val, NULL);
 	}
   if (msg->tag.getAttValue("y", val, MVL)) {
-		y = strtod(val, NULL);
+		yo = strtod(val, NULL);
 	}
   if (msg->tag.getAttValue("th", val, MVL)) {
-		th = strtod(val, NULL);
+		tho = strtod(val, NULL);
 	}
 
   if (ask4help)
@@ -98,7 +98,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       {
         // printf("Dist: %.2f, AngleDeg: %.2f\n", )
         double range = data->getRangeMeter(i);
-        if (range > 0.020 && range < 4.000)
+        if (range > 0.020 && range < 1.500)
         {
           r.push_back(range);
           th.push_back(data->getAngleRad(i));
@@ -118,16 +118,19 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 	      //poseR.push_back(2.0);
 	      //poseR.push_back(1.0);
 	      //poseR.push_back(-1.57);
-	      poseR.push_back(x);
-	      poseR.push_back(y);
-	      poseR.push_back(th);
+	      poseR.push_back(xo);
+	      poseR.push_back(yo);
+	      poseR.push_back(tho);
 
 	      poseW = transform(poseR);
 
 	      vector<double> lineW;
 	      lineW = transline(line, poseW);
 
-	      printf("Laser coordinates:\n");
+	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
+
+	      printf("Line parameters (World):\n");
 	      printVec(lineW);
       }
     }
