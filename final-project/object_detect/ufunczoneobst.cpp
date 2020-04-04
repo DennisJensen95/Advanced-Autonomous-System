@@ -210,7 +210,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
     
     for(int i = 0; i<lineMat.size(); i++){
-      print(i);
+      printf("i = %d\n", i);
     }
 
     return true;
