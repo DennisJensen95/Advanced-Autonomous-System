@@ -47,6 +47,10 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   vector <int> g1;
   ULaserData * data;
   //
+  double x = 0;
+  double y = 0;
+  double th = 0;
+  //
   int i,j,imax;
   double r,delta;
   double minRange; // min range in meter
@@ -56,6 +60,17 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   // check for parameters - one parameter is tested for - 'help'
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
+
+  if (msg->tag.getAttValue("x", val, MVL)) {
+		x = strtod(val, NULL);
+	}
+  if (msg->tag.getAttValue("y", val, MVL)) {
+		y = strtod(val, NULL);
+	}
+  if (msg->tag.getAttValue("th", val, MVL)) {
+		th = strtod(val, NULL);
+	}
+
   if (ask4help)
   { // create the reply in XML-like (html - like) format
     sendHelpStart(msg, "zoneobst");
@@ -98,9 +113,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       bool state = lsqline(x,y,line);
       
       vector<double> poseR, poseW;
-      poseR.push_back(2.0);
+      /*poseR.push_back(2.0);
       poseR.push_back(1.0);
-      poseR.push_back(-1.57);
+      poseR.push_back(-1.57);*/
+      poseR.push_back(x);
+      poseR.push_back(y);
+      poseR.push_back(th);
 
       poseW = transform(poseR);
 
