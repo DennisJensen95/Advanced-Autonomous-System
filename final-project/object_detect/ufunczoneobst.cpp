@@ -293,12 +293,9 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector <double> po
   * lineL = [aL, rL]
   * poseW = [xL, yL, thL]^W
   */
-  vector<double> lineW;
 
-  double a,r;
-
-  a = lineL[0] + poseW[2];
-  r = lineL[1] + (cos(lineW[0])*poseW[0] + sin(lineW[0])*poseW[1]);
+  double a = lineL[0] + poseW[2];
+  double r = lineL[1] + (cos(a)*poseW[0] + sin(a)*poseW[1]);
 
   if (r<0){
     r = abs(r);
@@ -309,6 +306,7 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector <double> po
     }
   }
 
+  vector<double> lineW;
   lineW.push_back(a);
   lineW.push_back(r);
 
