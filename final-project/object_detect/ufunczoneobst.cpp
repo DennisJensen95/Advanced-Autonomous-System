@@ -192,6 +192,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   int n = x.size();
   int parts = 3;
   int delta = n/parts;
+  int matches = 0;
 
   if (n > parts*2){
     vector<vector<double>> lineMat;
@@ -215,6 +216,10 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
     
     for(int i = 0; i<parts; i++){
       printf("Line %d:\t\talpha=%.2f\tr=%.2f\n", i, lineMat[i][0], lineMat[i][1]);
+      // Count occurences of lineMat[i] 
+      matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
+      printf("Matches: %d", matches);
+
     }
 
     vector<double> temp = lsqline(x,y);
