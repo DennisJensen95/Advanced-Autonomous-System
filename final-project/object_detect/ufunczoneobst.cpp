@@ -197,6 +197,8 @@ void UFunczoneobst::createBaseVar()
 int UFunczoneobst::DetermineObject(vector<vector<double>> &v){
   RemoveDuplicates(v);
 
+  printMat(v);
+  
   return 0;
 }
 
@@ -205,8 +207,6 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
   while (true){
     double a = v[itr][0];
     double r = v[itr][1];
-
-    printf("itr = %d\n", itr);
     
     uint j = v.size()-1;
     while (true){
