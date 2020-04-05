@@ -235,6 +235,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
     }
 
     printMat(lineMat);
+    printMat(lineMatCopy);
     
     for(int i = 0; i<parts; i++){
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
