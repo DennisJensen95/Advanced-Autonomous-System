@@ -239,9 +239,21 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
     sumy += y[j];
   }
 
+  printf("sumx:\n\t");
+  printf("%.2f\n", sumx);
+  printf("sumy:\n\t");
+  printf("%.2f\n", sumy);
+  printf("\n\n");
+
   xmean = sumx/(double)n;
   ymean = sumy/(double)n;
   
+  printf("xmean:\n\t");
+  printf("%.2f\n", xmean);
+  printf("ymean:\n\t");
+  printf("%.2f\n", ymean);
+  printf("\n\n");
+
   sumx2 = 0;
   sumy2 = 0;
   sumxy = 0;
@@ -250,6 +262,14 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
     sumy2 += y[i]*y[i];
     sumxy += x[i]*y[i];
   }
+
+  printf("sumx2:\n\t");
+  printf("%.2f\n", sumx2);
+  printf("sumy2:\n\t");
+  printf("%.2f\n", sumy2);
+  printf("sumxy:\n\t");
+  printf("%.2f\n", sumxy);
+  printf("\n\n");
 
   double a = 1/2*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
   double r = xmean*cos(a) + ymean*sin(a);
