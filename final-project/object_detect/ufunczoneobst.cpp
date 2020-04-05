@@ -202,6 +202,29 @@ int UFunczoneobst::DetermineObject(vector<vector<double>> &v){
   return 0;
 }
 
+vector<double> UFunczoneobst::FindIntersection(vector<double> u, vector<double> v){
+  double a1 = u[0];
+  double r1 = u[1];
+  double a2 = v[0];
+  double r2 = v[1];
+
+  double t,s;
+
+  t = (-r1*sin(a1)*sin(a2)-cos(a2)*cos(a1)*r1+r2)/(cos(a1)*sin(a2)-sin(a1)*cos(a2));
+  s = (sin(a2)*sin(a1)*r2+cos(a2)*cos(a1)*r2-r1)/(cos(a1)*sin(a2)-sin(a1)*cos(a2));
+
+  double x1,x2,y1,y2;
+
+  x1 = r1*cos(a1)+t*(-sin(a1));
+  x2 = r2*cos(a2)+s*(-sin(a2));
+  y1 = r1*sin(a1)+t*cos(a1);
+  y2 = r2*sin(a2)+s*cos(a2);
+
+  vector<double> intersectionXY = {(x1+x2)/2, (y1+y2)/2};
+
+  return intersectionXY;
+}
+
 void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
   uint itr = 0;
   while (true){

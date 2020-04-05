@@ -69,6 +69,7 @@ public:
 
     int DetermineObject(vector<vector<double>> &v);
     void RemoveDuplicates(vector<vector<double>> &v);
+    vector<double> FindIntersection(vector<double> a, vector<double> b);
 };
 
 
