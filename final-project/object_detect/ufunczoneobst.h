@@ -64,7 +64,7 @@ public:
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);
     float round(float var);
-    vector<vector<double>> goodLineFitsLaserCoordinates;
+    vector<vector<double>> goodLineFitsWorldCoordinates;
 };
 
 

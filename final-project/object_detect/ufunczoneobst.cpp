@@ -127,11 +127,13 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 	      vector<double> lineW;
 	      lineW = transline(line, poseW);
 
+        goodLineFitsWorldCoordinates.push_back(lineW);
+
 	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
 	      printf("Line parameters (World):\n");
-	      printVec(lineW);
+	      printVec(goodLineFitsWorldCoordinates[0]);
       }
     }
   }
@@ -212,6 +214,8 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
       lineMat.push_back(lsqline(tempX,tempY));
     }
+
+    // round numbers
     for(int i = 0; i<parts; i++) {
       lineMat[i][0] = round(lineMat[i][0]);
       lineMat[i][1] = round(lineMat[i][1]);
@@ -221,14 +225,14 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
       // Count occurences of lineMat[i] 
       matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
-      printf("Matches: %d", matches);
+      //printf("Matches: %d\n", matches);
 
+      if(matches>(parts/2+1)){
+        line.push_back(lineMat[i][0]);
+        line.push_back(lineMat[i][1]);
+        return true;
+      }
     }
-
-    vector<double> temp = lsqline(x,y);
-    line.push_back(temp[0]);
-    line.push_back(temp[1]);
-    return true;
   }
   return false;
 }
@@ -237,33 +241,15 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
   int n = x.size();
   double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
 
-  /*printf("x:\n\t");
-  printVec(x);
-  printf("\ny:\n\t");
-  printVec(y);
-  printf("\n\n");*/
-
   for (int j = 0; j < n; j++) 
   {
     sumx += x[j];
     sumy += y[j];
   }
 
-  /*printf("sumx:\n\t");
-  printf("%.2f\n", sumx);
-  printf("sumy:\n\t");
-  printf("%.2f\n", sumy);
-  printf("\n\n");*/
-
   xmean = sumx/(double)n;
   ymean = sumy/(double)n;
   
-  /*printf("xmean:\n\t");
-  printf("%.2f\n", xmean);
-  printf("ymean:\n\t");
-  printf("%.2f\n", ymean);
-  printf("\n\n");*/
-
   sumx2 = 0;
   sumy2 = 0;
   sumxy = 0;
@@ -273,15 +259,7 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y){
     sumxy += x[i]*y[i];
   }
 
-  /*printf("sumx2:\n\t");
-  printf("%.2f\n", sumx2);
-  printf("sumy2:\n\t");
-  printf("%.2f\n", sumy2);
-  printf("sumxy:\n\t");
-  printf("%.2f\n", sumxy);
-  printf("\n\n");*/
-
-  double a = 1.0/2.0*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
+  double a = 0.5*atan2((2*sumx*sumy-2*(double)n*sumxy), pow(sumx,2)-pow(sumy,2)-(double)n*sumx2+(double)n*sumy2);
   double r = xmean*cos(a) + ymean*sin(a);
 
   if (r<0){
