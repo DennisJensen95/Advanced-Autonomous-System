@@ -129,10 +129,10 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
         goodLineFitsWorldCoordinates.push_back(lineW);
 
-	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+	      /*printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
-	      printf("Line parameters (world):\n");
+	      printf("Line parameters (world):\n");*/
 	      printMat(goodLineFitsWorldCoordinates);
       }
     }
@@ -183,18 +183,39 @@ void UFunczoneobst::createBaseVar()
   var_zone = addVarA("zone", "0 0 0 0 0 0 0 0 0", "d", "Value of each laser zone. Updated by zoneobst.");
 }
 
-void UFunczoneobst::printVec(vector<double> & result){
-    for (unsigned int i = 0; i < result.size(); i++) {
-        cout << result.at(i) << ' ';
-    }
-  cout << endl;
+int UFunczoneobst::DetermineObject(vector<vector<double>> v){
+  RemoveDuplicates(v);
+
+  
+
+  return 0;
 }
 
-void UFunczoneobst::printMat(vector<vector<double>> &result){
-  for ( const vector<double> &v : result )
-  {
-    for ( double x : v ) cout << x << ' ';
-    cout << endl;
+void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
+  int itr = 0;
+  while (true){
+    double a = v[itr][0];
+    double r = v[itr][1];
+
+    printf("itr = %d\n", itr);
+    
+    int j = v.size()-1;
+    while (true){
+        if (j==itr){
+          break;
+        }
+        if (abs(a-v[j][0]) < 0.01 && abs(r-v[j][1]) < 0.01){
+        v.erase(v.begin() + j);
+        }
+
+        j--;
+    }
+    
+    itr++;
+    
+    if (itr == v.size()){
+        break;
+    }
   }
 }
 
@@ -221,9 +242,9 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       printVec(tempY);*/
 
       lineMat.push_back(lsqline(tempX,tempY));
-      //lineMatCopy.push_back(lsqline(tempX,tempY)); // save copy so we have to unrounded values
     }
 
+    // copy of lineMat
     auto lineMatCopy(lineMat);
 
     // round numbers
@@ -232,9 +253,6 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat[i][1] = round(lineMat[i][1]);
     }
     
-    printMat(lineMat);
-    printMat(lineMatCopy);
-
     for(int i = 0; i<parts; i++){
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
       // Count occurences of lineMat[i] 
@@ -327,6 +345,21 @@ vector<double> UFunczoneobst::transform(vector<double> poseR){
   return poseW;
 }
 
+void UFunczoneobst::printVec(vector<double> & result){
+    for (unsigned int i = 0; i < result.size(); i++) {
+        cout << result.at(i) << ' ';
+    }
+  cout << endl;
+}
+
+void UFunczoneobst::printMat(vector<vector<double>> &result){
+  for ( const vector<double> &v : result )
+  {
+    for ( double x : v ) cout << x << ' ';
+    cout << endl;
+  }
+}
+
 float UFunczoneobst::round(float var) 
 { 
     // 37.66666 * 100 =3766.66 
@@ -335,4 +368,4 @@ float UFunczoneobst::round(float var)
     // then divided by 100 so the value converted into 37.67 
     float value = (int)(var * 100 + .5); 
     return (float)value / 100; 
-} 
+}

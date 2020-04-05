@@ -66,6 +66,9 @@ public:
     vector<double> transform(vector<double> poseR);
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
+
+    int DetermineObject(vector<vector<double>> v);
+    void RemoveDuplicates(vector<vector<double>> &v);
 };
 
 
