@@ -132,8 +132,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
-	      printf("Line parameters (World):\n");
-	      printVec(goodLineFitsWorldCoordinates[0]);
+	      printf("Line parameters (world):\n");
+	      printMat(goodLineFitsWorldCoordinates);
       }
     }
   }
@@ -295,8 +295,22 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector <double> po
   */
   vector<double> lineW;
 
-  lineW.push_back(lineL[0] + poseW[2]);
-  lineW.push_back(lineL[1] + ( cos(lineW[0])*poseW[0] + sin(lineW[0])*poseW[1] ));
+  double a,r;
+
+  a = lineL[0] + poseW[2];
+  r = lineL[1] + (cos(lineW[0])*poseW[0] + sin(lineW[0])*poseW[1]);
+
+  if (r<0){
+    r = abs(r);
+    if (a<0){
+      a += PI;
+    } else {
+      a -= PI;
+    }
+  }
+
+  lineW.push_back(a);
+  lineW.push_back(r);
 
   return lineW;
 }
