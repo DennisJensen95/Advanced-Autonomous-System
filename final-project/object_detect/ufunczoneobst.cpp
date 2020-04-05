@@ -205,7 +205,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   int matches = 0;
 
   if (n > parts*2){
-    vector<vector<double>> lineMat, lineMatCopy;
+    vector<vector<double>> lineMat;//, lineMatCopy;
 
     for (int i = 0; i<parts; i++){
       vector<double> tempX, tempY, tempL;
@@ -221,21 +221,20 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       printVec(tempY);*/
 
       lineMat.push_back(lsqline(tempX,tempY));
-      lineMatCopy.push_back(lsqline(tempX,tempY)); // save copy so we have to unrounded values
+      //lineMatCopy.push_back(lsqline(tempX,tempY)); // save copy so we have to unrounded values
     }
 
-    printMat(lineMat);
-    printMat(lineMatCopy);
+    auto lineMatCopy(lineMat);
 
     // round numbers
     for(int i = 0; i<parts; i++) {
       lineMat[i][0] = round(lineMat[i][0]);
       lineMat[i][1] = round(lineMat[i][1]);
     }
-
+    
     printMat(lineMat);
     printMat(lineMatCopy);
-    
+
     for(int i = 0; i<parts; i++){
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
       // Count occurences of lineMat[i] 
