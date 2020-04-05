@@ -212,10 +212,13 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
       lineMat.push_back(lsqline(tempX,tempY));
     }
-
+    for(int i = 0; i<parts; i++) {
+      lineMat[i][0] = round(lineMat[i][0]);
+      lineMat[i][1] = round(lineMat[i][1]);
+    }
     
     for(int i = 0; i<parts; i++){
-      printf("Line %d:\t\talpha=%.2f\tr=%.2f\n", i, lineMat[i][0], lineMat[i][1]);
+      printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
       // Count occurences of lineMat[i] 
       matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
       printf("Matches: %d", matches);
@@ -319,3 +322,13 @@ vector<double> UFunczoneobst::transform(vector<double> poseR){
 
   return poseW;
 }
+
+float UFunczoneobst::round(float var) 
+{ 
+    // 37.66666 * 100 =3766.66 
+    // 3766.66 + .5 =3767.16    for rounding off value 
+    // then type cast to int so value is 3767 
+    // then divided by 100 so the value converted into 37.67 
+    float value = (int)(var * 100 + .5); 
+    return (float)value / 100; 
+} 

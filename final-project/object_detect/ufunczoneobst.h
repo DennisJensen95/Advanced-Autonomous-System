@@ -63,6 +63,7 @@ public:
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);
+    float round(float var);
     vector<vector<double>> goodLineFitsLaserCoordinates;
 };
 
