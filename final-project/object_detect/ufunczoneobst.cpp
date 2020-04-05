@@ -101,7 +101,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
         double angle = data->getAngleRad(i);
         if (range > 0.020 && range < 1.500)
         {
-          if(angle > -20*PI/180 && angle < 20*PI/180){
+          if(angle > -30*PI/180 && angle < 30*PI/180){
             r.push_back(range);
             th.push_back(data->getAngleRad(i));
             x.push_back(cos(th[j])*r[j]);
@@ -190,7 +190,7 @@ void UFunczoneobst::printVec(vector<double> & result){
 
 bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &line){
   int n = x.size();
-  int parts = 3;
+  int parts = 5;
   int delta = n/parts;
   int matches = 0;
 
