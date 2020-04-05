@@ -223,10 +223,8 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat.push_back(lsqline(tempX,tempY));
     }
 
-    vector<vector<double>> lineMatCopy;
-
     // save copy so we have to unrounded values
-    lineMatCopy.insert(lineMatCopy.end(), lineMat.begin(), lineMat.end());
+    auto lineMatCopy(lineMat);    
 
     // round numbers
     for(int i = 0; i<parts; i++) {
