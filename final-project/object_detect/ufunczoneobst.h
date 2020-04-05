@@ -43,7 +43,7 @@ public:
   Constructor */
   UFunczoneobst()
   { // set the command (or commands) handled by this plugin
-    setCommand("zoneobst detect x y th", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
+    setCommand("zoneobst detect x y th determine", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
     createBaseVar();
   }
   /**

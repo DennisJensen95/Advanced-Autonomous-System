@@ -42,6 +42,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   char reply[MRL];
   bool ask4help;
   bool detectObject = false;
+  bool determineObject = false;
   const int MVL = 30;
   char val[MRL];
   char value[MVL];
@@ -61,6 +62,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   // check for parameters - one parameter is tested for - 'help'
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
+  determineObject = msg->tag.getAttValue("determine", value, MVL);
 
   if (msg->tag.getAttValue("x", val, MVL)) {
 		xo = strtod(val, NULL);
@@ -129,12 +131,21 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
         goodLineFitsWorldCoordinates.push_back(lineW);
 
-	      /*printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
-	      printf("Line parameters (world):\n");*/
+	      printf("Line parameters (world):\n");
 	      printMat(goodLineFitsWorldCoordinates);
       }
+    }
+  }
+  else if(determineObject){
+    if (goodLineFitsWorldCoordinates.size() == 0){
+      printf("Not enough values to determine object!\n");
+    }
+    else{
+      int object = DetermineObject(goodLineFitsWorldCoordinates);
+      printf("Object = %d\n", object);
     }
   }
   else
@@ -183,23 +194,21 @@ void UFunczoneobst::createBaseVar()
   var_zone = addVarA("zone", "0 0 0 0 0 0 0 0 0", "d", "Value of each laser zone. Updated by zoneobst.");
 }
 
-int UFunczoneobst::DetermineObject(vector<vector<double>> v){
+int UFunczoneobst::DetermineObject(vector<vector<double>> &v){
   RemoveDuplicates(v);
-
-  
 
   return 0;
 }
 
 void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
-  int itr = 0;
+  uint itr = 0;
   while (true){
     double a = v[itr][0];
     double r = v[itr][1];
 
     printf("itr = %d\n", itr);
     
-    int j = v.size()-1;
+    uint j = v.size()-1;
     while (true){
         if (j==itr){
           break;
