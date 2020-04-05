@@ -193,7 +193,7 @@ void UFunczoneobst::printVec(vector<double> & result){
 void UFunczoneobst::printMat(vector<vector<double>> &result){
   for ( const vector<double> &v : result )
   {
-    for ( int x : v ) cout << x << ' ';
+    for ( double x : v ) cout << x << ' ';
     cout << endl;
   }
 }
