@@ -223,6 +223,11 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat.push_back(lsqline(tempX,tempY));
     }
 
+    vector<vector<double>> lineMatCopy;
+
+    // save copy so we have to unrounded values
+    lineMatCopy.insert(lineMatCopy.end(), lineMat.begin(), lineMat.end());
+
     // round numbers
     for(int i = 0; i<parts; i++) {
       lineMat[i][0] = round(lineMat[i][0]);
@@ -238,8 +243,8 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       //printf("Matches: %d\n", matches);
 
       if(matches>1){
-        line.push_back(lineMat[i][0]);
-        line.push_back(lineMat[i][1]);
+        line.push_back(lineMatCopy[i][0]);
+        line.push_back(lineMatCopy[i][1]);
         return true;
       }
     }
