@@ -227,7 +227,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
       //printf("Matches: %d\n", matches);
 
-      if(matches>(parts/2+1)){
+      if(matches>=(parts/2+1)){
         line.push_back(lineMat[i][0]);
         line.push_back(lineMat[i][1]);
         return true;
