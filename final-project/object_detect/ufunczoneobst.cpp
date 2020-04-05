@@ -190,6 +190,14 @@ void UFunczoneobst::printVec(vector<double> & result){
   cout << endl;
 }
 
+void UFunczoneobst::printMat(vecter<vector<double>> &result){
+  for ( const vector<double> &v : result )
+  {
+    for ( int x : v ) cout << x << ' ';
+    cout << endl;
+  }
+}
+
 bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &line){
   int n = x.size();
   int parts = 5;
@@ -220,6 +228,8 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat[i][0] = round(lineMat[i][0]);
       lineMat[i][1] = round(lineMat[i][1]);
     }
+
+    printMat(lineMat);
     
     for(int i = 0; i<parts; i++){
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
@@ -227,7 +237,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
       //printf("Matches: %d\n", matches);
 
-      if(matches>=(parts/2+1)){
+      if(matches>1){
         line.push_back(lineMat[i][0]);
         line.push_back(lineMat[i][1]);
         return true;
