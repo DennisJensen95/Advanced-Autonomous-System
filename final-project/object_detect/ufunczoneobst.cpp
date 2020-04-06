@@ -128,7 +128,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
 	      vector<vector<double>> lineW;
         for (uint i = 0; i<lines.size(); i++){
-          lineW.push_back(transline(lines, poseW));
+          lineW.push_back(transline(lines[i], poseW));
         }
 
         for (uint i = 0; i<lineW.size(); i++){
