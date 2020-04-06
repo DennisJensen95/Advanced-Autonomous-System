@@ -148,8 +148,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       printf("Not enough values to determine object!\n");
     }
     else{
-      int object = DoObjectProcessing(goodLineFitsWorldCoordinates);
+      vector<double> pointO;
+      double objectPose;
+      int object = DoObjectProcessing(goodLineFitsWorldCoordinates, pointO, objectPose);
       printf("Object = %d\n", object);
+      printf("Point O coordinates: (%.2f, %.2f)\n", pointO[0], pointO[1]);
+      printf("Object pose: %.2f\n", objectPose);
     }
   }
   else
@@ -205,7 +209,7 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
-int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v){
+int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, vector<double> &pointO, double &objectPose){
   RemoveDuplicates(v);
 
   if (v.size() > 1){
@@ -214,8 +218,9 @@ int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v){
 
     printMat(XYresult);
 
+    int object = DetermineObject(XYresult, pointO, objectPose);
 
-
+    return object;
   }
   else {
     printf("Not enough lines!\n");
@@ -224,6 +229,13 @@ int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v){
   return 0;
 }
 
+int UFunczoneobst::DetermineObject(vector<vector<double>> v, vector<double> &pointO, double &objectPose){
+  pointO.push_back(0);
+  pointO.push_back(0);
+  objectPose = 0;
+
+  return 0;
+}
 
 vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v){
   vector<vector<double>> intersections;
