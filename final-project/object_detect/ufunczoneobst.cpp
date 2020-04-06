@@ -331,7 +331,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       //printf("Matches: %d\n", matches);
 
       if(matches>1){
-        line.push_back(lineMatCopy[i]);
+        lines.push_back(lineMatCopy[i]);
       }
     }
 
