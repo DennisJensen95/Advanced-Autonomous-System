@@ -60,7 +60,7 @@ public:
   private:
     void printVec(vector<double> & result);
     void printMat(vector<vector<double>> &result);
-    bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &lines);
+    bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines);
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);

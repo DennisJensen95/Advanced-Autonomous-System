@@ -148,7 +148,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       printf("Not enough values to determine object!\n");
     }
     else{
-      int object = ObjectProcessing(goodLineFitsWorldCoordinates);
+      int object = DoObjectProcessing(goodLineFitsWorldCoordinates);
       printf("Object = %d\n", object);
     }
   }
