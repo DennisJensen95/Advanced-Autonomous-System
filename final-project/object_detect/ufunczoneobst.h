@@ -60,16 +60,17 @@ public:
   private:
     void printVec(vector<double> & result);
     void printMat(vector<vector<double>> &result);
-    bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &line);
+    bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &lines);
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
 
-    int DetermineObject(vector<vector<double>> &v);
+    int DoObjectProcessing(vector<vector<double>> &v);
     void RemoveDuplicates(vector<vector<double>> &v);
     vector<double> FindIntersection(vector<double> a, vector<double> b);
+    vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> v);
 };
 
 

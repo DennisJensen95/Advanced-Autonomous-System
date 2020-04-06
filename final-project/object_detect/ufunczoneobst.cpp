@@ -115,8 +115,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       //printVec(r);
 
       // Transform to world coordinates
-      vector<double> line;
-      bool state = DoLsqLineProcessing(x,y,line);
+      vector<vector<double>> lines;
+      bool state = DoLsqLineProcessing(x,y,lines);
       
       if (state){
 	      vector<double> poseR, poseW;
@@ -126,10 +126,14 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 
 	      poseW = transform(poseR);
 
-	      vector<double> lineW;
-	      lineW = transline(line, poseW);
+	      vector<vector<double>> lineW;
+        for (uint i = 0; i<lines.size(); i++){
+          lineW.push_back(transline(lines, poseW));
+        }
 
-        goodLineFitsWorldCoordinates.push_back(lineW);
+        for (uint i = 0; i<lineW.size(); i++){
+          goodLineFitsWorldCoordinates.push_back(lineW[i]);
+        }
 
 	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
@@ -144,7 +148,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       printf("Not enough values to determine object!\n");
     }
     else{
-      int object = DetermineObject(goodLineFitsWorldCoordinates);
+      int object = ObjectProcessing(goodLineFitsWorldCoordinates);
       printf("Object = %d\n", object);
     }
   }
@@ -194,12 +198,46 @@ void UFunczoneobst::createBaseVar()
   var_zone = addVarA("zone", "0 0 0 0 0 0 0 0 0", "d", "Value of each laser zone. Updated by zoneobst.");
 }
 
-int UFunczoneobst::DetermineObject(vector<vector<double>> &v){
+
+/*
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+* * * * * * * * * * * * * * OUR FUNCTIONS * * * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*/
+
+int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v){
   RemoveDuplicates(v);
 
-  printMat(v);
+  if (v.size() > 1){
+    vector<vector<double>> XYresult;
+    XYresult = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
+
+    printMat(XYresult);
+
+
+
+  }
+  else {
+    printf("Not enough lines!\n");
+  }
   
   return 0;
+}
+
+
+vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v){
+  vector<vector<double>> intersections;
+  for (uint i = 0; i < v.size()-1; i++){
+    for (uint j = i+1; j<v.size(); j++){
+      vector<double> temp = FindIntersection(v[i],v[j]);
+      // perform quality check to make sure the line intersection 
+      // is within the green area
+      if(temp[0] > 1.0 || temp[0] < 3.0 || temp[1] > 1.0 || temp[1] < 2.0){
+        intersections.push_back(temp);
+      }
+    }
+  }
+  return intersections;
 }
 
 vector<double> UFunczoneobst::FindIntersection(vector<double> u, vector<double> v){
@@ -251,7 +289,7 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
   }
 }
 
-bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<double> &line){
+bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines){
   int n = x.size();
   int parts = 5;
   int delta = n/parts;
@@ -260,6 +298,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   if (n > parts*2){
     vector<vector<double>> lineMat;//, lineMatCopy;
 
+    // extract line segments and do least squares estimation for each segment
     for (int i = 0; i<parts; i++){
       vector<double> tempX, tempY, tempL;
       for (int j = 0+(int)(i*delta); j < (int)((i+1)*delta); j++){
@@ -292,11 +331,15 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       //printf("Matches: %d\n", matches);
 
       if(matches>1){
-        line.push_back(lineMatCopy[i][0]);
-        line.push_back(lineMatCopy[i][1]);
-        return true;
+        line.push_back(lineMatCopy[i]);
       }
     }
+
+    // return true if 1 or more line parameters have been added
+    if(line.size()>0){
+      return true;
+    }
+
   }
   return false;
 }
