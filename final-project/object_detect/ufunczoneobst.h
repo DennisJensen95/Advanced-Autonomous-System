@@ -67,11 +67,11 @@ public:
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
 
-    int DoObjectProcessing(vector<vector<double>> &v, vector<double> &pointO, double &objectPose);
+    bool DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose);
     void RemoveDuplicates(vector<vector<double>> &v);
     vector<double> FindIntersection(vector<double> a, vector<double> b);
     vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> v);
-    int DetermineObject(vector<vector<double>> v, vector<double> &pointO, double &objectPose);
+    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose);
 };
 
 

@@ -148,12 +148,18 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       printf("Not enough values to determine object!\n");
     }
     else{
+      int object;
       vector<double> pointO;
       double objectPose;
-      int object = DoObjectProcessing(goodLineFitsWorldCoordinates, pointO, objectPose);
-      printf("Object = %d\n", object);
-      printf("Point O coordinates: (%.2f, %.2f)\n", pointO[0], pointO[1]);
-      printf("Object pose: %.2f\n", objectPose);
+      bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
+      if (FoundObject){
+        printf("Object = %d\n", object);
+        printf("Point o coordinates: (%.2f, %.2f)\n", pointO[0], pointO[1]);
+        printf("Object pose: %.2f\n", objectPose);
+      }
+      else{
+        printf("Object not found\n");
+      }
     }
   }
   else
@@ -209,7 +215,7 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
-int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, vector<double> &pointO, double &objectPose){
+bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose){
   RemoveDuplicates(v);
 
   if (v.size() > 1){
@@ -218,23 +224,24 @@ int UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, vector<double> 
 
     printMat(XYresult);
 
-    int object = DetermineObject(XYresult, pointO, objectPose);
+    bool FoundObject = DetermineObject(XYresult, object, pointO, objectPose);
 
-    return object;
+    return FoundObject;
   }
   else {
     printf("Not enough lines!\n");
   }
   
-  return 0;
+  return false;
 }
 
-int UFunczoneobst::DetermineObject(vector<vector<double>> v, vector<double> &pointO, double &objectPose){
+bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose){
+  object = 0;
   pointO.push_back(0);
   pointO.push_back(0);
   objectPose = 0;
 
-  return 0;
+  return true;
 }
 
 vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v){
