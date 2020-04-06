@@ -274,8 +274,8 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
         if (j==itr){
           break;
         }
-        if (abs(a-v[j][0]) < 0.01 && abs(r-v[j][1]) < 0.01){
-        v.erase(v.begin() + j);
+        if (abs(a-v[j][0]) < 0.1 && abs(r-v[j][1]) < 0.1){
+          v.erase(v.begin() + j);
         }
 
         j--;
@@ -334,6 +334,8 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
         lines.push_back(lineMatCopy[i]);
       }
     }
+
+    RemoveDuplicates(lines);
 
     // return true if 1 or more line parameters have been added
     if(lines.size()>0){
