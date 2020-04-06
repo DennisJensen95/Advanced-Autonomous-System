@@ -336,7 +336,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
     }
 
     // return true if 1 or more line parameters have been added
-    if(line.size()>0){
+    if(lines.size()>0){
       return true;
     }
 
