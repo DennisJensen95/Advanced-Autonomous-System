@@ -75,7 +75,7 @@ public:
     bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat);
     double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
     double CalcSSD(vector<double> a, vector<double> b);
-    bool FindPointOTriangle(vector<vector<double>> v, vector<double> &point);
+    bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
 };
 
 

@@ -228,12 +228,12 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   RemoveDuplicates(v);
 
   if (v.size() > 1){
-    vector<vector<double>> XYresult;
-    XYresult = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
+    vector<vector<double>> resultXY;
+    resultXY = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
 
-    printMat(XYresult);
+    printMat(resultXY);
 
-    bool FoundObject = DetermineObject(XYresult, object, pointO, objectPose, v);
+    bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v);
 
     return FoundObject;
   }
@@ -288,7 +288,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
     }
 
     // find point o
-    bool foundPointO = FindPointOTriangle(lineMat, pointO);
+    bool foundPointO = FindPointOAndPoseTriangle(lineMat, v, pointO, objectPose);
     if (not foundPointO){
       printf("No point o found!\n");
     }
@@ -303,7 +303,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
   return true;
 }
 
-bool UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> &point){
+bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose){
   
   for (uint i = 0; i < v.size()-1; i++){
     for (uint j = i+1; j<v.size(); j++){
@@ -320,6 +320,20 @@ bool UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> 
           vector<double> temp = FindIntersection(v[i],v[j]);
           point[0] = temp[0];
           point[1] = temp[1];
+
+          // find biggest side
+          int idx;
+          double biggest = 0;
+          double dist;
+          for (uint k = 0; k<v.size(); k++){
+            dist = CalcDistanceBetweenPoints(point,matXY[k]);
+            if (dist > biggest){
+              biggest = dist;
+              idx = (int)k;
+            }
+          }
+          objectPose = atan2(matXY[idx][1] - point[1], matXY[idx][0] - point[0]);
+
           return true;
       }
     }
