@@ -320,8 +320,8 @@ bool UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> 
       
       if (abs(PI/2 - abs(angle)) < 0.1 ){
           vector<double> temp = FindIntersection(v[i],v[j]);
-          pointO[0] = temp[0];
-          pointO[1] = temp[1];
+          point[0] = temp[0];
+          point[1] = temp[1];
           return true;
       }
     }
