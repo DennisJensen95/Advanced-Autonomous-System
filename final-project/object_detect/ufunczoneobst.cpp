@@ -216,6 +216,15 @@ void UFunczoneobst::createBaseVar()
 */
 
 bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose){
+  /*
+  * INPUT:  vector<vector<double>> &v: address of 2-D vector containing alhpa,r parameters of good line fits
+  *         int &ojbect: address of integer value of the detected object (1 to 4)
+  *         vector<double> &pointO: address vector containing the coordinates of point o
+  *         double &objectPose: address of double containin the pose of the object
+  * 
+  * OUTPUT:
+  *         bool value stating if the function is successful or not
+  * */
   RemoveDuplicates(v);
 
   if (v.size() > 1){
@@ -224,7 +233,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
 
     printMat(XYresult);
 
-    bool FoundObject = DetermineObject(XYresult, object, pointO, objectPose);
+    bool FoundObject = DetermineObject(XYresult, object, pointO, objectPose, v);
 
     return FoundObject;
   }
@@ -235,13 +244,107 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   return false;
 }
 
-bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose){
+bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat){
+  /*
+  * INPUT:  vector<vector<double>> v: X,Y coordinates of intersection between lines
+  *         int &ojbect: address of integer value of the detected object (1 to 4)
+  *         vector<double> &pointO: address vector containing the coordinates of point o
+  *         double &objectPose: address of double containin the pose of the object
+  * 
+  * OUTPUT:
+  *         bool value stating if the function is successful or not
+  * */
+
   object = 0;
   pointO.push_back(0);
   pointO.push_back(0);
   objectPose = 0;
 
+
+  if(v.size()>3){ // assume square
+
+  }
+  else if(v.size()>2){ // assume triangle
+    // lengths of possible triangles
+    vector<double> obj3 = {0.10,0.40};
+    vector<double> obj4 = {0.15,0.3};
+
+    vector<double> lengths;
+    for (uint i = 0; i<v.size()-1; i++){
+      for (uint j = i+1; j<v.size(); j++){
+        lengths.push_back(CalcDistanceBetweenPoints(v[i],v[j]));
+
+      }
+    }
+    sort(lengths.begin(), lengths.end());
+    lengths.pop_back();
+
+    // SSD between the measured lengths and the triangles
+    if(CalcSSD(lengths,obj3) < CalcSSD(lengths,obj4)){
+      object = 3;
+    }
+    else{
+      object = 4;
+    }
+
+    // find point o
+    bool foundPointO = FindPointOTriangle(lineMat, pointO);
+    if (not foundPointO){
+      printf("No point o found!\n");
+    }
+
+
+  }
+  else{ // not enough points
+    return false;
+  }
+
+
   return true;
+}
+
+vector<double> UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> &point){
+  
+  for (uint i = 0; i < v.size()-1; i++){
+    for (uint j = i+1; j<v.size(); j++){
+  
+      double a1 = v[i][0];
+      double r1 = v[i][1];
+      double a2 = v[j][0];
+      double r2 = v[j][1];
+
+      double angle = atan2(cos(a2), -sin(a2)) - atan2(cos(a1), -sin(a1));
+
+      if (angle > PI)        { angle -= 2 * PI; }
+      else if (angle <= -PI) { angle += 2 * PI; }
+      
+      if (abs(PI/2 - abs(angle)) < 0.1 ){
+          vector<double> temp = FindIntersection(v[i],v[j]);
+          pointO[0] = temp[0];
+          pointO[1] = temp[1];
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
+double UFunczoneobst::CalcSSD(vector<double> a, vector<double> b){
+  double SSD = 0.0;
+  
+  if(a.size() != b.size()){
+    printf("Vectors not same length!\n");
+    return SSD;
+  }
+  
+  for(uint i = 0; i<a.size(); i++){
+    SSD += pow(a[i]-b[i],2);
+  }
+  return SSD;
+}
+
+double UFunczoneobst::CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2){
+  return sqrt(pow(p2[0] - p1[0], 2) + pow(p2[1] - p1[1], 2) * 1.0);
 }
 
 vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v){

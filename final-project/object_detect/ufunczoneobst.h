@@ -22,6 +22,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <bits/stdc++.h> 
 #include <ulms4/ufunclaserbase.h>
 
 using namespace std;
@@ -71,7 +72,10 @@ public:
     void RemoveDuplicates(vector<vector<double>> &v);
     vector<double> FindIntersection(vector<double> a, vector<double> b);
     vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> v);
-    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose);
+    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat);
+    double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
+    double CalcSSD(vector<double> a, vector<double> b);
+    vector<double> FindPointOTriangle(vector<vector<double>> v, vector<double> &point);
 };
 
 
