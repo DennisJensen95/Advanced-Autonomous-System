@@ -76,6 +76,8 @@ public:
     double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
     double CalcSSD(vector<double> a, vector<double> b);
     bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
+    double CalcDistToPoint(vector<double> a);
 };
 
 

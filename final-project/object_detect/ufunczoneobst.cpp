@@ -261,10 +261,47 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
   objectPose = 0;
 
 
-  if(v.size()>3){ // assume square
+  if(v.size()==4){ // assume square
+    // lengths of possible squares
+    vector<double> obj1 = {0.15,0.40};
+    vector<double> obj2 = {0.20,0.30};
+
+    vector<double> lengths;
+    for (uint i = 0; i<v.size()-1; i++){
+      for (uint j = i+1; j<v.size(); j++){
+        lengths.push_back(CalcDistanceBetweenPoints(v[i],v[j]));
+      }
+    }
+    sort(lengths.begin(), lengths.end());
+    lengths.pop_back(); //delete diagonal
+    lengths.pop_back(); //delete diagonal
+
+    double temp1,temp2;
+    temp1 = accumulate(lengths.begin(), lengths.begin()+int(lengths.size()/2), 0.0)/2.0;
+    temp2 = accumulate(lengths.begin()+int(lengths.size()/2), lengths.end(), 0.0)/2.0;
+    
+    lengths.pop_back();
+    lengths.pop_back();
+    lengths[0] = temp1;
+    lengths[1] = temp2;
+
+    printVec(lengths);
+    
+    if(CalcSSD(lengths,obj1) < CalcSSD(lengths,obj2)){
+      object = 1;
+    }
+    else{
+      object = 2;
+    }
+
+    // find point o and pose
+    bool foundPointO = FindPointOAndPoseSquare(lineMat, v, pointO, objectPose);
+    if (not foundPointO){
+      printf("No point o found!\n");
+    }
 
   }
-  else if(v.size()>2){ // assume triangle
+  else if(v.size()==3){ // assume triangle
     // lengths of possible triangles
     vector<double> obj3 = {0.10,0.40};
     vector<double> obj4 = {0.15,0.3};
@@ -287,12 +324,11 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
       object = 4;
     }
 
-    // find point o
+    // find point o and pose
     bool foundPointO = FindPointOAndPoseTriangle(lineMat, v, pointO, objectPose);
     if (not foundPointO){
       printf("No point o found!\n");
     }
-
 
   }
   else{ // not enough points
@@ -301,6 +337,53 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
 
 
   return true;
+}
+
+bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose){
+  // vector to store initial point to calculate pose
+  vector<double> point1 = {0,0};
+  double smallest = 10000;
+  
+  // point o is average of all X,Y coords
+  for (uint i = 0; i < matXY.size(); i++){
+    point[0] += matXY[i][0]/(double)matXY.size();
+    point[1] += matXY[i][1]/(double)matXY.size();
+
+    if (CalcDistToPoint(matXY[i]) < smallest){
+        smallest = CalcDistToPoint(matXY[i]);
+        point1[0] = matXY[i][0];
+        point1[1] = matXY[i][1];
+    }
+  }
+
+  // find biggest side
+  int idx1=0;
+  int idx2=0;
+  double biggest = 0;
+  double dist;
+  for (uint k = 0; k<matXY.size(); k++){
+    dist = CalcDistanceBetweenPoints(point1,matXY[k]);
+    if (dist > biggest){
+      biggest = dist;
+      idx1 = (int)k;
+    }
+  }
+  biggest = 0;
+  for (uint k = 0; k<matXY.size(); k++){
+    dist = CalcDistanceBetweenPoints(point1,matXY[k]);
+    if (dist > biggest && (int)k!=idx1){
+      biggest = dist;
+      idx2 = (int)k;
+    }
+  }
+  
+  objectPose = atan2(matXY[idx2][1] - point1[1], matXY[idx2][0] - point1[0]);
+  
+  return true;
+}
+
+double UFunczoneobst::CalcDistToPoint(vector<double> a){
+    return sqrt(pow(a[0], 2) + pow(a[1], 2) * 1.0);
 }
 
 bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose){
@@ -366,7 +449,7 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
       vector<double> temp = FindIntersection(v[i],v[j]);
       // perform quality check to make sure the line intersection 
       // is within the green area
-      if(temp[0] > 1.0 || temp[0] < 3.0 || temp[1] > 1.0 || temp[1] < 2.0){
+      if(temp[0] > 1.0 && temp[0] < 3.0 && temp[1] > 1.0 && temp[1] < 2.0){
         intersections.push_back(temp);
       }
     }
