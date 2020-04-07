@@ -303,7 +303,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
   return true;
 }
 
-vector<double> UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> &point){
+bool UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> &point){
   
   for (uint i = 0; i < v.size()-1; i++){
     for (uint j = i+1; j<v.size(); j++){
