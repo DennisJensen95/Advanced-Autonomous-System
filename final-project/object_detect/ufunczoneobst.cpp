@@ -309,9 +309,7 @@ bool UFunczoneobst::FindPointOTriangle(vector<vector<double>> v, vector<double> 
     for (uint j = i+1; j<v.size(); j++){
   
       double a1 = v[i][0];
-      double r1 = v[i][1];
       double a2 = v[j][0];
-      double r2 = v[j][1];
 
       double angle = atan2(cos(a2), -sin(a2)) - atan2(cos(a1), -sin(a1));
 
