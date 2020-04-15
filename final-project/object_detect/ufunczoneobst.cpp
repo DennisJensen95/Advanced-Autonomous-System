@@ -139,7 +139,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
 	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
 	      printf("Line parameters (world):\n");
-        RemoveDuplicates(goodLineFitsWorldCoordinates);
+        //RemoveDuplicates(goodLineFitsWorldCoordinates);
 	      printMat(goodLineFitsWorldCoordinates);
       }
     }
