@@ -581,7 +581,7 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
 bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines)
 {
   int n = x.size();
-  int parts = 5;
+  int parts = 7;
   int delta = n / parts;
   int matches = 0;
 
