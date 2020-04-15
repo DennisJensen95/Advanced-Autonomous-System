@@ -14,7 +14,7 @@
 % laser update call
 laser "resetplanner"
 laser "scanget"
-%laser "resetlocalizer" %do we need this?
+laser "resetlocalizer" %do we need this?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%MISSION%%%%%%%%%%%%%%%%%%%%
@@ -228,9 +228,6 @@ laser "addline startx=0.9 starty=4.3 endx=3.1 endy=4.3 name='maze top'"
 %%%%%%%%%%%%%%%SET UP%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-laser "scanset logopen"
-laser "scanset log=1"
-laser "odopose log=true"
 
 % start pose and covariance
 laser "setinitpose x=xlaser y=0 th=0"
@@ -245,7 +242,8 @@ set "$odoy" 0.25
 set "$odoth" 0
 
 % set localizer
-laser "push t='0.5' cmd='localize'"
+laser "LOCALIZE silent"
+laser "push t='2.0' cmd='localize'"
 
 %-------------------
 % GUIDEMARKS
@@ -504,7 +502,7 @@ switch(n)
 	case 1:
 		x=2.0
 		y=2.25
-		objangle = 0
+		objangle = -1.57
 	case 2:
 		x=1.25
 		y=2.25
@@ -537,6 +535,7 @@ thc = $odoth
 
 stringcat "findroute  startx="xc"  starty="yc" endx="x" endy="y""
 laser "$string"
+wait 1
 K = $l4
 
 
@@ -577,11 +576,16 @@ if (K>-1) "drivearound"
 
 turn objangle "rad" @v 0.2
 turn 10 @v 0.2
+wait 1
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 wait 1
 turn -20 @v 0.2
+wait 1
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 wait 1
+laser "$string"
+wait 1
+
 
 
 n=n+1
@@ -591,8 +595,17 @@ if (n!=8) "objectfinding"
 wait 1
 
 laser "zoneobst determine"
-stringcat "zoneobst determine"
-laser "$string"
+wait 5
+
+obj = $l1
+pointx= $l1
+pointy=$l2
+objhead=$l3
+
+eval obj
+eval pointx
+eval pointy
+eval objhead
 
 wait 10
 %detect object
