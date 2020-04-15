@@ -196,6 +196,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         printf("Line parameters (world):\n");
         printMat(goodLineFitsWorldCoordinates);
       }
+      else
+      {
+        printf("No good lines found!\n");
+      }
+      
     }
   }
   else if (determineObject)
