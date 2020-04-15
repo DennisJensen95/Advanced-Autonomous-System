@@ -135,8 +135,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
           goodLineFitsWorldCoordinates.push_back(lineW[i]);
         }
 
-	      printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
-	      printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
+	      //printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+	      //printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
 	      printf("Line parameters (world):\n");
         //RemoveDuplicates(goodLineFitsWorldCoordinates);
