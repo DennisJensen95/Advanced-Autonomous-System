@@ -146,29 +146,32 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     // Get laser data
     if (data->isValid())
     {
-      vector<double> r;
-      vector<double> th;
+      vector<double> poseR, poseW;
+      poseR.push_back(xo);
+      poseR.push_back(yo);
+      poseR.push_back(tho);
+      poseW = transform(poseR);
+
+
+      //vector<double> r;
+      //vector<double> th;
       vector<double> x;
       vector<double> y;
-      int j = 0;
       for (int i = 0; i < data->getRangeCnt(); i++)
       {
-        // printf("Dist: %.2f, AngleDeg: %.2f\n", )
         double range = data->getRangeMeter(i);
         double angle = data->getAngleRad(i);
-        if (range > 0.020 && range < 1.500)
+        double xx = cos(angle) * range;
+        double yy = sin(angle) * range;
+        transform(poseW, xx, yy);
+        if (xx >= 1 && xx <= 3 && yy >= 1 && yy <= 2)
         {
-          if (angle > -30 * PI / 180 && angle < 30 * PI / 180)
-          {
-            r.push_back(range);
-            th.push_back(data->getAngleRad(i));
-            x.push_back(cos(th[j]) * r[j]);
-            y.push_back(sin(th[j]) * r[j]);
-            j++;
-          }
+            //r.push_back(range);
+            //th.push_back(angle);
+            x.push_back(xx);
+            y.push_back(yy);
         }
       }
-      //printVec(r);
 
       // Transform to world coordinates
       vector<vector<double>> lines;
@@ -176,13 +179,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
 
       if (state)
       {
-        vector<double> poseR, poseW;
-        poseR.push_back(xo);
-        poseR.push_back(yo);
-        poseR.push_back(tho);
-
-        poseW = transform(poseR);
-
         vector<vector<double>> lineW;
         for (uint i = 0; i < lines.size(); i++)
         {
