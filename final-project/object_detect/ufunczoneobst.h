@@ -44,7 +44,7 @@ public:
   Constructor */
   UFunczoneobst()
   { // set the command (or commands) handled by this plugin
-    setCommand("zoneobst detect x y th determine", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
+    setCommand("zoneobst detect x y th determine findobject", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
     createBaseVar();
   }
   /**
@@ -65,6 +65,7 @@ public:
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);
+    void transform(vector<double> pose, double &x, double &y);
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
 

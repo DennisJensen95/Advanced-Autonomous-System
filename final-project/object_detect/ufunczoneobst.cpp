@@ -42,6 +42,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   bool ask4help;
   bool detectObject = false;
   bool determineObject = false;
+  bool findObject = false;
   const int MVL = 30;
   char val[MRL];
   char value[MVL];
@@ -62,6 +63,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
   determineObject = msg->tag.getAttValue("determine", value, MVL);
+  findObject = msg->tag.getAttValue("findobject", value, MVL);
 
   if (msg->tag.getAttValue("x", val, MVL))
   {
@@ -85,6 +87,59 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     sendText("device=N        Laser device to use (see: SCANGET help)\n");
     sendText("see also: SCANGET and SCANSET\n");
     sendHelpDone();
+  }
+  else if (findObject)
+  {
+    data = getScan(msg, (ULaserData *)extra);
+
+    // Get laser data
+    if (data->isValid())
+    {
+      vector<double> poseR, poseW;
+      poseR.push_back(xo);
+      poseR.push_back(yo);
+      poseR.push_back(tho);
+      poseW = transform(poseR);
+
+
+      //vector<double> r;
+      //vector<double> th;
+      vector<double> x;
+      vector<double> y;
+      int j = 0;
+      for (int i = 0; i < data->getRangeCnt(); i++)
+      {
+        double range = data->getRangeMeter(i);
+        double angle = data->getAngleRad(i);
+        double xx = cos(angle) * range;
+        double yy = sin(angle) * range;
+        transform(poseW, xx, yy);
+        if (xx >= 1 && xx =< 3 && yy >= 1 && yy <= 2)
+        {
+            //r.push_back(range);
+            //th.push_back(angle);
+            x.push_back(xx);
+            y.push_back(yy);
+        }
+      }
+
+      printf("x:\n");
+      printVec(x);
+      printf("y:\n");
+      printVec(y);
+      printf("\n");
+
+      double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
+      double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
+
+      printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
+
+      /* SMRCL reply format */
+      snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n",
+               xmean, ymean);
+      // send this string as the reply to the client
+      sendMsg(msg, reply);
+
   }
   else if (detectObject)
   {
@@ -716,6 +771,17 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> pos
   lineW.push_back(r);
 
   return lineW;
+}
+
+void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
+{
+  th_lw = pose[2];
+
+  double tempx = cos(th_lw)*x - sin(th_lw)*y + pose[0];
+  double tempy = sin(th_lw)*x + cos(th_lw)*y + pose[1];
+
+  x = tempx;
+  y = tempy;
 }
 
 vector<double> UFunczoneobst::transform(vector<double> poseR)
