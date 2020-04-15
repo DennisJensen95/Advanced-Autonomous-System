@@ -168,8 +168,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         {
             //r.push_back(range);
             //th.push_back(angle);
-            x.push_back(xx);
-            y.push_back(yy);
+            x.push_back(cos(angle)*range);
+            y.push_back(sin(angle)*range);
         }
       }
       
@@ -178,7 +178,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       printf("y:\n");
       printVec(y);
       printf("\n");
-      
+
       double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
       double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
       printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
