@@ -773,7 +773,7 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> pos
 
 void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
 {
-  th_lw = pose[2];
+  double th_lw = pose[2];
 
   double tempx = cos(th_lw)*x - sin(th_lw)*y + pose[0];
   double tempy = sin(th_lw)*x + cos(th_lw)*y + pose[1];
