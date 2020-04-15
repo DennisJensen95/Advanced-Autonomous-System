@@ -316,6 +316,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
     resultXY = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
 
     printf("\nIntersections (x,y):\n");
+    RemoveDuplicates(resultXY);
     printMat(resultXY);
 
     bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v);
