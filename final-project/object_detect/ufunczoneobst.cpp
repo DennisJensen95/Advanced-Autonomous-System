@@ -137,7 +137,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n", xmean, ymean);
       // send this string as the reply to the client
       sendMsg(msg, reply);
-
+    }
   }
   else if (detectObject)
   {
