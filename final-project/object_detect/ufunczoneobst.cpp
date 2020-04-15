@@ -146,6 +146,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
   else if(determineObject){
     if (goodLineFitsWorldCoordinates.size() == 0){
       printf("Not enough values to determine object!\n");
+      /* SMRCL reply format */
+      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n", 
+                      0,0.0,0.0,0.0);
+      // send this string as the reply to the client
+      sendMsg(msg, reply);
     }
     else{
       int object;
@@ -161,8 +166,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
         printf("Object not found\n");
       }
       /* SMRCL reply format */
-      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" test=\"%g\" />\n", 
-                      object,pointO[0],pointO[1],objectPose, 100.0);
+      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n", 
+                      object,pointO[0],pointO[1],objectPose);
       // send this string as the reply to the client
       sendMsg(msg, reply);
     }
