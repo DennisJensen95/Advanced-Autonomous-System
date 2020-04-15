@@ -122,17 +122,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
       }
 
-      printf("x:\n");
-      printVec(x);
-      printf("y:\n");
-      printVec(y);
-      printf("\n");
-
-      double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
-      double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
-
-      printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
-
       /* SMRCL reply format */
       snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n", xmean, ymean);
       // send this string as the reply to the client
