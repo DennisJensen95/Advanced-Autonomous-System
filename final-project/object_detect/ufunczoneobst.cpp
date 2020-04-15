@@ -619,8 +619,10 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
       {
         break;
       }
-      if (abs(a - v[j][0]) < 0.1 && abs(r - v[j][1]) < 0.1)
+      if (abs(a - v[j][0]) < 0.05 && abs(r - v[j][1]) < 0.05)
       {
+        v[itr][0] = (v[itr][0]+v[j][0])*0.5;
+        v[itr][1] = (v[itr][1]+v[j][1])*0.5;
         v.erase(v.begin() + j);
       }
 
@@ -680,13 +682,28 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
     {
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
       // Count occurences of lineMat[i]
-      matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
+      /*matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
       //printf("Matches: %d\n", matches)
 
       if (matches > 1)
       {
         lines.push_back(lineMatCopy[i]);
+      }*/
+
+      matches = 0;
+      for(int j = 0; j < parts; j++){
+        if (abs(lineMat[j][0] - lineMat[i][0]) < 0.03 && abs(lineMat[j][1] - lineMat[i][1]) < 0.03)
+        {
+          matches++;
+        }
       }
+
+      if (matches > 1)
+      {
+        lines.push_back(lineMatCopy[i]);
+      }
+
+      
     }
 
     // return true if 1 or more line parameters have been added
@@ -823,6 +840,6 @@ float UFunczoneobst::round(float var)
   // 3766.66 + .5 =3767.16    for rounding off value
   // then type cast to int so value is 3767
   // then divided by 100 so the value converted into 37.67
-  float value = (int)(var * 10 + .5);
-  return (float)value / 10;
+  float value = (int)(var * 100 + .5);
+  return (float)value / 100;
 }
