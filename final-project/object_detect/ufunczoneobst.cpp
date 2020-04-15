@@ -614,17 +614,20 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
     double r = v[itr][1];
 
     uint j = v.size() - 1;
+    double kk = 1.0;
     while (true)
     {
       if (j == itr)
       {
         break;
       }
-      if (abs(a - v[j][0]) < 0.05 && abs(r - v[j][1]) < 0.05)
+      if (abs(a - v[j][0]) < 0.08 && abs(r - v[j][1]) < 0.08)
       {
-        v[itr][0] = (v[itr][0]+v[j][0])*0.5;
-        v[itr][1] = (v[itr][1]+v[j][1])*0.5;
+        // recursive average of the similar elements
+        v[itr][0] = (v[itr][0]*kk+v[j][0])/(kk+1.0);
+        v[itr][1] = (v[itr][1]*kk+v[j][1])/(kk+1.0);
         v.erase(v.begin() + j);
+        kk = kk + 1.0;
       }
 
       j--;
