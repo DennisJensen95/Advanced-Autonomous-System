@@ -629,7 +629,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       {
         double sum_a, sum_r = 0;
         int k = 0;
-        for (int j = 0; j < lineMat.size(); j++)
+        for (unsigned int j = 0; j < lineMat.size(); j++)
         {
           if (lineMat[i] == lineMat[j])
           {
