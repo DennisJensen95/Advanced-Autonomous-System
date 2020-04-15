@@ -106,7 +106,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       //vector<double> th;
       vector<double> x;
       vector<double> y;
-      int j = 0;
       for (int i = 0; i < data->getRangeCnt(); i++)
       {
         double range = data->getRangeMeter(i);
@@ -114,7 +113,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         double xx = cos(angle) * range;
         double yy = sin(angle) * range;
         transform(poseW, xx, yy);
-        if (xx >= 1 && xx =< 3 && yy >= 1 && yy <= 2)
+        if (xx >= 1 && xx <= 3 && yy >= 1 && yy <= 2)
         {
             //r.push_back(range);
             //th.push_back(angle);
@@ -135,8 +134,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
 
       /* SMRCL reply format */
-      snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n",
-               xmean, ymean);
+      snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n", xmean, ymean);
       // send this string as the reply to the client
       sendMsg(msg, reply);
 
