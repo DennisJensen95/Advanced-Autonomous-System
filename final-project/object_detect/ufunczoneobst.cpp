@@ -172,6 +172,16 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
             y.push_back(yy);
         }
       }
+      
+      printf("x:\n");
+      printVec(x);
+      printf("y:\n");
+      printVec(y);
+      printf("\n");
+      
+      double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
+      double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
+      printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
 
       // Transform to world coordinates
       vector<vector<double>> lines;
@@ -194,14 +204,13 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
         printf("Line parameters (world):\n");
-        //RemoveDuplicates(goodLineFitsWorldCoordinates);
         printMat(goodLineFitsWorldCoordinates);
       }
     }
   }
   else if (determineObject)
   {
-    if (goodLineFitsWorldCoordinates.size() == 0)
+    if (goodLineFitsWorldCoordinates.size() < 3)
     {
       printf("Not enough values to determine object!\n");
       /* SMRCL reply format */
