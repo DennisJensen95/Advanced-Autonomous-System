@@ -575,18 +575,15 @@ if (K>-1) "drivearound"
 
 
 turn objangle "rad" @v 0.2
-turn 10 @v 0.2
-wait 1
+turn 30 @v 0.2
+c=1
+label "wooop"
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
-wait 1
-turn -20 @v 0.2
-wait 1
-stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
-wait 1
 laser "$string"
 wait 1
-
-
+turn -10 @v 0.2
+c=c+1
+if (c!=6) "wooop"
 
 n=n+1
 
@@ -595,19 +592,10 @@ if (n!=8) "objectfinding"
 wait 1
 
 laser "zoneobst determine"
-wait 5
+wait 1
 
-obj = $l1
-pointx= $l1
-pointy=$l2
-objhead=$l3
 
-eval obj
-eval pointx
-eval pointy
-eval objhead
-
-wait 10
+wait 1
 %detect object
 
 
@@ -622,7 +610,11 @@ goto "start"
 
 % drive to goal
 
+label "mission3"
+
 goto "finish"
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%FINISH%%%%%%%%%%%%%%%%%%%%%
@@ -632,5 +624,50 @@ label "missionerror"
 %NO MISSION NUMBER DETECTED
 
 label "finish"
+
+startx=0.25
+starty=0.25
+xc = $odox
+yc = $odoy
+stringcat "findroute  startx="xc"  starty="yc" endx="startx" endy="starty""
+laser "$string"
+wait 1
+N = $l4
+
+label "drive"
+
+stringcat "getpoint p=" N""
+laser "$string"
+wait 1
+
+x = $l5
+y = $l6
+th = $l7
+
+eval x
+eval y
+eval th
+
+invtrans $l0 $l1 $l2 $odox $odoy $odoth
+
+angle = th-$res2
+angle = normalizeanglerad(angle)
+ignoreobstacles
+eval angle
+wait 1
+turn angle "rad" @v 0.3
+
+ignoreobstacles
+drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
 stop
+wait 1
+
+
+N = N - 1
+if (N>-1) "drive"
+
+
+stop
+
+stringcat "OOOOOOH KILL EM"
 % DRIVE FINISHED
