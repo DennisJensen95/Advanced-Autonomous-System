@@ -564,10 +564,9 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       }
     }
 
-    RemoveDuplicates(lines);
-
     // return true if 1 or more line parameters have been added
     if(lines.size()>0){
+      RemoveDuplicates(lines);
       return true;
     }
 
