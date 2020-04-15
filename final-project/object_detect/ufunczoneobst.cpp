@@ -160,6 +160,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg * msg, void * extra)
       else{
         printf("Object not found\n");
       }
+      /* SMRCL reply format */
+      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" test=\"%g\" />\n", 
+                      object,pointO[0],pointO[1],objectPose, 100.0);
+      // send this string as the reply to the client
+      sendMsg(msg, reply);
     }
   }
   else
@@ -494,7 +499,7 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v){
         if (abs(a-v[j][0]) < 0.1 && abs(r-v[j][1]) < 0.1){
           v.erase(v.begin() + j);
         }
-
+        
         j--;
     }
     
