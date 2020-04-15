@@ -769,6 +769,6 @@ float UFunczoneobst::round(float var)
   // 3766.66 + .5 =3767.16    for rounding off value
   // then type cast to int so value is 3767
   // then divided by 100 so the value converted into 37.67
-  float value = (int)(var * 10 + .5);
-  return (float)value / 10;
+  float value = (int)(var * 100 + .5);
+  return (float)value / 100;
 }
