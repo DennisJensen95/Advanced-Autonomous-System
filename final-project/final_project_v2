@@ -25,7 +25,7 @@ laser "scanget"
 % mission 3: drive to goal
 
 %first mission is initialized
-mission = 1
+mission = 2
 
 %first guidemark to visit
 gmkno = 13
@@ -563,6 +563,7 @@ angle = normalizeanglerad(angle)
 eval angle
 ignoreobstacles
 turn angle "rad" @v 0.3
+wait 1
 
 ignoreobstacles
 drivew x y th "rad" @v 0.5 :($targetdist<0.05) 
@@ -576,10 +577,10 @@ if (K>-1) "drivearound"
 
 turn objangle "rad" @v 0.2
 turn 10 @v 0.2
-laser "zoneobst detect"
+stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 wait 1
 turn -20 @v 0.2
-laser "zoneobst detect"
+stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 wait 1
 
 
@@ -587,9 +588,11 @@ n=n+1
 
 if (n!=8) "objectfinding"
 
-wait 2 
+wait 1
 
 laser "zoneobst determine"
+stringcat "zoneobst determine"
+laser "$string"
 
 wait 10
 %detect object
