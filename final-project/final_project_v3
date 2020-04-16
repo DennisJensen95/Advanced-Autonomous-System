@@ -28,7 +28,7 @@ laser "resetlocalizer" %do we need this?
 mission = 1
 
 %first guidemark to visit
-gmkno = 13
+gmkno = 2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%CONSTANTS%%%%%%%%%%%%%%%%%%%
@@ -50,12 +50,18 @@ laser "addpoint pno=1 x=0.5 y=0.5"
 laser "addpoint pno=2 x=0.5 y=1.5"
 laser "addpoint pno=3 x=0.5 y=2.35"
 laser "addpoint pno=4 x=0.5 y=3.5"
-laser "addpoint pno=5 x=0.5 y=4.55"
+laser "addpoint pno=5 x=0.5 y=4.5"
 
 % top left straight right (Inside track)
+<<<<<<< HEAD
+laser "addpoint pno=6 x=1.5 y=4.65"
+laser "addpoint pno=7 x=2.5 y=4.65"
+laser "addpoint pno=8 x=3.5 y=4.5"
+=======
 laser "addpoint pno=6 x=1.5 y=4.70"
 laser "addpoint pno=7 x=2.5 y=4.70"
 laser "addpoint pno=8 x=3.5 y=4.55"
+>>>>>>> ff515716c8000977f2706dc7b4e12bafa2d2eb34
 
 % Right corner and down (inside track)
 laser "addpoint pno=9 x=3.5 y=3.5"
@@ -288,8 +294,8 @@ gmkth[3] = 3.14
 gmkth[4] = 0
 gmkth[5] = 3.14
 gmkth[6] = 0
-gmkth[7] = 0
-gmkth[8] = 3.14
+gmkth[7] = 3.14
+gmkth[8] = 0
 gmkth[9] = 0
 gmkth[10] = 3.14
 gmkth[11] = -1.57
@@ -386,8 +392,9 @@ angle = th-$res2
 angle = normalizeanglerad(angle)
 ignoreobstacles
 eval angle
-wait 1
+wait 0.5
 turn angle "rad" @v 0.3
+wait 0.5
 
 ignoreobstacles
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
@@ -403,7 +410,7 @@ invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
 angle= $res2 - thg
 
-%stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
+stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
 
 stop
 wait 1
@@ -411,6 +418,7 @@ wait 1
 angle = normalizeanglerad(angle)
 ignoreobstacles
 turn angle "rad" @v 0.3
+wait 0.5
 
 
 return
@@ -510,7 +518,7 @@ switch(n)
 	case 3:
 		x=0.5
 		y=2.25
-		objangle = 2.09
+		objangle = 2.0
 	case 4:
 		x=0.5
 		y=1.5
@@ -679,6 +687,13 @@ wait 1
 N = N - 1
 
 if (N>-1) "oooooh"
+
+turn 90
+fwd -0.25
+turn 90
+fwd -0.25
+
+
 
 
 stop
