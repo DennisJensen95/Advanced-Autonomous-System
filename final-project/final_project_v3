@@ -647,7 +647,7 @@ laser "$string"
 wait 1
 N = $l4
 
-label "drive"
+label "oooooh"
 
 stringcat "getpoint p=" N""
 laser "$string"
@@ -661,14 +661,14 @@ eval x
 eval y
 eval th
 
-%invtrans $l0 $l1 $l2 $odox $odoy $odoth
+invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
-%angle = th-$res2
-%angle = normalizeanglerad(angle)
-%ignoreobstacles
-%eval angle
-%wait 1
-%turn angle "rad" @v 0.3
+angle = th-$res2
+angle = normalizeanglerad(angle)
+ignoreobstacles
+eval angle
+wait 1
+turn angle "rad" @v 0.3
 
 ignoreobstacles
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
@@ -677,7 +677,8 @@ wait 1
 
 
 N = N - 1
-if (N>-1) "drive"
+
+if (N>-1) "oooooh"
 
 
 stop
