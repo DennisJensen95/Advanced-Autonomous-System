@@ -190,11 +190,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
           goodLineFitsWorldCoordinates.push_back(lineW[i]);
         }
 
-        printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+        printf("\nRobot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
         printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
         printf("Line parameters (world):\n");
         printMat(goodLineFitsWorldCoordinates);
+        cout << endl;
       }
       else
       {
@@ -678,6 +679,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat[i][1] = round(lineMat[i][1]);
     }
 
+    cout << endl;
     for (int i = 0; i < parts; i++)
     {
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
