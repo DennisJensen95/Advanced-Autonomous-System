@@ -48,18 +48,24 @@ xlaser = 0.26 %laser offset in x-direction
 % straight up from start position
 laser "addpoint pno=1 x=0.5 y=0.5"
 laser "addpoint pno=2 x=0.5 y=1.5"
-laser "addpoint pno=3 x=0.5 y=2.25"
+laser "addpoint pno=3 x=0.5 y=2.35"
 laser "addpoint pno=4 x=0.5 y=3.5"
 laser "addpoint pno=5 x=0.5 y=4.5"
 
 % top left straight right (Inside track)
+<<<<<<< HEAD
 laser "addpoint pno=6 x=1.5 y=4.65"
 laser "addpoint pno=7 x=2.5 y=4.65"
 laser "addpoint pno=8 x=3.5 y=4.5"
+=======
+laser "addpoint pno=6 x=1.5 y=4.70"
+laser "addpoint pno=7 x=2.5 y=4.70"
+laser "addpoint pno=8 x=3.5 y=4.55"
+>>>>>>> ff515716c8000977f2706dc7b4e12bafa2d2eb34
 
 % Right corner and down (inside track)
 laser "addpoint pno=9 x=3.5 y=3.5"
-laser "addpoint pno=10 x=3.5 y=2.25"
+laser "addpoint pno=10 x=3.5 y=2.35"
 laser "addpoint pno=11 x=3.5 y=1.5"
 laser "addpoint pno=12 x=3.5 y=0.5"
 

@@ -190,11 +190,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
           goodLineFitsWorldCoordinates.push_back(lineW[i]);
         }
 
-        printf("Robot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
+        printf("\nRobot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
         printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
         printf("Line parameters (world):\n");
         printMat(goodLineFitsWorldCoordinates);
+        cout << endl;
       }
       else
       {
@@ -222,13 +223,14 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
       if (FoundObject)
       {
-        printf("Object = %d\n", object);
-        printf("Point o coordinates: (%.2f, %.2f)\n", pointO[0], pointO[1]);
-        printf("Object pose: %.2f\n", objectPose);
+        printf("\n\nRESULT:\n");
+        printf("Object:\t\t\t%d\n", object);
+        printf("Point o coordinates:\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
+        printf("Object pose:\t\t%.2f\n\n", objectPose);
       }
       else
       {
-        printf("Object not found\n");
+        printf("\nObject not found!\n");
       }
       /* SMRCL reply format */
       snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n",
@@ -677,6 +679,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       lineMat[i][1] = round(lineMat[i][1]);
     }
 
+    cout << endl;
     for (int i = 0; i < parts; i++)
     {
       printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
