@@ -113,7 +113,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         double xx = cos(angle) * range;
         double yy = sin(angle) * range;
         transform(poseW, xx, yy);
-        if (xx >= 1 && xx <= 3 && yy >= 1 && yy <= 2)
+        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05)
         {
             //r.push_back(range);
             //th.push_back(angle);
@@ -164,7 +164,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         double xx = cos(angle) * range;
         double yy = sin(angle) * range;
         transform(poseW, xx, yy);
-        if (xx >= 1 && xx <= 3 && yy >= 1 && yy <= 2)
+        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05)
         {
             //r.push_back(range);
             //th.push_back(angle);
@@ -567,7 +567,7 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
       vector<double> temp = FindIntersection(v[i], v[j]);
       // perform quality check to make sure the line intersection
       // is within the green area
-      if (temp[0] > 1.0 && temp[0] < 3.0 && temp[1] > 1.0 && temp[1] < 2.0)
+      if (temp[0] > 0.95 && temp[0] < 3.05 && temp[1] > 0.95 && temp[1] < 2.05)
       {
         intersections.push_back(temp);
       }
@@ -616,7 +616,7 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
       {
         break;
       }
-      if (abs(a - v[j][0]) < 0.08 && abs(r - v[j][1]) < 0.08)
+      if (abs(a - v[j][0]) < 0.08 && abs(r - v[j][1]) < 0.08) //assume duplicate if both alpha and r are within 0.08 of eachother
       {
         // recursive average of the similar elements
         v[itr][0] = (v[itr][0]*kk+v[j][0])/(kk+1.0);
