@@ -224,9 +224,9 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       if (FoundObject)
       {
         printf("\n\nRESULT:\n");
-        printf("Object:\t\t\t%d\n", object);
-        printf("Point o coordinates:\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
-        printf("Object pose:\t\t%.2f\n\n", objectPose);
+        printf("Object:\t\t\t\t%d\n", object);
+        printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
+        printf("Object pose:\t\t\t%.2f rad\n\n", objectPose);
       }
       else
       {
