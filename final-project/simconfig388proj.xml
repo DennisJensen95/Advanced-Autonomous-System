@@ -13,15 +13,15 @@
   
   <!-- Simulator configuration -->
   <simstage>
-    <world wallmap="388project" linemap="" scale="125" yoff="775"/>
-    1<guidemark  gmno="1" gmpose=" 0 1.5 3.14 "/>
+    <world wallmap="388project" linemap="" scale="150" yoff="775"/>
+    1<guidemark  gmno="1" gmpose=" 0 1.5 3.14"/>
     2<guidemark gmno="7" gmpose=" 0 1.5 0"/>
     3<guidemark gmno="6" gmpose=" 4.0 1.5 3.14 "/>
     4<guidemark gmno="4" gmpose=" 4.0 1.5 0"/>
     5<guidemark gmno="5" gmpose=" 0.0 3.5 3.14"/>
     6<guidemark gmno="12" gmpose=" 0.0 3.5 0"/>
-    7<guidemark gmno="11" gmpose=" 4.0 3.5 0"/>
-    8<guidemark gmno="5" gmpose=" 4.0 3.5 3.14"/>
+    7<guidemark gmno="11" gmpose=" 4.0 3.5 3.14"/>
+    8<guidemark gmno="5" gmpose=" 4.0 3.5 0.0"/>
     9<guidemark gmno="5" gmpose=" 0.0 4.5 0.0"/>
     10<guidemark gmno="5" gmpose=" 4.0 4.5 3.14"/>
     11<guidemark gmno="3" gmpose=" 0.5 5.0 -1.57"/>
