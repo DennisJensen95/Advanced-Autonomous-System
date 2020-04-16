@@ -25,7 +25,7 @@ laser "resetlocalizer" %do we need this?
 % mission 3: drive to goal
 
 %first mission is initialized
-mission = 2
+mission = 1
 
 %first guidemark to visit
 gmkno = 13
@@ -48,18 +48,18 @@ xlaser = 0.26 %laser offset in x-direction
 % straight up from start position
 laser "addpoint pno=1 x=0.5 y=0.5"
 laser "addpoint pno=2 x=0.5 y=1.5"
-laser "addpoint pno=3 x=0.5 y=2.5"
+laser "addpoint pno=3 x=0.5 y=2.25"
 laser "addpoint pno=4 x=0.5 y=3.5"
-laser "addpoint pno=5 x=0.5 y=4.5"
+laser "addpoint pno=5 x=0.5 y=4.55"
 
 % top left straight right (Inside track)
-laser "addpoint pno=6 x=1.5 y=4.6"
-laser "addpoint pno=7 x=2.5 y=4.6"
-laser "addpoint pno=8 x=3.5 y=4.6"
+laser "addpoint pno=6 x=1.5 y=4.55"
+laser "addpoint pno=7 x=2.5 y=4.55"
+laser "addpoint pno=8 x=3.5 y=4.55"
 
 % Right corner and down (inside track)
 laser "addpoint pno=9 x=3.5 y=3.5"
-laser "addpoint pno=10 x=3.5 y=2.5"
+laser "addpoint pno=10 x=3.5 y=2.25"
 laser "addpoint pno=11 x=3.5 y=1.5"
 laser "addpoint pno=12 x=3.5 y=0.5"
 
@@ -78,22 +78,22 @@ laser "addpoint pno=19 x=4.5 y=3.5"
 laser "addpoint pno=20 x=4.5 y=1.5"
 
 % From left side to the entrance of the red box (G13, G14)
-laser "addpoint pno=21 x=1.25 y=2.25"
+laser "addpoint pno=21 x=1.25 y=2.35"
 
 % Infront of the entrance of the red box
 laser "addpoint pno=22 x=2.0 y=2.25"
 
 % From right side to the entrance of the red box (G13, G14)
-laser "addpoint pno=23 x=2.75 y=2.25"
+laser "addpoint pno=23 x=2.75 y=2.35"
 
 % Inside the red box (G13, G14)
 laser "addpoint pno=24 x=2 y=3"
 laser "addpoint pno=25 x=2 y=3.3"
 %% Inside the red box (G13)
-laser "addpoint pno=26 x=1.2 y=3.4"
-laser "addpoint pno=27 x=1.2 y=4.0"
+laser "addpoint pno=26 x=1.25 y=3.4"
+laser "addpoint pno=27 x=1.25 y=4.0"
 %%% Infront of G13
-laser "addpoint pno=28 x=1.6 y=4.0"
+laser "addpoint pno=28 x=1.5 y=4.0"
 %% Inside the red box (G14)
 laser "addpoint pno=29 x=2.8 y=3.4"
 laser "addpoint pno=30 x=2.8 y=4.0"
@@ -243,7 +243,7 @@ set "$odoth" 0
 
 % set localizer
 laser "LOCALIZE silent"
-laser "push t='2.0' cmd='localize'"
+laser "push t='0.5' cmd='localize'"
 
 %-------------------
 % GUIDEMARKS
@@ -264,7 +264,7 @@ gmkx[9] = 0.0
 gmkx[10] = 4.0
 gmkx[11] = 0.5
 gmkx[12] = 3.5
-gmkx[13] = 2.0
+gmkx[13] = 1.99
 gmkx[14] = 2.0
 
 gmky[1] = 1.5
@@ -403,7 +403,7 @@ invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
 angle= $res2 - thg
 
-stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
+%stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
 
 stop
 wait 1
@@ -502,45 +502,63 @@ switch(n)
 	case 1:
 		x=2.0
 		y=2.25
-		objangle = -1.57
+		objangle = 0
 	case 2:
 		x=1.25
-		y=2.25
+		y=2.35
 		objangle = 2.35
 	case 3:
 		x=0.5
+		y=2.25
+		objangle = 2.09
+	case 4:
+		x=0.5
 		y=1.5
 		objangle = 1.57
-	case 4:
+	case 5:
+		x=0.5
+		y=0.5
+		objangle = 2.09
+	case 6:
 		x=1.5
 		y=0.5
 		objangle= 1.05
-	case 5:
+	case 7:
 		x=2.5
 		y=0.5
 		objangle=2.09
-	case 6:
+	case 8:
+		x=3.5
+		y=0.5
+		objangle=2.35
+	case 9:
 		x=3.5
 		y=1.5
 		objangle = 1.57
-	case 7:
-		x=2.75
+	case 10:
+		x=3.5
 		y=2.25
+		objangle = 2.09
+	case 11:
+		x=2.75
+		y=2.35
 		objangle = 0.78
 endswitch
+
 
 xc = $odox
 yc = $odoy
 thc = $odoth	
 
+
 stringcat "findroute  startx="xc"  starty="yc" endx="x" endy="y""
 laser "$string"
-wait 1
+
 K = $l4
 
-
-
 label "drivearound"
+
+
 
 stringcat "getpoint p=" K""
 laser "$string"
@@ -561,13 +579,13 @@ angle = th-$res2
 angle = normalizeanglerad(angle)
 eval angle
 ignoreobstacles
-%turn angle "rad" @v 0.3
-%wait 1
+turn angle "rad" @v 0.3
+wait 0.5
 
 ignoreobstacles
 drivew x y th "rad" @v 0.5 :($targetdist<0.05) 
 stop
-wait 1
+wait 0.5
 
 K=K-1
 
@@ -575,14 +593,14 @@ if (K>-1) "drivearound"
 
 
 turn objangle "rad" @v 0.2
-wait 2
+wait 1
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 laser "$string"
-wait 2
+wait 1
 
 n=n+1
 
-if (n!=8) "objectfinding"
+if (n!=12) "objectfinding"
 
 wait 1
 
@@ -643,14 +661,14 @@ eval x
 eval y
 eval th
 
-invtrans $l0 $l1 $l2 $odox $odoy $odoth
+%invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
-angle = th-$res2
-angle = normalizeanglerad(angle)
-ignoreobstacles
-eval angle
-wait 1
-turn angle "rad" @v 0.3
+%angle = th-$res2
+%angle = normalizeanglerad(angle)
+%ignoreobstacles
+%eval angle
+%wait 1
+%turn angle "rad" @v 0.3
 
 ignoreobstacles
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
@@ -664,5 +682,5 @@ if (N>-1) "drive"
 
 stop
 
-stringcat "OOOOOOH KILL EM"
+% OOOOOOH KILL EM"
 % DRIVE FINISHED
