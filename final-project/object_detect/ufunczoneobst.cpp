@@ -222,13 +222,14 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
       if (FoundObject)
       {
-        printf("Object = %d\n", object);
-        printf("Point o coordinates: (%.2f, %.2f)\n", pointO[0], pointO[1]);
-        printf("Object pose: %.2f\n", objectPose);
+        printf("\n\nRESULT:\n");
+        printf("Object:\t\t\t%d\n", object);
+        printf("Point o coordinates:\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
+        printf("Object pose:\t\t%.2f\n\n", objectPose);
       }
       else
       {
-        printf("Object not found\n");
+        printf("\nObject not found!\n");
       }
       /* SMRCL reply format */
       snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n",
