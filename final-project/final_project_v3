@@ -575,9 +575,10 @@ if (K>-1) "drivearound"
 
 
 turn objangle "rad" @v 0.2
-
+wait 2
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 laser "$string"
+wait 2
 
 n=n+1
 
