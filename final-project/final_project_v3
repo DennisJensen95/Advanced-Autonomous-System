@@ -50,18 +50,12 @@ laser "addpoint pno=1 x=0.5 y=0.5"
 laser "addpoint pno=2 x=0.5 y=1.5"
 laser "addpoint pno=3 x=0.5 y=2.35"
 laser "addpoint pno=4 x=0.5 y=3.5"
-laser "addpoint pno=5 x=0.5 y=4.5"
+laser "addpoint pno=5 x=0.5 y=4.55"
 
 % top left straight right (Inside track)
-<<<<<<< HEAD
-laser "addpoint pno=6 x=1.5 y=4.65"
-laser "addpoint pno=7 x=2.5 y=4.65"
-laser "addpoint pno=8 x=3.5 y=4.5"
-=======
 laser "addpoint pno=6 x=1.5 y=4.70"
 laser "addpoint pno=7 x=2.5 y=4.70"
 laser "addpoint pno=8 x=3.5 y=4.55"
->>>>>>> ff515716c8000977f2706dc7b4e12bafa2d2eb34
 
 % Right corner and down (inside track)
 laser "addpoint pno=9 x=3.5 y=3.5"
@@ -394,9 +388,9 @@ ignoreobstacles
 eval angle
 wait 0.5
 turn angle "rad" @v 0.3
-wait 0.5
 
 ignoreobstacles
+wait 0.5
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
 stop
 wait 1
@@ -456,7 +450,6 @@ return
 
 
 
-
 %-------------------------%
 % READ GUIDEMARK FUNCTION %
 %-------------------------%
@@ -484,28 +477,15 @@ goto "start"
 %%%%%%%%%%%%%%MISSION 2%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%find object
-
+% this mission finds the object on the loose
 label "mission2"
 
-xp = 2.0
-yp = 1.5
-
-n=1
+n=1 %iterator for switch case
 
 %Go to reading points
-
 label "objectfinding"
 
-
-
-% Read from points 21 22 23 11 13 14 2
-
-
-
-
-
-
+% Read from points 22 -> 21 -> 3 -> 2 -> 1 -> 14 -> 13 -> 12 -> 11 -> 10 -> 23
 switch(n)
 	case 1:
 		x=2.0
@@ -588,9 +568,9 @@ angle = normalizeanglerad(angle)
 eval angle
 ignoreobstacles
 turn angle "rad" @v 0.3
-wait 0.5
 
 ignoreobstacles
+wait 0.5
 drivew x y th "rad" @v 0.5 :($targetdist<0.05) 
 stop
 wait 0.5
@@ -601,7 +581,7 @@ if (K>-1) "drivearound"
 
 
 turn objangle "rad" @v 0.2
-wait 1
+wait 2
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 laser "$string"
 wait 1
@@ -612,14 +592,9 @@ if (n!=12) "objectfinding"
 
 wait 1
 
-laser "zoneobst determine"
-wait 1
-
-
-wait 1
 %detect object
-
-
+laser "zoneobst determine"
+wait 3
 
 
 mission = mission + 1
@@ -633,19 +608,6 @@ goto "start"
 
 label "mission3"
 
-goto "finish"
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%FINISH%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-label "missionerror"
-%NO MISSION NUMBER DETECTED
-
-label "finish"
-
 startx=0.25
 starty=0.25
 xc = $odox
@@ -655,7 +617,7 @@ laser "$string"
 wait 1
 N = $l4
 
-label "oooooh"
+label "driveHome"
 
 stringcat "getpoint p=" N""
 laser "$string"
@@ -679,23 +641,31 @@ wait 1
 turn angle "rad" @v 0.3
 
 ignoreobstacles
+wait 1
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
 stop
 wait 1
 
-
 N = N - 1
 
-if (N>-1) "oooooh"
+if (N>-1) "driveHome"
 
 turn 90
 fwd -0.25
 turn 90
 fwd -0.25
 
+goto "finish"
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%FINISH%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+label "missionerror"
+%NO MISSION NUMBER DETECTED
+
+label "finish"
 stop
 
 % OOOOOOH KILL EM"
