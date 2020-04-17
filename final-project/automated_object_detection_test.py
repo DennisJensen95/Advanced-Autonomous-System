@@ -31,13 +31,13 @@ def run_mrc_script(mrc_script_path):
 def generate_object(obj_num, point_start=None, _random=False):
     if not _random:
         point_start = (2, 1.5, 0)
-    elif point_start != None and not _random:
+        x, y, theta = point_start
+    elif point_start == None and _random:
         x = random.uniform(1.4, 2.6)
         y = random.uniform(1.4, 1.6)
         theta = random.uniform(0, 3.14)
-        point_start = (x,y, theta)
+        point_start = (x, y, theta)
 
-    x, y, theta = point_start
     if obj_num == 1:
         lower_right_corner = (x + np.cos(theta) * 0.40, y + np.sin(theta) * 0.40)
         upper_left_corner = (x + np.sin(theta) * 0.15, y + np.cos(theta) * 0.15)
@@ -73,7 +73,7 @@ def generate_object(obj_num, point_start=None, _random=False):
 
     return str_to_write
 
-os.chdir('./../../test/')
+# os.chdir('./../../test/')
 
 map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.2     0.0     4.0     0.0     bottom right\n' \
