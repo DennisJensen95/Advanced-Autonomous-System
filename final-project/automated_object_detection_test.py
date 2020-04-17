@@ -77,7 +77,7 @@ os.chdir('./../../test/')
 
 
 for i in range(1, 4):
-    object_string = generate_object(1, (2, 1, 0))
+    object_string = generate_object(i, (2, 1, 0))
     with open('388auto', 'a+') as file:
         file.write(object_string)
     ulmsserver = open_ulmsserver()
