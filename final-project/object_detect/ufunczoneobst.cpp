@@ -1014,7 +1014,7 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
   ofstream fout; 
   
   // file path
-  const char *path="/home/smr/test/result.txt";
+  const char *path="/home/smr/test/results_cpp.txt";
 
   // flag to see if the file exists
   bool flag = false;
