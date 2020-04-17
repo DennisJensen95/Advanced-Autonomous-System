@@ -141,55 +141,64 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   }
   else if (detectObject)
   {
+    // Get laser data
     data = getScan(msg, (ULaserData *)extra);
 
-    // Get laser data
+    // check if data is valid
     if (data->isValid())
     {
+      // create vector with robot pose (x,y,th) in world given by the caller
       vector<double> poseR, poseW;
       poseR.push_back(xo);
       poseR.push_back(yo);
       poseR.push_back(tho);
+      // find the pose of the laser scanner in world
       poseW = transform(poseR);
 
-
-      //vector<double> r;
-      //vector<double> th;
+      // vectors to store x,y data
       vector<double> x;
       vector<double> y;
+
+      // loop over each data point and only store good values that fall within the "green area"
       for (int i = 0; i < data->getRangeCnt(); i++)
       {
         double range = data->getRangeMeter(i);
         double angle = data->getAngleRad(i);
+
+        // x,y data in the laser frame
         double xx = cos(angle) * range;
         double yy = sin(angle) * range;
+        // transform to world frame for test
         transform(poseW, xx, yy);
         if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05)
         {
-            //r.push_back(range);
-            //th.push_back(angle);
+            // the data is saved in the laser frame
             x.push_back(cos(angle)*range);
             y.push_back(sin(angle)*range);
         }
       }
 
-      // Transform to world coordinates
+      // find good line fits and store in 2-D vector lines
       vector<vector<double>> lines;
       bool state = DoLsqLineProcessing(x, y, lines);
 
+      // state=TRUE if one or more good line fits has been found
       if (state)
       {
+        // transform lines to world frame and store in 2-D vector lineW
         vector<vector<double>> lineW;
         for (uint i = 0; i < lines.size(); i++)
         {
           lineW.push_back(transline(lines[i], poseW));
         }
 
+        // store world lines in the global variable "goodLineFitsWorldCoordinates"
         for (uint i = 0; i < lineW.size(); i++)
         {
           goodLineFitsWorldCoordinates.push_back(lineW[i]);
         }
 
+        // print result to laser server
         printf("\nRobot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
         printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
@@ -206,6 +215,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   }
   else if (determineObject)
   {
+    // we need at least three good world lines to find an object
     if (goodLineFitsWorldCoordinates.size() < 3)
     {
       printf("Not enough values to determine object!\n");
@@ -217,12 +227,16 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     }
     else
     {
+      // initialize variables to store information on the object in question
       int object;
       vector<double> pointO;
       double objectPose;
+
+      // perform object processing
       bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
       if (FoundObject)
       {
+        // print result
         printf("\n\nRESULT:\n");
         printf("Object:\t\t\t\t%d\n", object);
         printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
