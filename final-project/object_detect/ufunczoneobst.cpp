@@ -295,6 +295,8 @@ void UFunczoneobst::createBaseVar()
 bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose)
 {
   /*
+  * This function implements the top layer structure to determine which object that has been spotted by the laser scanner.
+  * 
   * INPUT:  vector<vector<double>> &v: address of 2-D vector containing alhpa,r parameters of good line fits
   *         int &ojbect: address of integer value of the detected object (1 to 4)
   *         vector<double> &pointO: address vector containing the coordinates of point o
@@ -303,19 +305,25 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   * OUTPUT:
   *         bool value stating if the function is successful or not
   * */
+
+  // remove duplicate line parameters and print what was found
   RemoveDuplicates(v);
   printf("\nFinal line parameters (world):\n");
   printMat(v);
 
-  if (v.size() > 1)
+  // we need atleast three lines for anything useful
+  if (v.size() > 2)
   {
+    // find the intersections between the lines
     vector<vector<double>> resultXY;
     resultXY = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
 
+    // remove the duplicates again and print result
     printf("\nIntersections (x,y):\n");
     RemoveDuplicates(resultXY);
     printMat(resultXY);
 
+    // determine the data for the object
     bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v);
 
     return FoundObject;
@@ -331,7 +339,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
 bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat)
 {
   /*
-  * This function implements the basic structure to determine which object that has been spotted by the laser scanner.
+  * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
   * 
   * 
   * INPUT:  vector<vector<double>> v: X,Y coordinates of intersection between lines
@@ -407,6 +415,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
     vector<double> obj3 = {0.10, 0.40};
     vector<double> obj4 = {0.15, 0.3};
 
+    // calculate the distance between each point
     vector<double> lengths;
     for (uint i = 0; i < v.size() - 1; i++)
     {
@@ -415,8 +424,9 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
         lengths.push_back(CalcDistanceBetweenPoints(v[i], v[j]));
       }
     }
+    // sort lengths vector from smallest to biggest
     sort(lengths.begin(), lengths.end());
-    lengths.pop_back();
+    lengths.pop_back(); // remove biggest value (hypotenuse)
 
     // SSD between the measured lengths and the triangles
     if (CalcSSD(lengths, obj3) < CalcSSD(lengths, obj4))
