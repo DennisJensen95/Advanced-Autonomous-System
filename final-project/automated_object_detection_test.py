@@ -54,7 +54,7 @@ def generate_object(obj_num, point_start=None, _random=False):
     if obj_num == 1:
         lower_right_corner = rotate(point_start, (x + 0.40, y))
         upper_left_corner = rotate(point_start, (x, y + 0.15))
-        diag_corner = rotate(point_start, (upper_left_corner[0] + 0.40, upper_left_corner[1]))
+        diag_corner = rotate(point_start, (point_start[0] + 0.40, point_start[1] + 0.15))
 
 
 
@@ -65,7 +65,7 @@ def generate_object(obj_num, point_start=None, _random=False):
     elif obj_num == 2:
         lower_right_corner = rotate(point_start, (x + 0.30, y))
         upper_left_corner = rotate(point_start, (x, y + 0.20))
-        diag_corner = rotate(point_start, (upper_left_corner[0] + 0.30, upper_left_corner[1]))
+        diag_corner = rotate(point_start, (point_start[0] + 0.30, point_start[1] + 0.20))
 
         str_to_write = f'{point_start[0]}\t{point_start[1]}\t{lower_right_corner[0]}\t{lower_right_corner[1]}\n' \
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
