@@ -94,13 +94,14 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
 for i in range(1, 5):
-    object_string = generate_object(i, (2, 1, 0))
+    object_string = generate_object(i, _random=True)
     map_environ = map + object_string
     if os.path.exists('388auto'):
         os.remove('388auto')
 
     with open('./388auto', 'w+') as file:
         file.write(map_environ)
+
     ulmsserver = open_ulmsserver()
     simserver = open_simserver()
 
