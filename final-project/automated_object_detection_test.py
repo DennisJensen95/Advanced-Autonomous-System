@@ -19,12 +19,12 @@ timeout = 15
 while True:
     if out.poll(1):
         print(ulmsserver.stdout.readline())
+        ulmsserver.stdout.flush()
     else:
         print("")
         time.sleep(0.5)
 
     if time.time() - start > timeout:
-        # ulmsserver.stdin.write('q')
         time.sleep(1)
         ulmsserver.terminate()
         break
