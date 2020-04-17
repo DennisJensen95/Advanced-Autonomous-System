@@ -1,7 +1,6 @@
 from subprocess import Popen, PIPE
-from fcntl import fcntl, F_GETFL, F_SETFL
 import time
-from os import O_NONBLOCK, read
+import os
 
 def open_ulmsserver():
     """
@@ -9,28 +8,28 @@ def open_ulmsserver():
     :return:
     """
     ulmsserver = Popen(['ulmsserver'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
-    flags = fcntl(ulmsserver.stdout, F_GETFL)
-    fcntl(ulmsserver.stdout, F_SETFL, flags | O_NONBLOCK)
     return ulmsserver
 
-ulmsserver= open_ulmsserver()
-start = time.time()
-timeout = 15
-while True:
-    try:
-        output = read(ulmsserver.stdout.fileno(), 1024)
-    except OSError:
-        print("No more data")
-        break
+def open_simserver():
+    """
+    Open simserver
+    :return:
+    """
+    simserver = Popen(['simserver1', 'simconfig388proj.xml'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    return simserver
 
-    # if output == '' and ulmsserver.poll() is not None:
-    #     break
-    # if output:
-    #     print(output.strip())
+def run_mrc_script(mrc_script_path):
+    """
+    Run mrc script
+    :return:
+    """
+    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    return mrc_script
 
-    if time.time() - start > timeout:
-        time.sleep(1)
-        ulmsserver.terminate()
-        break
+os.chdir('./../test/')
+ulmsserver = open_ulmsserver()
+simserver = open_simserver()
 
+
+time.sleep(10)
 print("Done")
