@@ -153,6 +153,7 @@ for j in range(iterations):
         mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v3'
         mrc_process = run_mrc_script(mrc_path)
         time.sleep(3)
+        print(mrc_process.stdout.read())
         mrc_process.wait()
 
         ulmsserver.terminate()
