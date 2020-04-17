@@ -20,7 +20,8 @@ while True:
         time.sleep(0.5)
 
     if time.time() - start > timeout:
-        ulmsserver.kill()
+        ulmsserver.stdout.write('q')
+        ulmsserver.terminate()
         break
 
 
