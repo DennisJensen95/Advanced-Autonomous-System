@@ -302,38 +302,42 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
   // Creation of ofstream class object 
   ofstream fout; 
   
+  // file path
   const char *path="/home/smr/test/result.txt";
 
-  // by default ios::out mode, automatically deletes 
-  // the content of file. To append the content, open in ios:app 
-  fout.open(path, ios::app);
-  //fout.open("sample.txt"); 
-  
-  // Execute a loop If file successfully opened 
-  while (fout) {       
-      char str1[100];
-      snprintf(str1, sizeof(str1), "Object:\t%d", object);
-      string Str1 = str1;
-      
-      char str2[100];
-      snprintf(str2, sizeof(str2), "Point o coordinates (x,y):\t(%.2f, %.2f)", pointO[0], pointO[1]);
-      string Str2 = str2;
-      
-      char str3[100];
-      snprintf(str3, sizeof(str3), "Object pose:\t%.2f rad", objectPose);
-      string Str3 = str3;
-      
-      // Write line in file 
-      fout << "RESULT:" << endl;
-      fout << Str1 << endl;
-      fout << Str2 << endl;
-      fout << Str3 << endl << endl;
-      break;
-    } 
+  // flag to see if the file exists
+  bool flag = false;
     
-    // Close the File 
-    fout.close();
+  // check if the file exists
+  ifstream fin(path);
+  if (fin.good())
+  {
+    flag = true;
+  }
+
+  // open file and append
+  fout.open(path, ios::app);
+  
+  // Execute if file successfully opened 
+  if (fout) {
+    //
+    if(not flag){
+      fout << "Object | Point o x | Point o y | Object pose" << endl;
+    }
+
+    // create formatted string as C-string
+    char str[100];
+    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose);
+    string Str = str;
+
+    // write to file
+    fout << Str << endl;
+  }
+
+  // Close the File 
+  fout.close();
 }
+
 
 bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose)
 {
