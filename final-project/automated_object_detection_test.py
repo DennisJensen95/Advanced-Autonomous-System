@@ -120,6 +120,15 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
 iterations = 1
+if os.path.exists('results_python.txt'):
+    os.remove('results_python.txt')
+
+if os.path.exists('result.txt'):
+    os.remove('result.txt')
+
+with open('results_python.txt', 'w+') as file:
+    file.write('Results from test runs:\n')
+
 for j in range(iterations):
     for i in range(1, 5):
         object_string, point_o, theta = generate_object(i, _random=True)
@@ -128,12 +137,6 @@ for j in range(iterations):
         map_environ = map + object_string
         if os.path.exists('388auto'):
             os.remove('388auto')
-
-        if os.path.exists('results_python.txt'):
-            os.remove('results_python.txt')
-
-        if os.path.exists('result.txt'):
-            os.remove('result.txt')
 
         with open('./388auto', 'a+') as file:
             file.write(f'{i}, {point_o}, {theta}')
