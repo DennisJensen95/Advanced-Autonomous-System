@@ -139,7 +139,7 @@ for j in range(iterations):
             os.remove('388auto')
 
         with open('./results_python.txt', 'a+') as file:
-            file.write(f'{i}, {point_o}, {theta}')
+            file.write(f'{i}, {point_o}, {theta}\n')
 
         with open('./388auto', 'w+') as file:
             file.write(map_environ)
@@ -149,7 +149,9 @@ for j in range(iterations):
 
         # './../Advanced'
         # run_mrc_script()
-        
+
+        time.sleep(5)
+
         ulmsserver.terminate()
         simserver.terminate()
 
