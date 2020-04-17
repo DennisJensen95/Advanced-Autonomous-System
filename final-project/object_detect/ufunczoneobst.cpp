@@ -298,47 +298,6 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
-void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose){
-  // Creation of ofstream class object 
-  ofstream fout; 
-  
-  // file path
-  const char *path="/home/smr/test/result.txt";
-
-  // flag to see if the file exists
-  bool flag = false;
-    
-  // check if the file exists
-  ifstream fin(path);
-  if (fin.good())
-  {
-    flag = true;
-  }
-
-  // open file and append
-  fout.open(path, ios::app);
-  
-  // Execute if file successfully opened 
-  if (fout) {
-    //
-    if(not flag){
-      fout << "Object | Point o x | Point o y | Object pose" << endl;
-    }
-
-    // create formatted string as C-string
-    char str[100];
-    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose);
-    string Str = str;
-
-    // write to file
-    fout << Str << endl;
-  }
-
-  // Close the File 
-  fout.close();
-}
-
-
 bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose)
 {
   /*
@@ -1048,4 +1007,44 @@ float UFunczoneobst::round(float var)
 
   float value = (int)(var * 100 + .5);
   return (float)value / 100;
+}
+
+void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose){
+  // Creation of ofstream class object 
+  ofstream fout; 
+  
+  // file path
+  const char *path="/home/smr/test/result.txt";
+
+  // flag to see if the file exists
+  bool flag = false;
+    
+  // check if the file exists
+  ifstream fin(path);
+  if (fin.good())
+  {
+    flag = true;
+  }
+
+  // open file and append
+  fout.open(path, ios::app);
+  
+  // Execute if file successfully opened 
+  if (fout) {
+    //
+    if(not flag){
+      fout << "Object | Point o x | Point o y | Object pose" << endl;
+    }
+
+    // create formatted string as C-string
+    char str[100];
+    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose);
+    string Str = str;
+
+    // write to file
+    fout << Str << endl;
+  }
+
+  // Close the File 
+  fout.close();
 }
