@@ -26,7 +26,7 @@ def run_mrc_script(mrc_script_path):
     mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
     return mrc_script
 
-os.chdir('./../test/')
+os.chdir('./../../test/')
 ulmsserver = open_ulmsserver()
 simserver = open_simserver()
 
