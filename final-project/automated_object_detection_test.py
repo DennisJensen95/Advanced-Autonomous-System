@@ -17,7 +17,7 @@ def open_simserver():
     Open simserver
     :return:
     """
-    simserver = Popen(['simserver1', 'simconfig388proj.xml'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    simserver = Popen(['simserver1', 'automateEnvironment.xml'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
     return simserver
 
 def run_mrc_script(mrc_script_path):
@@ -69,21 +69,22 @@ def generate_object(obj_num, point_start=None, _random=False):
         upper_left_corner = (x + np.sin(theta) * 0.15, y + np.cos(theta) * 0.15)
         str_to_write = f'{point_start[0]}\t{point_start[1]}\t{lower_right_corner[0]}\t{lower_right_corner[1]}\n' \
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
-                       f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner}\n'
+                       f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n'
 
     return str_to_write
 
 os.chdir('./../../test/')
 
 
-for i in range(1, 4):
+for i in range(1, 5):
     object_string = generate_object(i, (2, 1, 0))
-    with open('388auto', 'a+') as file:
+    print(object_string)
+    with open('./388auto', 'a+') as file:
         file.write(object_string)
     ulmsserver = open_ulmsserver()
     simserver = open_simserver()
 
-    time.sleep(10)
+    time.sleep(5)
 
     ulmsserver.terminate()
     simserver.terminate()
