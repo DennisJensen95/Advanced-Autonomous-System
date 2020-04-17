@@ -121,7 +121,7 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
-iterations = 1
+
 if os.path.exists('results_python.txt'):
     os.remove('results_python.txt')
 
@@ -131,6 +131,8 @@ if os.path.exists('result.txt'):
 with open('results_python.txt', 'w+') as file:
     file.write('Results from test runs:\n')
 
+
+iterations = 1
 for j in range(iterations):
     for i in range(1, 5):
         object_string, point_o, theta = generate_object(i, _random=True)
@@ -150,7 +152,9 @@ for j in range(iterations):
         simserver = open_simserver()
 
         mrc_path = './../Advanced-Autonomous-System/final-project/final_project_v3'
-        run_mrc_script(mrc_path)
+        mrc_process = run_mrc_script(mrc_path)
+
+        mrc_process.wait()
 
         ulmsserver.terminate()
         simserver.terminate()
