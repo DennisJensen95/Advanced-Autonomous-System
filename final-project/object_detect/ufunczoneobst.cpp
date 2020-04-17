@@ -331,26 +331,33 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
 bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat)
 {
   /*
+  * This function implements the basic structure to determine which object that has been spotted by the laser scanner.
+  * 
+  * 
   * INPUT:  vector<vector<double>> v: X,Y coordinates of intersection between lines
   *         int &ojbect: address of integer value of the detected object (1 to 4)
   *         vector<double> &pointO: address vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
+  *         vector<vector<double>> lineMat: 2-D vector containing alhpa,r parameters of good line fits
   * 
   * OUTPUT:
   *         bool value stating if the function is successful or not
   * */
 
+  // Initialize values in the case that no object is found.
   object = 0;
   pointO.push_back(0);
   pointO.push_back(0);
   objectPose = 0;
 
+  // If the laser scanner has found 4 good line fits, we assume it is a square
   if (v.size() == 4)
-  { // assume square
+  { 
     // lengths of possible squares
     vector<double> obj1 = {0.15, 0.40};
     vector<double> obj2 = {0.20, 0.30};
 
+    // calculate the distance between each point
     vector<double> lengths;
     for (uint i = 0; i < v.size() - 1; i++)
     {
@@ -359,14 +366,17 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
         lengths.push_back(CalcDistanceBetweenPoints(v[i], v[j]));
       }
     }
+    // sort lengths vector from smallest to biggest
     sort(lengths.begin(), lengths.end());
     lengths.pop_back(); //delete diagonal
     lengths.pop_back(); //delete diagonal
 
+    // calculate mean of measurement of smallest and biggest side 
     double temp1, temp2;
     temp1 = accumulate(lengths.begin(), lengths.begin() + int(lengths.size() / 2), 0.0) / 2.0;
     temp2 = accumulate(lengths.begin() + int(lengths.size() / 2), lengths.end(), 0.0) / 2.0;
 
+    // reduce to a 1x2 vector containing average of each measurement
     lengths.pop_back();
     lengths.pop_back();
     lengths[0] = temp1;
@@ -374,6 +384,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
 
     printVec(lengths);
 
+    // use SSD to determine which object we are dealing with
     if (CalcSSD(lengths, obj1) < CalcSSD(lengths, obj2))
     {
       object = 1;
@@ -390,8 +401,8 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
       printf("No point o found!\n");
     }
   }
-  else if (v.size() == 3)
-  { // assume triangle
+  else if (v.size() == 3) // If the laser scanner has found 3 good line fits, we assume it is a square
+  {
     // lengths of possible triangles
     vector<double> obj3 = {0.10, 0.40};
     vector<double> obj4 = {0.15, 0.3};
@@ -434,6 +445,17 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
 
 bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose)
 {
+  /*
+  * This function implements the basic structure to find the location of point o and the pose of a triangle.
+  * 
+  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
+  *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+  *         vector<double> &point: address of vector containing the coordinates of point o
+  *         double &objectPose: address of double containin the pose of the object
+  * 
+  * OUTPUT:
+  *         bool value stating if the function is successful or not
+  * */
   // vector to store initial point to calculate pose
   vector<double> point1 = {0, 0};
   double smallest = 10000;
@@ -444,6 +466,7 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
     point[0] += matXY[i][0] / (double)matXY.size();
     point[1] += matXY[i][1] / (double)matXY.size();
 
+    // find the point which is closest to origo to use as "starting" point for the heading calculation
     if (CalcDistToPoint(matXY[i]) < smallest)
     {
       smallest = CalcDistToPoint(matXY[i]);
@@ -453,6 +476,7 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
   }
 
   // find biggest side
+  // this must be done twice as the furthest away point corresponds to the diagonal element
   int idx1 = 0;
   int idx2 = 0;
   double biggest = 0;
@@ -477,6 +501,7 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
     }
   }
 
+  // the object heading is then found as the angle of the vector spanning from the previously found point to its furthest away point
   objectPose = atan2(matXY[idx2][1] - point1[1], matXY[idx2][0] - point1[0]);
 
   return true;
@@ -484,22 +509,40 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
 
 double UFunczoneobst::CalcDistToPoint(vector<double> a)
 {
+    /*
+  * INPUT:  vector<double> a: 1-D vector of doubles describing a point location.
+  * 
+  * OUTPUT:
+  *         double value giving the distance from Origo to the point described by a.
+  * */
   return sqrt(pow(a[0], 2) + pow(a[1], 2) * 1.0);
 }
 
 bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose)
 {
+  /*
+  * This function implements the basic structure to find the location of point o and the pose of a triangle.
+  * 
+  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
+  *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+  *         vector<double> &point: address of vector containing the coordinates of point o
+  *         double &objectPose: address of double containin the pose of the object
+  * 
+  * OUTPUT:
+  *         bool value stating if the function is successful or not
+  * */
 
   for (uint i = 0; i < v.size() - 1; i++)
   {
     for (uint j = i + 1; j < v.size(); j++)
     {
 
+      // find the angle between two lines
       double a1 = v[i][0];
       double a2 = v[j][0];
-
       double angle = atan2(cos(a2), -sin(a2)) - atan2(cos(a1), -sin(a1));
 
+      // normalize to ]-pi;pi]
       if (angle > PI)
       {
         angle -= 2 * PI;
@@ -509,13 +552,15 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
         angle += 2 * PI;
       }
 
+      // if it is a right angle, we know where we are on the triangle
       if (abs(PI / 2 - abs(angle)) < 0.1)
       {
+        // the intersection between these lines must be point o
         vector<double> temp = FindIntersection(v[i], v[j]);
         point[0] = temp[0];
         point[1] = temp[1];
 
-        // find biggest side
+        // find biggest side as this is parallel to the heading
         int idx;
         double biggest = 0;
         double dist;
@@ -528,6 +573,7 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
             idx = (int)k;
           }
         }
+        // the object heading is then found as the angle of the vector spanning from point o to the furthest away point
         objectPose = atan2(matXY[idx][1] - point[1], matXY[idx][0] - point[0]);
 
         return true;
@@ -539,6 +585,13 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
 
 double UFunczoneobst::CalcSSD(vector<double> a, vector<double> b)
 {
+  /*
+  * INPUT:  vector<double> a: 1xN vector of doubles
+  *         vector<double> b: 1xN vector of doubles
+  * 
+  * OUTPUT:
+  *         double value giving the SSD measure between vector a and b 
+  * */
   double SSD = 0.0;
 
   if (a.size() != b.size())
@@ -556,11 +609,29 @@ double UFunczoneobst::CalcSSD(vector<double> a, vector<double> b)
 
 double UFunczoneobst::CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2)
 {
+  /*
+  * INPUT:  vector<double> p1: 1-D vector of doubles describing a point location
+  *         vector<double> p2: 1-D vector of doubles describing a point location
+  * 
+  * OUTPUT:
+  *         double value giving the euclidian distance between point p1 and p2
+  * */
   return sqrt(pow(p2[0] - p1[0], 2) + pow(p2[1] - p1[1], 2) * 1.0);
 }
 
 vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v)
 {
+  /*
+  * This function implements the structure to find a matrix with all intersections between all 
+  * lines in a matrix v.
+  * The function filters out intersections that are outside of the "green area" on the map.
+  * 
+  * 
+  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
+  * 
+  * OUTPUT:
+  *         vector<vector<double>>: 2-D vector with (X,Y) location of the intersection between lines in v
+  * */
   vector<vector<double>> intersections;
   for (uint i = 0; i < v.size() - 1; i++)
   {
@@ -580,6 +651,16 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
 
 vector<double> UFunczoneobst::FindIntersection(vector<double> u, vector<double> v)
 {
+  /*
+  * This function implements the core algorithm to find the (x,y) location of the intersection
+  * between two line fits.
+  * 
+  * INPUT:  vector<double> u: 1-D vector containing alhpa,r parameters of a good line fit
+  *         vector<double> v: 1-D vector containing alpha,r parameters of another good line fit
+  * 
+  * OUTPUT:
+  *         vector<double>: (X,Y) location of the intersection between lines u and v
+  * */
   double a1 = u[0];
   double r1 = u[1];
   double a2 = v[0];
@@ -604,6 +685,15 @@ vector<double> UFunczoneobst::FindIntersection(vector<double> u, vector<double> 
 
 void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
 {
+  /*
+  * This function removes potential duplicates in a 2xN matrix. Elements are considered duplicates if 
+  * both values in a row are within >0.08 of another row. In this case, the average is stored and the duplicate
+  * element is deleted.
+  *  
+  * INPUT:  vector<vector<double>> &v: address of 2xN vector where each row is a pair of associated parameters
+  * 
+  * */
+
   uint itr = 0;
   while (true)
   {
@@ -641,14 +731,29 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
 
 bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines)
 {
+  /*
+  * This function provides the structure to perform a robust least squares approximation of line segments found 
+  * with a laser scan.
+  * The function only detects lines within the "green area" marked on the map.
+  * The function is able to detect multiple lines in this area and ignores potential "corners" of objects.
+  *
+  * INPUT:  vector<double> x: X values of a laser scan
+  *         vector<double> y: Y values of a laser scan
+  *         vector<vector<double>> &lines: address of 2-D vector to store alhpa,r parameters of good line fits
+  *         
+  * 
+  * OUTPUT:
+  *         bool value stating if the function is successful or not
+  * */
+
   int n = x.size();
-  int parts = 7;
+  int parts = 5;
   int delta = n / parts;
   int matches = 0;
 
   if (n > parts * 2)
   {
-    vector<vector<double>> lineMat; //, lineMatCopy;
+    vector<vector<double>> lineMat;
 
     // extract line segments and do least squares estimation for each segment
     for (int i = 0; i < parts; i++)
@@ -720,6 +825,17 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
 vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y)
 {
+  /*
+  * This function implements the core algorithm to do least squares approximation of
+  * (x,y) data points to fit a line.
+  * 
+  * INPUT:  vector<double> x: X values of a laser scan
+  *         vector<double> y: Y values of a laser scan
+  * 
+  * OUTPUT:
+  *         vector<double>: 1-D vector containing alpha,r parameters of the line fit
+  * */
+
   int n = x.size();
   double xmean, ymean, sumx, sumy, sumx2, sumy2, sumxy;
 
@@ -768,10 +884,16 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y)
 vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> poseW)
 {
   /*
-  * lineL = [aL, rL]
-  * poseW = [xL, yL, thL]^W
-  */
-
+  * This function transforms a line estimate from the laser frame to the world frame
+  * using the pose of the laser in the world frame. 
+  * 
+  * INPUT:  vector<double> lineL: alpha,r parameters of a line in the laser frame
+  *         vector<double> poseW: (x,y,th) pose of the laser scanner in the world frame
+  * 
+  * OUTPUT:
+  *         vector<double>: alhpa,r parameters of the line in the world frame
+  * */
+ 
   double a = lineL[0] + poseW[2];
   double r = lineL[1] + (cos(a) * poseW[0] + sin(a) * poseW[1]);
 
@@ -797,6 +919,17 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> pos
 
 void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
 {
+  /*
+  * This function converts a set of (x,y) points from the laser frame to the 
+  * world frame using the pose of the laser scanner in the world frame.
+  * 
+  * 
+  * INPUT:  vector<double> pose: (x,y,th) pose of the laser scanner in the world frame
+  *         double &x: address of X location of a point in the laser frame
+  *         double &y: address of Y location of a point in the laser frame
+  * 
+  * */
+
   double th_lw = pose[2];
 
   double tempx = cos(th_lw)*x - sin(th_lw)*y + pose[0];
@@ -808,6 +941,17 @@ void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
 
 vector<double> UFunczoneobst::transform(vector<double> poseR)
 {
+  /*
+  * This function finds the pose of the laser scanner in the world frame using the 
+  * pose of the robot in the world frame.
+  * The laser scanner is mounted on the robot 26 cm from the centre.
+  * 
+  * INPUT:  vector<double> poseR: (x,y,th) pose of the robot in the world frame
+  * 
+  * OUTPUT:
+  *         vector<double>: (x,y,th) pose of the laser in the world frame
+  * */
+
   vector<double> poseW;
 
   poseW.push_back(cos(poseR[2]) * 0.26 + poseR[0]);
@@ -838,10 +982,16 @@ void UFunczoneobst::printMat(vector<vector<double>> &result)
 
 float UFunczoneobst::round(float var)
 {
-  // 37.66666 * 100 =3766.66
-  // 3766.66 + .5 =3767.16    for rounding off value
-  // then type cast to int so value is 3767
-  // then divided by 100 so the value converted into 37.67
+  /* Credit: https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
+  *
+  * 
+  * 37.66666 * 100 =3766.66
+  * 3766.66 + .5 =3767.16    for rounding off value
+  * then type cast to int so value is 3767
+  * then divided by 100 so the value converted into 37.67
+  * 
+  * */
+
   float value = (int)(var * 100 + .5);
   return (float)value / 100;
 }
