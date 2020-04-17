@@ -25,7 +25,7 @@ laser "resetlocalizer" %do we need this?
 % mission 3: drive to goal
 
 %first mission is initialized
-mission = 1
+mission = 2
 
 %first guidemark to visit
 gmkno = 13
@@ -484,12 +484,13 @@ label "mission2"
 
 n=1 %iterator for switch case
 
+% (x,y) of box with object on the loose
+midx = 2
+midy = 1.5
+
 %Go to reading points
 label "objectfinding"
 
-% (x,y) of box with object on the loose
-boxx = 2
-boxy = 1.5
 
 % Read from points 22 -> 21 -> 3 -> 2 -> 1 -> 14 -> 13 -> 12 -> 11 -> 10 -> 23
 switch(n)
@@ -540,10 +541,8 @@ wait 1
 
 K = $l4
 
+
 label "drivearound"
-
-
-
 stringcat "getpoint p=" K""
 laser "$string"
 wait 1
@@ -575,9 +574,12 @@ K=K-1
 
 if (K>-1) "drivearound"
 
+
+%call "findobject"
+
 % Turning towards middle of box on the loose
-posx = boxx - $odox
-posy = boxy - $odoy
+posx = midx - $odox
+posy = midy - $odoy
 
 midangle = atan2(posy, posx) - $odoth
 midangle = normalizeanglerad(midangle)
@@ -602,6 +604,29 @@ wait 3
 
 mission = mission + 1
 goto "start"
+
+
+label "findobject"
+posx = midx - $odox
+posy = midy - $odoy
+
+midangle = atan2(posy, posx) - $odoth
+midangle = normalizeanglerad(midangle)
+
+ignoreobstacles
+turn midangle "rad" @v 0.2
+wait 2
+
+stringcat "zoneobst findobject x="$odox" y="$odoy" th="$odoth""
+laser "$string"
+
+boxx = $l0
+boxy = $l1
+
+eval boxx
+eval boxy
+
+return
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%MISSION 3%%%%%%%%%%%%%%%%%%%
