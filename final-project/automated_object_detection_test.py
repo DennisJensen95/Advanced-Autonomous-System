@@ -56,6 +56,7 @@ def generate_object(obj_num, point_start=None, _random=False):
         upper_left_corner = rotate(point_start, (x, y + 0.15))
         diag_corner = rotate(point_start, (point_start[0] + 0.40, point_start[1] + 0.15))
 
+        point_o = (point_start + lower_right_corner + upper_left_corner + diag_corner) / 4
 
 
         str_to_write = f'{point_start[0]}\t{point_start[1]}\t{lower_right_corner[0]}\t{lower_right_corner[1]}\n' \
@@ -72,12 +73,16 @@ def generate_object(obj_num, point_start=None, _random=False):
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{diag_corner[0]}\t{diag_corner[1]}\n' \
                        f'{upper_left_corner[0]}\t{upper_left_corner[1]}\t{diag_corner[0]}\t{diag_corner[1]}\n'
 
+        point_o = (point_start + lower_right_corner + upper_left_corner + diag_corner) / 4
+
     elif obj_num == 3:
         lower_right_corner = rotate(point_start, (x + 0.40, y))
         upper_left_corner = rotate(point_start, (x, y + 0.10))
         str_to_write = f'{point_start[0]}\t{point_start[1]}\t{lower_right_corner[0]}\t{lower_right_corner[1]}\n' \
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner}\n'
+
+        point_o = point_start
 
     elif obj_num == 4:
         lower_right_corner = rotate(point_start, (x + 0.30, y))
@@ -86,7 +91,11 @@ def generate_object(obj_num, point_start=None, _random=False):
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n'
 
-    return str_to_write
+        point_o = point_start
+
+
+
+    return str_to_write, point_o, theta
 
 os.chdir('./../../test/')
 
@@ -108,23 +117,34 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
-for i in range(1, 5):
-    object_string = generate_object(i, _random=True)
-    # print(object_string)
-    # print("\n")
-    map_environ = map + object_string
-    if os.path.exists('388auto'):
-        os.remove('388auto')
+iterations = 1
+for j in range(iterations):
+    for i in range(1, 5):
+        object_string, point_o, theta = generate_object(i, _random=True)
 
-    with open('./388auto', 'w+') as file:
-        file.write(map_environ)
 
-    ulmsserver = open_ulmsserver()
-    simserver = open_simserver()
+        map_environ = map + object_string
+        if os.path.exists('388auto'):
+            os.remove('388auto')
 
-    time.sleep(5)
+        if os.path.exists('results_python.txt'):
+            os.remove('results_python.txt')
 
-    ulmsserver.terminate()
-    simserver.terminate()
+        if os.path.exists('result.txt'):
+            os.remove('result.txt')
+
+        with open('./388auto', 'a+') as file:
+            file.write(f'{i}, {point_o}, {theta}')
+
+        with open('./388auto', 'w+') as file:
+            file.write(map_environ)
+
+        ulmsserver = open_ulmsserver()
+        simserver = open_simserver()
+
+        time.sleep(5)
+
+        ulmsserver.terminate()
+        simserver.terminate()
 
 print("Done")
