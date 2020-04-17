@@ -75,12 +75,32 @@ def generate_object(obj_num, point_start=None, _random=False):
 
 os.chdir('./../../test/')
 
+map = f'0.0     0.0     1.8     0.0     bottom left\n' \
+      f'2.2     0.0     4.0     0.0     bottom right\n' \
+      f'0.0     5.0     1.8     5.0     top left\n' \
+      f'2.2     5.0     4.0     5.0     top right\n' \
+      f'0.0     0.0     0.0     1.8     left down\n' \
+      f'0.0     3.2     0.0     5.0     left up\n' \
+      f'4.0     0.0     4.0     1.8     right down\n' \
+      f'4.0     3.2     4.0     5.0     right up\n' \
+      f'0.9     3.1     1.7     3.1     maze bottom left\n' \
+      f'2.3     3.1     3.1     3.1     maze bottom right\n' \
+      f'1.7     2.5     1.7     3.1     maze left down\n' \
+      f'0.9     3.1     0.9     4.3     maze left up\n' \
+      f'2.3     2.5     2.3     3.1     maze right down\n' \
+      f'3.1     3.1     3.1     4.3     maze right up\n' \
+      f'1.5     3.7     2.5     3.7     maze middle horizontal\n' \
+      f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
+      f'0.9     4.3     3.1     4.3     maze top\n'
 
 for i in range(1, 5):
     object_string = generate_object(i, (2, 1, 0))
-    print(object_string)
-    with open('./388auto', 'a+') as file:
-        file.write(object_string)
+    map_environ = map + object_string
+    if os.path.exists('388auto'):
+        os.remove('388auto')
+
+    with open('./388auto', 'w+') as file:
+        file.write(map_environ)
     ulmsserver = open_ulmsserver()
     simserver = open_simserver()
 
