@@ -18,9 +18,6 @@ while True:
     output = ulmsserver.stdout.readline()
     if output == '' and ulmsserver.poll() is not None:
         break
-    elif output == '':
-        ulmsserver.stdin.write('\n')
-
     if output:
         print(output.strip())
 
