@@ -124,14 +124,14 @@ os.chdir('./../../test/')
 if os.path.exists('results_python.txt'):
     os.remove('results_python.txt')
 
-if os.path.exists('result.txt'):
-    os.remove('result.txt')
+if os.path.exists('results_cpp.txt'):
+    os.remove('results_cpp.txt')
 
 with open('results_python.txt', 'w+') as file:
-    file.write('Results from test runs:\n')
+    file.write('Object | Point o | Object pose\n')
 
 
-iterations = 1
+iterations = 20
 for j in range(iterations):
     for i in range(1, 5):
         object_string, point_o, theta = generate_object(i, _random=True)
@@ -158,5 +158,8 @@ for j in range(iterations):
 
         ulmsserver.terminate()
         simserver.terminate()
+
+os.rename('results_cpp.txt', 'results_cpp_done.txt')
+os.rename('results_python.txt', 'results_python_done.txt')
 
 print("Done")
