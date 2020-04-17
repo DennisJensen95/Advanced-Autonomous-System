@@ -1,7 +1,6 @@
 from subprocess import Popen, PIPE
-import select
+import threading
 import time
-
 
 def open_ulmsserver():
     """
@@ -15,8 +14,9 @@ ulmsserver= open_ulmsserver()
 start = time.time()
 timeout = 15
 while True:
-    output = ulmsserver.stdout.readline()
-    if output == '' and ulmsserver.poll() is not None:
+    output = ulmsserver.stdout.read() # <---- hangs here
+    if not output:
+        print("No more data")
         break
     if output:
         print(output.strip())
