@@ -13,6 +13,7 @@ while True:
     print(ulmsserver.stdout.readline())
 
     if time.time() - start > timeout:
+        ulmsserver.kill()
         break
 
 
