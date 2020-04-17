@@ -101,8 +101,6 @@ def generate_object(obj_num, point_start=None, _random=False):
 
     return str_to_write, point_o, theta
 
-os.chdir('./../../test/')
-
 map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.2     0.0     4.0     0.0     bottom right\n' \
       f'0.0     5.0     1.8     5.0     top left\n' \
@@ -121,6 +119,7 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
+os.chdir('./../../test/')
 
 if os.path.exists('results_python.txt'):
     os.remove('results_python.txt')
@@ -151,9 +150,9 @@ for j in range(iterations):
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
 
-        mrc_path = './../Advanced-Autonomous-System/final-project/final_project_v3'
+        mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v3'
         mrc_process = run_mrc_script(mrc_path)
-
+        time.sleep(3)
         mrc_process.wait()
 
         ulmsserver.terminate()
