@@ -56,7 +56,7 @@ def generate_object(obj_num, point_start=None, _random=False):
         upper_left_corner = rotate(point_start, (x, y + 0.15))
         diag_corner = rotate(point_start, (point_start[0] + 0.40, point_start[1] + 0.15))
 
-        point_o = (np.asarray(point_start) + np.asarray(lower_right_corner) +
+        point_o = (np.asarray(point_start[:2]) + np.asarray(lower_right_corner) +
                    np.asrray(upper_left_corner) + np.asarray(diag_corner)) / 4
 
 
@@ -74,7 +74,7 @@ def generate_object(obj_num, point_start=None, _random=False):
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{diag_corner[0]}\t{diag_corner[1]}\n' \
                        f'{upper_left_corner[0]}\t{upper_left_corner[1]}\t{diag_corner[0]}\t{diag_corner[1]}\n'
 
-        point_o = (np.asarray(point_start) + np.asarray(lower_right_corner) +
+        point_o = (np.asarray(point_start[:2]) + np.asarray(lower_right_corner) +
                    np.asrray(upper_left_corner) + np.asarray(diag_corner)) / 4
 
     elif obj_num == 3:
