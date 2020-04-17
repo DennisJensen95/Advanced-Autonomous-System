@@ -24,6 +24,9 @@
 #include <vector>
 #include <bits/stdc++.h> 
 #include <ulms4/ufunclaserbase.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -79,6 +82,8 @@ public:
     bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
     bool FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
     double CalcDistToPoint(vector<double> a);
+
+    void WriteResult2File(int object, vector<double> pointO, double objectPose);
 };
 
 

@@ -215,43 +215,35 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   }
   else if (determineObject)
   {
-    // we need at least three good world lines to find an object
-    if (goodLineFitsWorldCoordinates.size() < 3)
+    // Define variables to store information on the object in question
+    // Initialize values in the case that no object is found.
+    int object = 0;
+    vector<double> pointO = {0,0};
+    double objectPose = 0;
+
+    // perform object processing
+    bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
+    if (FoundObject)
     {
-      printf("Not enough values to determine object!\n");
-      /* SMRCL reply format */
-      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n",
-               0, 0.0, 0.0, 0.0);
-      // send this string as the reply to the client
-      sendMsg(msg, reply);
+      // print result
+      printf("\n\nRESULT:\n");
+      printf("Object:\t\t\t\t%d\n", object);
+      printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
+      printf("Object pose:\t\t\t%.2f rad\n\n", objectPose);
     }
     else
     {
-      // initialize variables to store information on the object in question
-      int object;
-      vector<double> pointO;
-      double objectPose;
-
-      // perform object processing
-      bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
-      if (FoundObject)
-      {
-        // print result
-        printf("\n\nRESULT:\n");
-        printf("Object:\t\t\t\t%d\n", object);
-        printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
-        printf("Object pose:\t\t\t%.2f rad\n\n", objectPose);
-      }
-      else
-      {
-        printf("\nObject not found!\n");
-      }
-      /* SMRCL reply format */
-      snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n",
-               object, pointO[0], pointO[1], objectPose);
-      // send this string as the reply to the client
-      sendMsg(msg, reply);
+      printf("\nObject not found!\n");
     }
+
+    /* SMRCL reply format */
+    snprintf(reply, MRL, "<laser l0=\"%d\" l1=\"%g\" l2=\"%g\" l3=\"%g\" />\n",
+              object, pointO[0], pointO[1], objectPose);
+    // send this string as the reply to the client
+    sendMsg(msg, reply);
+
+    // write the result to a file for statistics
+    WriteResult2File(object, pointO, objectPose);
   }
   else
   { // do some action and send a reply
@@ -306,6 +298,43 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
+void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose){
+  // Creation of ofstream class object 
+  ofstream fout; 
+  
+  const char *path="/home/smr/test/result.txt";
+
+  // by default ios::out mode, automatically deletes 
+  // the content of file. To append the content, open in ios:app 
+  fout.open(path, ios::app);
+  //fout.open("sample.txt"); 
+  
+  // Execute a loop If file successfully opened 
+  while (fout) {       
+      char str1[100];
+      snprintf(str1, sizeof(str1), "Object:\t%d", object);
+      string Str1 = str1;
+      
+      char str2[100];
+      snprintf(str2, sizeof(str2), "Point o coordinates (x,y):\t(%.2f, %.2f)", pointO[0], pointO[1]);
+      string Str2 = str2;
+      
+      char str3[100];
+      snprintf(str3, sizeof(str3), "Object pose:\t%.2f rad", objectPose);
+      string Str3 = str3;
+      
+      // Write line in file 
+      fout << "RESULT:" << endl;
+      fout << Str1 << endl;
+      fout << Str2 << endl;
+      fout << Str3 << endl << endl;
+      break;
+    } 
+    
+    // Close the File 
+    fout.close();
+}
+
 bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose)
 {
   /*
@@ -320,14 +349,14 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   *         bool value stating if the function is successful or not
   * */
 
-  // remove duplicate line parameters and print what was found
-  RemoveDuplicates(v);
-  printf("\nFinal line parameters (world):\n");
-  printMat(v);
-
   // we need atleast three lines for anything useful
   if (v.size() > 2)
   {
+    // remove duplicate line parameters and print what was found
+    RemoveDuplicates(v);
+    printf("\nFinal line parameters (world):\n");
+    printMat(v);
+    
     // find the intersections between the lines
     vector<vector<double>> resultXY;
     resultXY = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
@@ -365,12 +394,6 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
   * OUTPUT:
   *         bool value stating if the function is successful or not
   * */
-
-  // Initialize values in the case that no object is found.
-  object = 0;
-  pointO.push_back(0);
-  pointO.push_back(0);
-  objectPose = 0;
 
   // If the laser scanner has found 4 good line fits, we assume it is a square
   if (v.size() == 4)
