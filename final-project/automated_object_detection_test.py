@@ -88,7 +88,7 @@ def generate_object(obj_num, point_start=None, _random=False):
 
     return str_to_write
 
-# os.chdir('./../../test/')
+os.chdir('./../../test/')
 
 map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.2     0.0     4.0     0.0     bottom right\n' \
@@ -110,8 +110,8 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
 
 for i in range(1, 5):
     object_string = generate_object(i, _random=True)
-    print(object_string)
-    print("\n")
+    # print(object_string)
+    # print("\n")
     map_environ = map + object_string
     if os.path.exists('388auto'):
         os.remove('388auto')
