@@ -10,7 +10,11 @@ ulmsserver = open_ulmsserver()
 start = time.time()
 timeout = 15
 while True:
-    print(ulmsserver.stdout.readline())
+    output = ulmsserver.stdout.readline()
+    if output == '' and ulmsserver.poll() is not None:
+        break
+    if output:
+        print(output.strip())
 
     if time.time() - start > timeout:
         ulmsserver.kill()
