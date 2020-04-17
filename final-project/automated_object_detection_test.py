@@ -138,7 +138,7 @@ for j in range(iterations):
         if os.path.exists('388auto'):
             os.remove('388auto')
 
-        with open('./388auto', 'a+') as file:
+        with open('./results_python.txt', 'a+') as file:
             file.write(f'{i}, {point_o}, {theta}')
 
         with open('./388auto', 'w+') as file:
@@ -147,8 +147,9 @@ for j in range(iterations):
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
 
-        time.sleep(5)
-
+        # './../Advanced'
+        # run_mrc_script()
+        
         ulmsserver.terminate()
         simserver.terminate()
 
