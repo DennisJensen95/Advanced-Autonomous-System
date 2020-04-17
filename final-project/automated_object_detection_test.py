@@ -20,9 +20,9 @@ while True:
         time.sleep(0.5)
 
     if time.time() - start > timeout:
-        ulmsserver.stdout.write('q')
+        ulmsserver.stdin.write('q')
+        time.sleep(1)
         ulmsserver.terminate()
         break
-
 
 print("Done")
