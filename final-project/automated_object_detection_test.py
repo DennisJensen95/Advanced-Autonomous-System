@@ -9,19 +9,23 @@ def open_ulmsserver():
     :return:
     """
     ulmsserver = Popen(['ulmsserver'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
-    out = select.poll()
-    out.register(ulmsserver.stdout, select.POLLIN)
-    return ulmsserver, out
+    return ulmsserver
 
-ulmsserver, out = open_ulmsserver()
+ulmsserver= open_ulmsserver()
 start = time.time()
 timeout = 15
 while True:
-    if out.poll(1):
-        print(ulmsserver.stdout.readline())
-        ulmsserver.stdin.write('\n')
-    else:
-        time.sleep(0.5)
+    output = ulmsserver.stdout.readline()
+    if output == '' and ulmsserver.poll() is not None:
+        break
+    if output:
+        print(output.strip())
+
+    time.sleep(0.5)
+    ulmsserver.stdin.write('\n')
+
+
+
 
     if time.time() - start > timeout:
         time.sleep(1)
