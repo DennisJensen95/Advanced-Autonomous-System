@@ -20,6 +20,8 @@ def open_simserver():
     simserver = Popen(['simserver1', 'automateEnvironment.xml'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
     return simserver
 
+
+
 def run_mrc_script(mrc_script_path):
     """
     Run mrc script
@@ -84,7 +86,7 @@ def generate_object(obj_num, point_start=None, _random=False):
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner}\n'
 
-        point_o = point_start
+        point_o = np.asarray(point_start[:2])
 
     elif obj_num == 4:
         lower_right_corner = rotate(point_start, (x + 0.30, y))
@@ -93,7 +95,7 @@ def generate_object(obj_num, point_start=None, _random=False):
                        f'{point_start[0]}\t{point_start[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n' \
                        f'{lower_right_corner[0]}\t{lower_right_corner[1]}\t{upper_left_corner[0]}\t{upper_left_corner[1]}\n'
 
-        point_o = point_start
+        point_o = np.asarray(point_start[:2])
 
 
 
@@ -147,10 +149,8 @@ for j in range(iterations):
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
 
-        # './../Advanced'
-        # run_mrc_script()
-
-        time.sleep(5)
+        mrc_path = './../Advanced-Autonomous-System/final-project/final_project_v3'
+        run_mrc_script(mrc_path)
 
         ulmsserver.terminate()
         simserver.terminate()
