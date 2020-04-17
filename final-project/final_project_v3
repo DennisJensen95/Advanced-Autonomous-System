@@ -28,7 +28,7 @@ laser "resetlocalizer" %do we need this?
 mission = 1
 
 %first guidemark to visit
-gmkno = 2
+gmkno = 6
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%CONSTANTS%%%%%%%%%%%%%%%%%%%
@@ -53,8 +53,8 @@ laser "addpoint pno=4 x=0.5 y=3.5"
 laser "addpoint pno=5 x=0.5 y=4.55"
 
 % top left straight right (Inside track)
-laser "addpoint pno=6 x=1.5 y=4.70"
-laser "addpoint pno=7 x=2.5 y=4.70"
+laser "addpoint pno=6 x=1.5 y=4.65"
+laser "addpoint pno=7 x=2.5 y=4.65"
 laser "addpoint pno=8 x=3.5 y=4.55"
 
 % Right corner and down (inside track)
@@ -87,18 +87,18 @@ laser "addpoint pno=22 x=2.0 y=2.25"
 laser "addpoint pno=23 x=2.75 y=2.35"
 
 % Inside the red box (G13, G14)
-laser "addpoint pno=24 x=2 y=3"
+%laser "addpoint pno=24 x=2 y=3"
 laser "addpoint pno=25 x=2 y=3.3"
 %% Inside the red box (G13)
 laser "addpoint pno=26 x=1.25 y=3.4"
 laser "addpoint pno=27 x=1.25 y=4.0"
 %%% Infront of G13
-laser "addpoint pno=28 x=1.5 y=4.0"
+laser "addpoint pno=28 x=1.4 y=4.0"
 %% Inside the red box (G14)
 laser "addpoint pno=29 x=2.8 y=3.4"
 laser "addpoint pno=30 x=2.8 y=4.0"
 %%% Infront of G14
-laser "addpoint pno=31 x=2.5 y=4.0"
+laser "addpoint pno=31 x=2.7 y=4.0"
 
 %-------------------
 % CONNECTIONS
@@ -169,11 +169,11 @@ laser "addcon pno1=21 pno2=3"
 laser "addcon pno1=21 pno2=22"
 laser "addcon pno1=22 pno2=21"
 
-laser "addcon pno1=22 pno2=24"
-laser "addcon pno1=24 pno2=22"
+laser "addcon pno1=22 pno2=25"
+laser "addcon pno1=25 pno2=22"
 
-laser "addcon pno1=24 pno2=25"
-laser "addcon pno1=25 pno2=24"
+%laser "addcon pno1=24 pno2=25"
+%laser "addcon pno1=25 pno2=24"
 
 laser "addcon pno1=25 pno2=26"
 laser "addcon pno1=26 pno2=25"
@@ -265,7 +265,7 @@ gmkx[10] = 4.0
 gmkx[11] = 0.5
 gmkx[12] = 3.5
 gmkx[13] = 1.99
-gmkx[14] = 2.0
+gmkx[14] = 2.01
 
 gmky[1] = 1.5
 gmky[2] = 1.5
@@ -402,11 +402,12 @@ if (N>-1) "drive"
 %laser "localize getonly"
 invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
-angle= $res2 - thg
+xx = xg-$res0
+yy = yg-$res1
 
-stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
+angle = atan2(yy,xx)-$res2
 
-stop
+%stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
 wait 1
 
 angle = normalizeanglerad(angle)
@@ -428,7 +429,7 @@ if (gmval < 1) "bad"
 if (gmval >= 1) "good"
 
 label "bad"
-get "guidemark"
+%get "guidemark"
 wait
 gmval = $fiducialid
 
@@ -456,13 +457,14 @@ return
 label "readgm"
 tries = 0
 label "retry"
-get "guidemark"
+%get "guidemark"
 wait 2 :($fiducialid)
 eval $fiducialid
 gmval = $fiducialid
+wait 2
 tries = tries + 1
 
-if (gmval == 5) "complete"
+if (gmval == 98) "complete"
 
 if (tries < 2 | gmval < 1) "retry"
 
@@ -494,10 +496,10 @@ switch(n)
 	case 2:
 		x=1.25
 		y=2.35
-		objangle = 2.35
+		objangle = 1.7
 	case 3:
 		x=0.5
-		y=2.25
+		y=2.35
 		objangle = 2.0
 	case 4:
 		x=0.5
@@ -510,7 +512,7 @@ switch(n)
 	case 6:
 		x=1.5
 		y=0.5
-		objangle= 1.05
+		objangle= 1.15
 	case 7:
 		x=2.5
 		y=0.5
@@ -518,19 +520,19 @@ switch(n)
 	case 8:
 		x=3.5
 		y=0.5
-		objangle=2.35
+		objangle=2.6
 	case 9:
 		x=3.5
 		y=1.5
 		objangle = 1.57
 	case 10:
 		x=3.5
-		y=2.25
+		y=2.35
 		objangle = 2.09
 	case 11:
 		x=2.75
 		y=2.35
-		objangle = 0.78
+		objangle = 1.35
 endswitch
 
 
@@ -541,6 +543,7 @@ thc = $odoth
 
 stringcat "findroute  startx="xc"  starty="yc" endx="x" endy="y""
 laser "$string"
+wait 1
 
 K = $l4
 
@@ -579,12 +582,12 @@ K=K-1
 
 if (K>-1) "drivearound"
 
-
+ignoreobstacles
 turn objangle "rad" @v 0.2
 wait 2
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 laser "$string"
-wait 1
+wait 2
 
 n=n+1
 
