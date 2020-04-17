@@ -73,7 +73,7 @@ def generate_object(obj_num, point_start=None, _random=False):
 
     return str_to_write
 
-# os.chdir('./../../test/')
+os.chdir('./../../test/')
 
 map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.2     0.0     4.0     0.0     bottom right\n' \
