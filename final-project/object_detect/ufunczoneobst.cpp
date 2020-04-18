@@ -122,11 +122,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
       }
 
-      /*printf("x:\n");
+      printf("x:\n");
       printVec(x);
       printf("y:\n");
       printVec(y);
-      printf("\n");*/
+      printf("\n");
 
       double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
       double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
