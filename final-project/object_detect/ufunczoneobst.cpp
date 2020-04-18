@@ -178,6 +178,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
       }
 
+      printf("x:\n");
+      printVec(x);
+      printf("y:\n");
+      printVec(y);
+      printf("\n");
+
       // find good line fits and store in 2-D vector lines
       vector<vector<double>> lines;
       bool state = DoLsqLineProcessing(x, y, lines);
