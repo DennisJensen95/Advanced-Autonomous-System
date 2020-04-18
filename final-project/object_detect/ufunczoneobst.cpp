@@ -229,7 +229,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
       // print result
       printf("\n\nRESULT:\n");
       printf("Object:\t\t\t\t%d\n", object);
-      printf("Object SSD:\t\t\t%.2f\n", objectSSD);
+      printf("Object SSD:\t\t\t%f\n", objectSSD);
       printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
       printf("Object pose:\t\t\t%.2f rad\n\n", objectPose);
     }
@@ -763,16 +763,16 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   * */
 
   int n = x.size();
-  vector<int> parts = {5,7,2};
+  vector<int> parts = {5,7,2,3};
 
   for (uint itr = 0; itr < parts.size(); itr++){
     int part = parts[itr];
     int delta = n / part;
     int matches = 0;
 
+    cout << endl << "Attempt with parts = " << part << "..." << endl;
     if (n > part * 2)
     {
-      cout << endl << "Attempt with parts = " << part << ":" << endl;
       vector<vector<double>> lineMat;
 
       // extract line segments and do least squares estimation for each segment
@@ -830,6 +830,9 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
         RemoveDuplicates(lines);
         return true;
       }
+    }
+    else{
+      cout << "Not enough data points (" << n << ")." << endl;
     }
   }
   return false;
@@ -1040,7 +1043,7 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
 
     // create formatted string as C-string
     char str[100];
-    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose, objectSSD);
+    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f %f", object, pointO[0], pointO[1], objectPose, objectSSD);
     string Str = str;
 
     // write to file
