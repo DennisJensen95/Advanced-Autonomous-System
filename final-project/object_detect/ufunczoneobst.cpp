@@ -758,77 +758,73 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
   int n = x.size();
   int parts = 5;
-  int delta = n / parts;
-  int matches = 0;
 
-  if (n > parts * 2)
-  {
-    vector<vector<double>> lineMat;
+  for (int itr = 0; itr < 2; itr++){
+    int delta = n / parts;
+    int matches = 0;
 
-    // extract line segments and do least squares estimation for each segment
-    for (int i = 0; i < parts; i++)
+    if (n > parts * 2)
     {
-      vector<double> tempX, tempY, tempL;
-      for (int j = 0 + (int)(i * delta); j < (int)((i + 1) * delta); j++)
+      cout << endl << "Attempt with parts = " << parts << ":" << endl;
+      vector<vector<double>> lineMat;
+
+      // extract line segments and do least squares estimation for each segment
+      for (int i = 0; i < parts; i++)
       {
-        tempX.push_back(x[j]);
-        tempY.push_back(y[j]);
-      }
-
-      /*printf("i = %d\n", i);
-      printf("tempX:\n\t");
-      printVec(tempX);
-      printf("tempY:\n\t");
-      printVec(tempY);*/
-
-      lineMat.push_back(lsqline(tempX, tempY));
-    }
-
-    // copy of lineMat
-    auto lineMatCopy(lineMat);
-
-    // round numbers
-    for (int i = 0; i < parts; i++)
-    {
-      lineMat[i][0] = round(lineMat[i][0]);
-      lineMat[i][1] = round(lineMat[i][1]);
-    }
-
-    cout << endl;
-    for (int i = 0; i < parts; i++)
-    {
-      printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
-      // Count occurences of lineMat[i]
-      /*matches = count(lineMat.begin(), lineMat.end(), lineMat[i]);
-      //printf("Matches: %d\n", matches)
-
-      if (matches > 1)
-      {
-        lines.push_back(lineMatCopy[i]);
-      }*/
-
-      matches = 0;
-      for(int j = 0; j < parts; j++){
-        if (abs(lineMat[j][0] - lineMat[i][0]) < 0.03 && abs(lineMat[j][1] - lineMat[i][1]) < 0.03)
+        vector<double> tempX, tempY, tempL;
+        for (int j = 0 + (int)(i * delta); j < (int)((i + 1) * delta); j++)
         {
-          matches++;
+          tempX.push_back(x[j]);
+          tempY.push_back(y[j]);
         }
+
+        /*printf("i = %d\n", i);
+        printf("tempX:\n\t");
+        printVec(tempX);
+        printf("tempY:\n\t");
+        printVec(tempY);*/
+
+        lineMat.push_back(lsqline(tempX, tempY));
       }
 
-      if (matches > 1)
+      // copy of lineMat
+      auto lineMatCopy(lineMat);
+
+      // round numbers
+      for (int i = 0; i < parts; i++)
       {
-        lines.push_back(lineMatCopy[i]);
+        lineMat[i][0] = round(lineMat[i][0]);
+        lineMat[i][1] = round(lineMat[i][1]);
       }
 
-      
-    }
+      for (int i = 0; i < parts; i++)
+      {
+        printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
 
-    // return true if 1 or more line parameters have been added
-    if (lines.size() > 0)
-    {
-      RemoveDuplicates(lines);
-      return true;
+        matches = 0;
+        for(int j = 0; j < parts; j++){
+          if (abs(lineMat[j][0] - lineMat[i][0]) < 0.03 && abs(lineMat[j][1] - lineMat[i][1]) < 0.03)
+          {
+            matches++;
+          }
+        }
+
+        if (matches > 1)
+        {
+          lines.push_back(lineMatCopy[i]);
+        }
+
+        
+      }
+
+      // return true if 1 or more line parameters have been added
+      if (lines.size() > 0)
+      {
+        RemoveDuplicates(lines);
+        return true;
+      }
     }
+    parts += 2;
   }
   return false;
 }
