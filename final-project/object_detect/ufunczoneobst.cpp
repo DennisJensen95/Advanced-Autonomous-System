@@ -724,8 +724,8 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
       {
         break;
       }
-      if (abs(a - v[j][0]) < 0.08 && abs(r - v[j][1]) < 0.08) //assume duplicate if both alpha and r are within 0.08 of eachother
-      {
+      if (sqrt(pow((a - v[j][0]),2) + pow((r - v[j][1]),2)) < 0.07) //assume duplicate if euclidian distance < 0.07 
+      { //(abs(a - v[j][0]) < 0.08 && abs(r - v[j][1]) < 0.08)
         // recursive average of the similar elements
         v[itr][0] = (v[itr][0]*kk+v[j][0])/(kk+1.0);
         v[itr][1] = (v[itr][1]*kk+v[j][1])/(kk+1.0);
@@ -810,7 +810,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
 
         matches = 0;
         for(int j = 0; j < part; j++){
-          if (abs(lineMat[j][0] - lineMat[i][0]) < 0.03 && abs(lineMat[j][1] - lineMat[i][1]) < 0.03)
+          if (abs(lineMat[j][0] - lineMat[i][0]) < 0.06 && abs(lineMat[j][1] - lineMat[i][1]) < 0.06)
           {
             matches++;
           }
