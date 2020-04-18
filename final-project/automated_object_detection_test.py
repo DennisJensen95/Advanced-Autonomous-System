@@ -9,7 +9,7 @@ def open_ulmsserver():
     Open ulmserver
     :return:
     """
-    ulmsserver = Popen(['ulmsserver'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    ulmsserver = Popen(['ulmsserver'], universal_newlines=True)
     return ulmsserver
 
 def open_simserver():
@@ -17,7 +17,7 @@ def open_simserver():
     Open simserver
     :return:
     """
-    simserver = Popen(['simserver1', 'automateEnvironment.xml'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    simserver = Popen(['simserver1', 'automateEnvironment.xml'], universal_newlines=True)
     return simserver
 
 
@@ -27,7 +27,7 @@ def run_mrc_script(mrc_script_path):
     Run mrc script
     :return:
     """
-    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], stdout=PIPE, stdin=PIPE, universal_newlines=True)
+    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], universal_newlines=True)
     return mrc_script
 
 def rotate(origin_angle, point):
