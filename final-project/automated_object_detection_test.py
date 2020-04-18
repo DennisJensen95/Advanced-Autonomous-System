@@ -149,13 +149,12 @@ for j in range(iterations):
 
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
-        time.sleep(3)
+        time.sleep(5)
         mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v3'
         mrc_process = run_mrc_script(mrc_path)
         time.sleep(3)
-        print(mrc_process.stdout.read())
         mrc_process.wait()
-
+        mrc_process.terminate()
         ulmsserver.terminate()
         simserver.terminate()
 
