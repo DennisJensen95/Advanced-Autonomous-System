@@ -113,7 +113,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         double xx = cos(angle) * range;
         double yy = sin(angle) * range;
         transform(poseW, xx, yy);
-        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05)
+        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05 && range > 0.03)
         {
             //r.push_back(range);
             //th.push_back(angle);
@@ -178,11 +178,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
       }
 
-      printf("x:\n");
+      /*printf("x:\n");
       printVec(x);
       printf("y:\n");
       printVec(y);
-      printf("\n");
+      printf("\n");*/
 
       // find good line fits and store in 2-D vector lines
       vector<vector<double>> lines;
