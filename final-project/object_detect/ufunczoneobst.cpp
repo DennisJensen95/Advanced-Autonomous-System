@@ -757,19 +757,20 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   * */
 
   int n = x.size();
-  int parts = 5;
+  vector<int> parts = {5,7,2};
 
-  for (int itr = 0; itr < 2; itr++){
-    int delta = n / parts;
+  for (uint itr = 0; itr < parts.size(); itr++){
+    int part = parts[itr];
+    int delta = n / part;
     int matches = 0;
 
-    if (n > parts * 2)
+    if (n > part * 2)
     {
-      cout << endl << "Attempt with parts = " << parts << ":" << endl;
+      cout << endl << "Attempt with parts = " << part << ":" << endl;
       vector<vector<double>> lineMat;
 
       // extract line segments and do least squares estimation for each segment
-      for (int i = 0; i < parts; i++)
+      for (int i = 0; i < part; i++)
       {
         vector<double> tempX, tempY, tempL;
         for (int j = 0 + (int)(i * delta); j < (int)((i + 1) * delta); j++)
@@ -791,18 +792,18 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
       auto lineMatCopy(lineMat);
 
       // round numbers
-      for (int i = 0; i < parts; i++)
+      for (int i = 0; i < part; i++)
       {
         lineMat[i][0] = round(lineMat[i][0]);
         lineMat[i][1] = round(lineMat[i][1]);
       }
 
-      for (int i = 0; i < parts; i++)
+      for (int i = 0; i < part; i++)
       {
         printf("Line %d:\t\talpha=%f\tr=%f\n", i, lineMat[i][0], lineMat[i][1]);
 
         matches = 0;
-        for(int j = 0; j < parts; j++){
+        for(int j = 0; j < part; j++){
           if (abs(lineMat[j][0] - lineMat[i][0]) < 0.03 && abs(lineMat[j][1] - lineMat[i][1]) < 0.03)
           {
             matches++;
@@ -824,7 +825,6 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
         return true;
       }
     }
-    parts += 2;
   }
   return false;
 }
