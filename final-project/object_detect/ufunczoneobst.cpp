@@ -122,11 +122,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
       }
 
-      printf("x:\n");
+      /*printf("x:\n");
       printVec(x);
       printf("y:\n");
       printVec(y);
-      printf("\n");
+      printf("\n");*/
 
       double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
       double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
@@ -170,7 +170,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         double yy = sin(angle) * range;
         // transform to world frame for test
         transform(poseW, xx, yy);
-        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05)
+        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05 && range > 0.03)
         {
             // the data is saved in the laser frame
             x.push_back(cos(angle)*range);
