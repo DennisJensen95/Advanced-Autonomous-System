@@ -220,14 +220,16 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     int object = 0;
     vector<double> pointO = {0,0};
     double objectPose = 0;
+    double objectSSD = 0;
 
     // perform object processing
-    bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose);
+    bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose, objectSSD);
     if (FoundObject)
     {
       // print result
       printf("\n\nRESULT:\n");
       printf("Object:\t\t\t\t%d\n", object);
+      printf("Object SSD:\t\t\t%.2f\n", objectSSD);
       printf("Point o coordinates (x,y):\t(%.2f, %.2f)\n", pointO[0], pointO[1]);
       printf("Object pose:\t\t\t%.2f rad\n\n", objectPose);
     }
@@ -243,7 +245,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     sendMsg(msg, reply);
 
     // write the result to a file for statistics
-    WriteResult2File(object, pointO, objectPose);
+    WriteResult2File(object, pointO, objectPose, objectSSD);
   }
   else
   { // do some action and send a reply
@@ -298,7 +300,7 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
-bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose)
+bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, double &objectSSD)
 {
   /*
   * This function implements the top layer structure to determine which object that has been spotted by the laser scanner.
@@ -330,7 +332,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
     printMat(resultXY);
 
     // determine the data for the object
-    bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v);
+    bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v, objectSSD);
 
     return FoundObject;
   }
@@ -342,7 +344,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   return false;
 }
 
-bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat)
+bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat, double &objectSSD)
 {
   /*
   * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
@@ -395,10 +397,12 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
     // use SSD to determine which object we are dealing with
     if (CalcSSD(lengths, obj1) < CalcSSD(lengths, obj2))
     {
+      objectSSD = CalcSSD(lengths, obj1);
       object = 1;
     }
     else
     {
+      objectSSD = CalcSSD(lengths, obj2);
       object = 2;
     }
 
@@ -431,10 +435,12 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vecto
     // SSD between the measured lengths and the triangles
     if (CalcSSD(lengths, obj3) < CalcSSD(lengths, obj4))
     {
+      objectSSD = CalcSSD(lengths, obj3);
       object = 3;
     }
     else
     {
+      objectSSD = CalcSSD(lengths, obj4);
       object = 4;
     }
 
@@ -1005,7 +1011,7 @@ float UFunczoneobst::round(float var)
   return (float)value / 100;
 }
 
-void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose){
+void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose, double objectSSD){
   // Creation of ofstream class object 
   ofstream fout; 
   
@@ -1029,12 +1035,12 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
   if (fout) {
     //
     if(not flag){
-      fout << "Object | Point o x | Point o y | Object pose" << endl;
+      fout << "Object | Point o x | Point o y | Object pose | SSD" << endl;
     }
 
     // create formatted string as C-string
     char str[100];
-    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose);
+    snprintf(str, sizeof(str), "%d %.2f %.2f %.2f %.2f", object, pointO[0], pointO[1], objectPose, objectSSD);
     string Str = str;
 
     // write to file
