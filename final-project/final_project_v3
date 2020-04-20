@@ -48,18 +48,18 @@ xlaser = 0.26 %laser offset in x-direction
 % straight up from start position
 laser "addpoint pno=1 x=0.5 y=0.5"
 laser "addpoint pno=2 x=0.5 y=1.5"
-laser "addpoint pno=3 x=0.5 y=2.5"
+laser "addpoint pno=3 x=0.5 y=2.35"
 laser "addpoint pno=4 x=0.5 y=3.5"
-laser "addpoint pno=5 x=0.5 y=4.5"
+laser "addpoint pno=5 x=0.5 y=4.55"
 
 % top left straight right (Inside track)
-laser "addpoint pno=6 x=1.5 y=4.6"
-laser "addpoint pno=7 x=2.5 y=4.6"
-laser "addpoint pno=8 x=3.5 y=4.6"
+laser "addpoint pno=6 x=1.5 y=4.65"
+laser "addpoint pno=7 x=2.5 y=4.65"
+laser "addpoint pno=8 x=3.5 y=4.55"
 
 % Right corner and down (inside track)
 laser "addpoint pno=9 x=3.5 y=3.5"
-laser "addpoint pno=10 x=3.5 y=2.5"
+laser "addpoint pno=10 x=3.5 y=2.35"
 laser "addpoint pno=11 x=3.5 y=1.5"
 laser "addpoint pno=12 x=3.5 y=0.5"
 
@@ -78,27 +78,27 @@ laser "addpoint pno=19 x=4.5 y=3.5"
 laser "addpoint pno=20 x=4.5 y=1.5"
 
 % From left side to the entrance of the red box (G13, G14)
-laser "addpoint pno=21 x=1.25 y=2.25"
+laser "addpoint pno=21 x=1.25 y=2.35"
 
 % Infront of the entrance of the red box
 laser "addpoint pno=22 x=2.0 y=2.25"
 
 % From right side to the entrance of the red box (G13, G14)
-laser "addpoint pno=23 x=2.75 y=2.25"
+laser "addpoint pno=23 x=2.75 y=2.35"
 
 % Inside the red box (G13, G14)
-laser "addpoint pno=24 x=2 y=3"
+%laser "addpoint pno=24 x=2 y=3"
 laser "addpoint pno=25 x=2 y=3.3"
 %% Inside the red box (G13)
-laser "addpoint pno=26 x=1.2 y=3.4"
-laser "addpoint pno=27 x=1.2 y=4.0"
+laser "addpoint pno=26 x=1.25 y=3.4"
+laser "addpoint pno=27 x=1.25 y=4.0"
 %%% Infront of G13
-laser "addpoint pno=28 x=1.6 y=4.0"
+laser "addpoint pno=28 x=1.4 y=4.0"
 %% Inside the red box (G14)
 laser "addpoint pno=29 x=2.8 y=3.4"
 laser "addpoint pno=30 x=2.8 y=4.0"
 %%% Infront of G14
-laser "addpoint pno=31 x=2.5 y=4.0"
+laser "addpoint pno=31 x=2.7 y=4.0"
 
 %-------------------
 % CONNECTIONS
@@ -169,11 +169,11 @@ laser "addcon pno1=21 pno2=3"
 laser "addcon pno1=21 pno2=22"
 laser "addcon pno1=22 pno2=21"
 
-laser "addcon pno1=22 pno2=24"
-laser "addcon pno1=24 pno2=22"
+laser "addcon pno1=22 pno2=25"
+laser "addcon pno1=25 pno2=22"
 
-laser "addcon pno1=24 pno2=25"
-laser "addcon pno1=25 pno2=24"
+%laser "addcon pno1=24 pno2=25"
+%laser "addcon pno1=25 pno2=24"
 
 laser "addcon pno1=25 pno2=26"
 laser "addcon pno1=26 pno2=25"
@@ -243,7 +243,7 @@ set "$odoth" 0
 
 % set localizer
 laser "LOCALIZE silent"
-laser "push t='2.0' cmd='localize'"
+laser "push t='0.5' cmd='localize'"
 
 %-------------------
 % GUIDEMARKS
@@ -264,8 +264,8 @@ gmkx[9] = 0.0
 gmkx[10] = 4.0
 gmkx[11] = 0.5
 gmkx[12] = 3.5
-gmkx[13] = 2.0
-gmkx[14] = 2.0
+gmkx[13] = 1.99
+gmkx[14] = 2.01
 
 gmky[1] = 1.5
 gmky[2] = 1.5
@@ -288,8 +288,8 @@ gmkth[3] = 3.14
 gmkth[4] = 0
 gmkth[5] = 3.14
 gmkth[6] = 0
-gmkth[7] = 0
-gmkth[8] = 3.14
+gmkth[7] = 3.14
+gmkth[8] = 0
 gmkth[9] = 0
 gmkth[10] = 3.14
 gmkth[11] = -1.57
@@ -386,10 +386,11 @@ angle = th-$res2
 angle = normalizeanglerad(angle)
 ignoreobstacles
 eval angle
-wait 1
+wait 0.5
 turn angle "rad" @v 0.3
 
 ignoreobstacles
+wait 0.5
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
 stop
 wait 1
@@ -401,16 +402,18 @@ if (N>-1) "drive"
 %laser "localize getonly"
 invtrans $l0 $l1 $l2 $odox $odoy $odoth
 
-angle= $res2 - thg
+xx = xg-$res0
+yy = yg-$res1
 
-stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
+angle = atan2(yy,xx)-$res2
 
-stop
+%stringcat " thw = " $res2 "guidemarkth =" thg "turned angle =" angle"odoth="$odoth
 wait 1
 
 angle = normalizeanglerad(angle)
 ignoreobstacles
 turn angle "rad" @v 0.3
+wait 0.5
 
 
 return
@@ -426,7 +429,7 @@ if (gmval < 1) "bad"
 if (gmval >= 1) "good"
 
 label "bad"
-get "guidemark"
+%get "guidemark"
 wait
 gmval = $fiducialid
 
@@ -448,20 +451,20 @@ return
 
 
 
-
 %-------------------------%
 % READ GUIDEMARK FUNCTION %
 %-------------------------%
 label "readgm"
 tries = 0
 label "retry"
-get "guidemark"
+%get "guidemark"
 wait 2 :($fiducialid)
 eval $fiducialid
 gmval = $fiducialid
+wait 2
 tries = tries + 1
 
-if (gmval == 5) "complete"
+if (gmval == 98) "complete"
 
 if (tries < 2 | gmval < 1) "retry"
 
@@ -476,72 +479,70 @@ goto "start"
 %%%%%%%%%%%%%%MISSION 2%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%find object
-
+% this mission finds the object on the loose
 label "mission2"
 
-xp = 2.0
-yp = 1.5
+n=1 %iterator for switch case
 
-n=1
+% (x,y) of box with object on the loose
+midx = 2
+midy = 1.5
 
 %Go to reading points
-
 label "objectfinding"
 
 
-
-% Read from points 21 22 23 11 13 14 2
-
-
-
-
-
-
+% Read from points 22 -> 21 -> 3 -> 2 -> 1 -> 14 -> 13 -> 12 -> 11 -> 10 -> 23
 switch(n)
 	case 1:
 		x=2.0
 		y=2.25
-		objangle = -1.57
 	case 2:
 		x=1.25
-		y=2.25
-		objangle = 2.35
+		y=2.35
 	case 3:
 		x=0.5
-		y=1.5
-		objangle = 1.57
+		y=2.35
 	case 4:
+		x=0.5
+		y=1.5
+	case 5:
+		x=0.5
+		y=0.5
+	case 6:
 		x=1.5
 		y=0.5
-		objangle= 1.05
-	case 5:
+	case 7:
 		x=2.5
 		y=0.5
-		objangle=2.09
-	case 6:
+	case 8:
+		x=3.5
+		y=0.5
+	case 9:
 		x=3.5
 		y=1.5
-		objangle = 1.57
-	case 7:
+	case 10:
+		x=3.5
+		y=2.35
+	case 11:
 		x=2.75
-		y=2.25
-		objangle = 0.78
+		y=2.35
 endswitch
+
 
 xc = $odox
 yc = $odoy
 thc = $odoth	
 
+
 stringcat "findroute  startx="xc"  starty="yc" endx="x" endy="y""
 laser "$string"
 wait 1
+
 K = $l4
 
 
-
 label "drivearound"
-
 stringcat "getpoint p=" K""
 laser "$string"
 wait 1
@@ -562,47 +563,70 @@ angle = normalizeanglerad(angle)
 eval angle
 ignoreobstacles
 turn angle "rad" @v 0.3
-wait 1
 
 ignoreobstacles
+wait 0.5
 drivew x y th "rad" @v 0.5 :($targetdist<0.05) 
 stop
-wait 1
+wait 0.5
 
 K=K-1
 
 if (K>-1) "drivearound"
 
 
-turn objangle "rad" @v 0.2
-turn 30 @v 0.2
-c=1
-label "wooop"
+%call "findobject"
+
+% Turning towards middle of box on the loose
+posx = midx - $odox
+posy = midy - $odoy
+
+midangle = atan2(posy, posx) - $odoth
+midangle = normalizeanglerad(midangle)
+
+ignoreobstacles
+turn midangle "rad" @v 0.2
+wait 2
 stringcat "zoneobst detect x="$odox" y="$odoy" th="$odoth""
 laser "$string"
-wait 1
-turn -10 @v 0.2
-c=c+1
-if (c!=6) "wooop"
+wait 2
 
 n=n+1
 
-if (n!=8) "objectfinding"
+if (n!=12) "objectfinding"
 
 wait 1
 
-laser "zoneobst determine"
-wait 1
-
-
-wait 1
 %detect object
-
-
+laser "zoneobst determine"
+wait 3
 
 
 mission = mission + 1
 goto "start"
+
+
+label "findobject"
+posx = midx - $odox
+posy = midy - $odoy
+
+midangle = atan2(posy, posx) - $odoth
+midangle = normalizeanglerad(midangle)
+
+ignoreobstacles
+turn midangle "rad" @v 0.2
+wait 2
+
+stringcat "zoneobst findobject x="$odox" y="$odoy" th="$odoth""
+laser "$string"
+
+boxx = $l0
+boxy = $l1
+
+eval boxx
+eval boxy
+
+return
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%MISSION 3%%%%%%%%%%%%%%%%%%%
@@ -611,19 +635,6 @@ goto "start"
 % drive to goal
 
 label "mission3"
-
-goto "finish"
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%FINISH%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-label "missionerror"
-%NO MISSION NUMBER DETECTED
-
-label "finish"
 
 startx=0.25
 starty=0.25
@@ -634,7 +645,7 @@ laser "$string"
 wait 1
 N = $l4
 
-label "drive"
+label "driveHome"
 
 stringcat "getpoint p=" N""
 laser "$string"
@@ -658,16 +669,32 @@ wait 1
 turn angle "rad" @v 0.3
 
 ignoreobstacles
+wait 1
 drivew x y th "rad" @v 0.8 :($targetdist<0.05) 
 stop
 wait 1
 
-
 N = N - 1
-if (N>-1) "drive"
+
+if (N>-1) "driveHome"
+
+turn 90
+fwd -0.25
+turn 90
+fwd -0.25
+
+goto "finish"
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%FINISH%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+label "missionerror"
+%NO MISSION NUMBER DETECTED
+
+label "finish"
 stop
 
-stringcat "OOOOOOH KILL EM"
+% OOOOOOH KILL EM"
 % DRIVE FINISHED

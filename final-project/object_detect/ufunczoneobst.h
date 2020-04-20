@@ -24,6 +24,9 @@
 #include <vector>
 #include <bits/stdc++.h> 
 #include <ulms4/ufunclaserbase.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -44,7 +47,7 @@ public:
   Constructor */
   UFunczoneobst()
   { // set the command (or commands) handled by this plugin
-    setCommand("zoneobst detect x y th determine", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
+    setCommand("zoneobst detect x y th determine findobject", "zoneobstif", "obstacle detect for MRC (Compiled " __DATE__ " " __TIME__ ")");
     createBaseVar();
   }
   /**
@@ -65,19 +68,22 @@ public:
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
     vector<double> transform(vector<double> poseR);
+    void transform(vector<double> pose, double &x, double &y);
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
 
-    bool DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose);
+    bool DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
     void RemoveDuplicates(vector<vector<double>> &v);
     vector<double> FindIntersection(vector<double> a, vector<double> b);
     vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> v);
-    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat);
+    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat, double &objectSSD);
     double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
     double CalcSSD(vector<double> a, vector<double> b);
     bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
     bool FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
     double CalcDistToPoint(vector<double> a);
+
+    void WriteResult2File(int object, vector<double> pointO, double objectPose, double objectSSD);
 };
 
 
