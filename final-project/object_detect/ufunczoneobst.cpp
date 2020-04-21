@@ -205,8 +205,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
 
         // print result to laser server
-        printf("\nRobot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
-        printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
+        printf("\nLaser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
         printf("Line parameters (world):\n");
         printMat(goodLineFitsWorldCoordinates);
