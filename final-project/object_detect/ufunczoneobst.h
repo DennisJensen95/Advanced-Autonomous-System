@@ -67,16 +67,16 @@ public:
     bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines);
     vector<double> lsqline(vector<double> x, vector<double> y);
     vector<double> transline(vector<double> lineL, vector <double> poseW);
-    vector<double> transform(vector<double> poseR);
+    void transform(vector<double> &pose);
     void transform(vector<double> pose, double &x, double &y);
     float round(float var);
     vector<vector<double>> goodLineFitsWorldCoordinates;
 
     bool DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
     void RemoveDuplicates(vector<vector<double>> &v);
-    vector<double> FindIntersection(vector<double> a, vector<double> b);
-    vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> v);
-    bool DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat, double &objectSSD);
+    vector<double> FindIntersection(vector<double> &u, vector<double> &v);
+    vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> &v);
+    bool DetermineObject(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> &lineMat, double &objectSSD);
     double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
     double CalcSSD(vector<double> a, vector<double> b);
     bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
