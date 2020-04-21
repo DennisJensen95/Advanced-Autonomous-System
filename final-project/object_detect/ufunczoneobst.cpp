@@ -95,11 +95,13 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     // Get laser data
     if (data->isValid())
     {
-      vector<double> poseR, poseW;
-      poseR.push_back(xo);
-      poseR.push_back(yo);
-      poseR.push_back(tho);
-      poseW = transform(poseR);
+      // create vector with robot pose (x,y,th) in world given by the caller
+      vector<double> poseW;
+      poseW.push_back(xo);
+      poseW.push_back(yo);
+      poseW.push_back(tho);
+      // find the pose of the laser scanner in world
+      transform(poseW);
 
 
       //vector<double> r;
