@@ -95,11 +95,13 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     // Get laser data
     if (data->isValid())
     {
-      vector<double> poseR, poseW;
-      poseR.push_back(xo);
-      poseR.push_back(yo);
-      poseR.push_back(tho);
-      poseW = transform(poseR);
+      // create vector with robot pose (x,y,th) in world given by the caller
+      vector<double> poseW;
+      poseW.push_back(xo);
+      poseW.push_back(yo);
+      poseW.push_back(tho);
+      // find the pose of the laser scanner in world
+      transform(poseW);
 
 
       //vector<double> r;
@@ -148,12 +150,12 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     if (data->isValid())
     {
       // create vector with robot pose (x,y,th) in world given by the caller
-      vector<double> poseR, poseW;
-      poseR.push_back(xo);
-      poseR.push_back(yo);
-      poseR.push_back(tho);
+      vector<double> poseW;
+      poseW.push_back(xo);
+      poseW.push_back(yo);
+      poseW.push_back(tho);
       // find the pose of the laser scanner in world
-      poseW = transform(poseR);
+      transform(poseW);
 
       // vectors to store x,y data
       vector<double> x;
@@ -205,8 +207,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         }
 
         // print result to laser server
-        printf("\nRobot pose in world:\t(%.2f,%.2f,%.2f)\n", poseR[0], poseR[1], poseR[2]);
-        printf("Laser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
+        printf("\nLaser pose in world:\t(%.2f,%.2f,%.2f)\n", poseW[0], poseW[1], poseW[2]);
 
         printf("Line parameters (world):\n");
         printMat(goodLineFitsWorldCoordinates);
@@ -350,17 +351,17 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   return false;
 }
 
-bool UFunczoneobst::DetermineObject(vector<vector<double>> v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> lineMat, double &objectSSD)
+bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> &lineMat, double &objectSSD)
 {
   /*
   * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
   * 
   * 
-  * INPUT:  vector<vector<double>> v: X,Y coordinates of intersection between lines
+  * INPUT:  vector<vector<double>> v: address of X,Y coordinates of intersection between lines
   *         int &ojbect: address of integer value of the detected object (1 to 4)
   *         vector<double> &pointO: address vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
-  *         vector<vector<double>> lineMat: 2-D vector containing alhpa,r parameters of good line fits
+  *         vector<vector<double>> lineMat: address of 2-D vector containing alhpa,r parameters of good line fits
   * 
   * OUTPUT:
   *         bool value stating if the function is successful or not
@@ -641,7 +642,7 @@ double UFunczoneobst::CalcDistanceBetweenPoints(vector<double> p1, vector<double
   return sqrt(pow(p2[0] - p1[0], 2) + pow(p2[1] - p1[1], 2) * 1.0);
 }
 
-vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> v)
+vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> &v)
 {
   /*
   * This function implements the structure to find a matrix with all intersections between all 
@@ -649,7 +650,7 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
   * The function filters out intersections that are outside of the "green area" on the map.
   * 
   * 
-  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
+  * INPUT:  vector<vector<double>> v: address of 2-D vector containing alhpa,r parameters of good line fits
   * 
   * OUTPUT:
   *         vector<vector<double>>: 2-D vector with (X,Y) location of the intersection between lines in v
@@ -671,7 +672,7 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
   return intersections;
 }
 
-vector<double> UFunczoneobst::FindIntersection(vector<double> u, vector<double> v)
+vector<double> UFunczoneobst::FindIntersection(vector<double> &u, vector<double> &v)
 {
   /*
   * This function implements the core algorithm to find the (x,y) location of the intersection
@@ -963,26 +964,19 @@ void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
   y = tempy;
 }
 
-vector<double> UFunczoneobst::transform(vector<double> poseR)
+void UFunczoneobst::transform(vector<double> &pose)
 {
   /*
   * This function finds the pose of the laser scanner in the world frame using the 
   * pose of the robot in the world frame.
   * The laser scanner is mounted on the robot 26 cm from the centre.
   * 
-  * INPUT:  vector<double> poseR: (x,y,th) pose of the robot in the world frame
+  * INPUT:  vector<double> pose: address of (x,y,th) pose of the robot in the world frame to be transformed to laser pose in world
   * 
-  * OUTPUT:
-  *         vector<double>: (x,y,th) pose of the laser in the world frame
   * */
 
-  vector<double> poseW;
-
-  poseW.push_back(cos(poseR[2]) * 0.26 + poseR[0]);
-  poseW.push_back(sin(poseR[2]) * 0.26 + poseR[1]);
-  poseW.push_back(poseR[2]);
-
-  return poseW;
+  pose[0] = cos(pose[2]) * 0.26 + pose[0];
+  pose[1] = sin(pose[2]) * 0.26 + pose[1];
 }
 
 void UFunczoneobst::printVec(vector<double> &result)
