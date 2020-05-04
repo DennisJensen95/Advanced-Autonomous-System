@@ -7,27 +7,28 @@ import numpy as np
 def open_ulmsserver():
     """
     Open ulmserver
-    :return:
+    :return: Subprocess running ulmsserver
     """
-    ulmsserver = Popen(['ulmsserver'], universal_newlines=True)
+    ulmsserver = Popen(['ulmsserver'],
+                       stdout=PIPE, stderr=PIPE, universal_newlines=True)
     return ulmsserver
 
 def open_simserver():
     """
     Open simserver
-    :return:
+    :return: Subprocess running simulation server
     """
-    simserver = Popen(['simserver1', 'automateEnvironment.xml'], universal_newlines=True)
+    simserver = Popen(['simserver1', 'automateEnvironment.xml'],
+                      stdout=PIPE, stderr=PIPE, universal_newlines=True)
     return simserver
-
-
 
 def run_mrc_script(mrc_script_path):
     """
     Run mrc script
-    :return:
+    :return: Subprocess running mission script
     """
-    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], universal_newlines=True)
+    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'],
+                       stdout=PIPE, stderr=PIPE, universal_newlines=True)
     return mrc_script
 
 def rotate(origin_angle, point):
@@ -44,6 +45,14 @@ def rotate(origin_angle, point):
     return qx, qy
 
 def generate_object(obj_num, point_start=None, _random=False):
+    """
+    Takes a starting point or will random choose one and generate the object
+    corresponding with the object number given.
+    :param obj_num: Object to genereate
+    :param point_start: A point to generate the object from if not to generate random position
+    :param _random: Do a random generation of the object
+    :return:
+    """
     if not _random:
         point_start = (2, 1.5, 0)
         x, y, theta = point_start
