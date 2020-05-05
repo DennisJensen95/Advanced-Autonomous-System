@@ -33,7 +33,7 @@ laser "odopose log=true"
 mission = 1
 
 %first guidemark to visit
-gmkno = 13
+gmkno = 2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%CONSTANTS%%%%%%%%%%%%%%%%%%%
