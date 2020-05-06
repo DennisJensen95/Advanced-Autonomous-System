@@ -992,18 +992,20 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
   ofstream fout;                
   fout.open("/home/smr/test/temp.txt", ios::out);
   
-  string line; // used to store line read from line
+  string lineold; // used to store newest line read from line
+  string linenew; // stores the old line
   
-  while(getline(fin, line)){
-    
-    if (not fin.eof()){
-        fout << line << endl;
+  // the last line in results_cpp.txt is a line of "-1"s 
+  // and should be excluded
+  while(getline(fin, linenew)){
+    if (!lineold.empty()){
+        fout << lineold << endl;
     }
-    else {
-        fout << Str << endl;
-    }
-    
+    lineold = linenew;
   }
+  
+  // append the result
+  fout << Str << endl;
   
   fout.close();
   fin.close();
