@@ -252,12 +252,12 @@ void UFunczoneobst::createBaseVar()
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 */
 
-bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, double &objectSSD)
+bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &goodLines, int &object, vector<double> &pointO, double &objectPose, double &objectSSD)
 {
   /*
   * This function implements the top layer structure to determine which object that has been spotted by the laser scanner.
   * 
-  * INPUT:  vector<vector<double>> &v: address of 2-D vector containing alhpa,r parameters of good line fits
+  * INPUT:  vector<vector<double>> &goodLines: address of 2-D vector containing alhpa,r parameters of good line fits
   *         int &ojbect: address of integer value of the detected object (1 to 4)
   *         vector<double> &pointO: address vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
@@ -267,24 +267,24 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   * */
 
   // we need atleast three lines for anything useful
-  if (v.size() > 2)
+  if (goodLines.size() > 2)
   {
     // remove duplicate line parameters and print what was found
-    RemoveDuplicates(v);
+    RemoveDuplicates(goodLines);
     printf("\nFinal line parameters (world):\n");
-    printMat(v);
+    printMat(goodLines;
     
     // find the intersections between the lines
-    vector<vector<double>> resultXY;
-    resultXY = GetIntersectionMatrix(v); // extract X,Y values of all line intersections
+    vector<vector<double>> intersectionsXY;
+    intersectionsXY = GetIntersectionMatrix(goodLines); // extract X,Y values of all line intersections
 
     // remove the duplicates again and print result
     printf("\nIntersections (x,y):\n");
-    RemoveDuplicates(resultXY);
-    printMat(resultXY);
+    RemoveDuplicates(intersectionsXY);
+    printMat(intersectionsXY);
 
     // determine the data for the object
-    bool FoundObject = DetermineObject(resultXY, object, pointO, objectPose, v, objectSSD);
+    bool FoundObject = DetermineObject(goodLines, intersectionsXY, object, pointO, objectPose, objectSSD);
 
     return FoundObject;
   }
@@ -296,24 +296,24 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &v, int &object, v
   return false;
 }
 
-bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> &lineMat, double &objectSSD)
+bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<vector<double>> &intersectionsXY, int &object, vector<double> &pointO, double &objectPose, double &objectSSD)
 {
   /*
   * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
   * 
   * 
-  * INPUT:  vector<vector<double>> v: address of X,Y coordinates of intersection between lines
+  * INPUT:  vector<vector<double>> goodLines: address of 2-D vector containing alhpa,r parameters of good line fits
+  *         vector<vector<double>> intersectionsXY: address of X,Y coordinates of intersection between lines
   *         int &ojbect: address of integer value of the detected object (1 to 4)
   *         vector<double> &pointO: address vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
-  *         vector<vector<double>> lineMat: address of 2-D vector containing alhpa,r parameters of good line fits
   * 
   * OUTPUT:
   *         bool value stating if the function is successful or not
   * */
 
-  // If the laser scanner has found 4 good line fits, we assume it is a square
-  if (v.size() == 4)
+  // If the laser scanner has found 4 intersections, we assume it is a square
+  if (intersectionsXY.size() == 4)
   { 
     // lengths of possible squares
     vector<double> obj1 = {0.15, 0.40};
@@ -321,11 +321,11 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
 
     // calculate the distance between each point
     vector<double> lengths;
-    for (uint i = 0; i < v.size() - 1; i++)
+    for (uint i = 0; i < intersectionsXY.size() - 1; i++)
     {
-      for (uint j = i + 1; j < v.size(); j++)
+      for (uint j = i + 1; j < intersectionsXY.size(); j++)
       {
-        lengths.push_back(CalcDistanceBetweenPoints(v[i], v[j]));
+        lengths.push_back(CalcDistanceBetweenPoints(intersectionsXY[i], intersectionsXY[j]));
       }
     }
     // sort lengths vector from smallest to biggest
@@ -359,7 +359,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
     }
 
     // find point o and pose
-    bool foundPointO = FindPointOAndPoseSquare(lineMat, v, pointO, objectPose);
+    bool foundPointO = FindPointOAndPoseSquare(goodLines, intersectionsXY, pointO, objectPose);
     if (not foundPointO)
     {
       printf("No point o found!\n");
@@ -373,11 +373,11 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
 
     // calculate the distance between each point
     vector<double> lengths;
-    for (uint i = 0; i < v.size() - 1; i++)
+    for (uint i = 0; i < intersectionsXY.size() - 1; i++)
     {
-      for (uint j = i + 1; j < v.size(); j++)
+      for (uint j = i + 1; j < intersectionsXY.size(); j++)
       {
-        lengths.push_back(CalcDistanceBetweenPoints(v[i], v[j]));
+        lengths.push_back(CalcDistanceBetweenPoints(intersectionsXY[i], intersectionsXY[j]));
       }
     }
     // sort lengths vector from smallest to biggest
@@ -397,7 +397,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
     }
 
     // find point o and pose
-    bool foundPointO = FindPointOAndPoseTriangle(lineMat, v, pointO, objectPose);
+    bool foundPointO = FindPointOAndPoseTriangle(goodLines, intersectionsXY, pointO, objectPose);
     if (not foundPointO)
     {
       printf("No point o found!\n");
@@ -411,13 +411,12 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
   return true;
 }
 
-bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose)
+bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose)
 {
   /*
   * This function implements the basic structure to find the location of point o and the pose of a rectangle.
   * 
-  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
-  *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+  * INPUT:  vector<vector<double>> intersectionsXY: X,Y coordinates of intersection between lines
   *         vector<double> &point: address of vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
   * 
@@ -429,17 +428,17 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
   double smallest = 10000;
 
   // point o is average of all X,Y coords
-  for (uint i = 0; i < matXY.size(); i++)
+  for (uint i = 0; i < intersectionsXY.size(); i++)
   {
-    point[0] += matXY[i][0] / (double)matXY.size();
-    point[1] += matXY[i][1] / (double)matXY.size();
+    point[0] += intersectionsXY[i][0] / (double)intersectionsXY.size();
+    point[1] += intersectionsXY[i][1] / (double)intersectionsXY.size();
 
     // find the point which is closest to origo to use as "starting" point for the heading calculation
-    if (CalcDistToPoint(matXY[i]) < smallest)
+    if (CalcDistToPoint(intersectionsXY[i]) < smallest)
     {
-      smallest = CalcDistToPoint(matXY[i]);
-      point1[0] = matXY[i][0];
-      point1[1] = matXY[i][1];
+      smallest = CalcDistToPoint(intersectionsXY[i]);
+      point1[0] = intersectionsXY[i][0];
+      point1[1] = intersectionsXY[i][1];
     }
   }
 
@@ -449,9 +448,9 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
   int idx2 = 0;
   double biggest = 0;
   double dist;
-  for (uint k = 0; k < matXY.size(); k++)
+  for (uint k = 0; k < intersectionsXY.size(); k++)
   {
-    dist = CalcDistanceBetweenPoints(point1, matXY[k]);
+    dist = CalcDistanceBetweenPoints(point1, intersectionsXY[k]);
     if (dist > biggest)
     {
       biggest = dist;
@@ -459,9 +458,9 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
     }
   }
   biggest = 0;
-  for (uint k = 0; k < matXY.size(); k++)
+  for (uint k = 0; k < intersectionsXY.size(); k++)
   {
-    dist = CalcDistanceBetweenPoints(point1, matXY[k]);
+    dist = CalcDistanceBetweenPoints(point1, intersectionsXY[k]);
     if (dist > biggest && (int)k != idx1)
     {
       biggest = dist;
@@ -470,7 +469,7 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vec
   }
 
   // the object heading is then found as the angle of the vector spanning from the previously found point to its furthest away point
-  objectPose = atan2(matXY[idx2][1] - point1[1], matXY[idx2][0] - point1[0]);
+  objectPose = atan2(intersectionsXY[idx2][1] - point1[1], intersectionsXY[idx2][0] - point1[0]);
 
   return true;
 }
@@ -486,13 +485,13 @@ double UFunczoneobst::CalcDistToPoint(vector<double> a)
   return sqrt(pow(a[0], 2) + pow(a[1], 2) * 1.0);
 }
 
-bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose)
+bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> goodLines, vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose)
 {
   /*
   * This function implements the basic structure to find the location of point o and the pose of a triangle.
   * 
-  * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
-  *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+  * INPUT:  vector<vector<double>> goodLines: 2-D vector containing alhpa,r parameters of good line fits
+  *         vector<vector<double>> intersectionsXY: X,Y coordinates of intersection between lines
   *         vector<double> &point: address of vector containing the coordinates of point o
   *         double &objectPose: address of double containin the pose of the object
   * 
@@ -500,14 +499,14 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
   *         bool value stating if the function is successful or not
   * */
 
-  for (uint i = 0; i < v.size() - 1; i++)
+  for (uint i = 0; i < goodLines.size() - 1; i++)
   {
-    for (uint j = i + 1; j < v.size(); j++)
+    for (uint j = i + 1; j < goodLines.size(); j++)
     {
 
       // find the angle between two lines
-      double a1 = v[i][0];
-      double a2 = v[j][0];
+      double a1 = goodLines[i][0];
+      double a2 = goodLines[j][0];
       double angle = atan2(cos(a2), -sin(a2)) - atan2(cos(a1), -sin(a1));
 
       // normalize to ]-pi;pi]
@@ -524,7 +523,7 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
       if (abs(PI / 2 - abs(angle)) < 0.1)
       {
         // the intersection between these lines must be point o
-        vector<double> temp = FindIntersection(v[i], v[j]);
+        vector<double> temp = FindIntersection(goodLines[i], goodLines[j]);
         point[0] = temp[0];
         point[1] = temp[1];
 
@@ -532,9 +531,9 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
         int idx;
         double biggest = 0;
         double dist;
-        for (uint k = 0; k < v.size(); k++)
+        for (uint k = 0; k < goodLines.size(); k++)
         {
-          dist = CalcDistanceBetweenPoints(point, matXY[k]);
+          dist = CalcDistanceBetweenPoints(point, intersectionsXY[k]);
           if (dist > biggest)
           {
             biggest = dist;
@@ -542,7 +541,7 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> v, vector<v
           }
         }
         // the object heading is then found as the angle of the vector spanning from point o to the furthest away point
-        objectPose = atan2(matXY[idx][1] - point[1], matXY[idx][0] - point[0]);
+        objectPose = atan2(intersectionsXY[idx][1] - point[1], intersectionsXY[idx][0] - point[0]);
 
         return true;
       }
