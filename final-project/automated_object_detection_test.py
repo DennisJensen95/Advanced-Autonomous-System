@@ -27,8 +27,7 @@ def run_mrc_script(mrc_script_path):
     Run mrc script
     :return: Subprocess running mission script
     """
-    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'],
-                       stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], universal_newlines=True)
     return mrc_script
 
 def rotate(origin_angle, point):
