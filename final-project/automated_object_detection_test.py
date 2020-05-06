@@ -139,6 +139,9 @@ if os.path.exists('results_cpp.txt'):
 with open('results_python.txt', 'w+') as file:
     file.write('Object | Point o | Object pose\n')
 
+with open('results_cpp.txt', 'w+') as file:
+    file.write('Object | Point o x | point o y | Object pose | SSD\n')
+
 
 iterations = 20
 for j in range(iterations):
@@ -155,6 +158,9 @@ for j in range(iterations):
 
         with open('./388auto', 'w+') as file:
             file.write(map_environ)
+
+        with open('.results_cpp.txt', 'a+') as file:
+            file.write(f'-1 -1 -1 -1 -1')
 
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
