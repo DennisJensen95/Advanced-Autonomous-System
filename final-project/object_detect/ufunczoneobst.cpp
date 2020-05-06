@@ -959,6 +959,46 @@ float UFunczoneobst::round(float var)
   return (float)value / 100;
 }
 
+
+void WriteResult2File(int object, vector<double> pointO, double objectPose, double objectSSD){
+  
+  // create string with result
+  char str[100];
+  snprintf(str, sizeof(str), "%d %.2f %.2f %.2f %f", object, pointO[0], pointO[1], objectPose, objectSSD);
+  string Str = str;
+  
+  // file path
+  const char *path="/home/smr/test/results_cpp.txt";
+
+  // file to be read
+  ifstream fin(path);    
+  
+  // temporary file to write to
+  ofstream fout;                
+  fout.open("/home/smr/test/temp.txt", ios::out);
+  
+  string line; // used to store line read from line
+  
+  int count = 0;
+  while(getline(fin, line)){
+    
+    if (not fin.eof()){
+        fout << line << endl;
+    }
+    else {
+        fout << Str << endl;
+    }
+    
+  }
+  
+  fout.close();
+  fin.close();
+  
+  remove(path);        
+  rename("/home/smr/test/temp.txt", path);
+}
+
+/*
 void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double objectPose, double objectSSD){
   // Creation of ofstream class object 
   ofstream fout; 
@@ -997,4 +1037,4 @@ void UFunczoneobst::WriteResult2File(int object, vector<double> pointO, double o
 
   // Close the File 
   fout.close();
-}
+}*/
