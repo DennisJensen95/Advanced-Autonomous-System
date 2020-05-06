@@ -185,9 +185,11 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     uint itr = 0;
     while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
       if (objectSSD > 0.005){
+        printf("1\n");
         vector<vector<double>> newGoodLines(goodLineFitsWorldCoordinates);
+        printf("2\n");
         newGoodLines.erase(newGoodLines.begin()+itr); // delete element
-
+        printf("3\n");
         FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
       }
       else{
