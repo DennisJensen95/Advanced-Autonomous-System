@@ -272,7 +272,7 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &goodLines, int &o
     // remove duplicate line parameters and print what was found
     RemoveDuplicates(goodLines);
     printf("\nFinal line parameters (world):\n");
-    printMat(goodLines;
+    printMat(goodLines);
     
     // find the intersections between the lines
     vector<vector<double>> intersectionsXY;
