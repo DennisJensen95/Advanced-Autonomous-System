@@ -139,6 +139,9 @@ if os.path.exists('results_cpp.txt'):
 with open('results_python.txt', 'w+') as file:
     file.write('Object | Point o | Object pose\n')
 
+with open('results_cpp.txt', 'w+') as file:
+    file.write('Object | Point o x | point o y | Object pose | SSD\n')
+
 
 iterations = 20
 for j in range(iterations):
