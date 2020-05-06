@@ -159,7 +159,7 @@ for j in range(iterations):
             file.write(map_environ)
 
         with open('results_cpp.txt', 'a+') as file:
-            file.write(f'-1 -1 -1 -1 -1')
+            file.write(f'-1 -1 -1 -1 -1\n')
 
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
@@ -172,17 +172,17 @@ for j in range(iterations):
         ulmsserver.terminate()
         simserver.terminate()
 
-        with open('results_cpp.txt', 'r+') as file:
-            lines = file.read().splitlines()
-            last_line = lines[-1]
-            if last_line == '-1 -1 -1 -1 -1':
-                next_line = True
-            else:
-                next_line = False
+        # with open('results_cpp.txt', 'r+') as file:
+        #     lines = file.read().splitlines()
+        #     last_line = lines[-1]
+        #     if last_line == '-1 -1 -1 -1 -1':
+        #         next_line = True
+        #     else:
+        #         next_line = False
 
-        if next_line:
-            with open('results_cpp.txt', 'a+') as file:
-                file.write('\n')
+        # if next_line:
+        #     with open('results_cpp.txt', 'a+') as file:
+        #         file.write('\n')
 
 os.rename('results_cpp.txt', 'results_cpp_done.txt')
 os.rename('results_python.txt', 'results_python_done.txt')
