@@ -359,13 +359,13 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<ve
     }
 
     // find point o and pose
-    bool foundPointO = FindPointOAndPoseSquare(goodLines, intersectionsXY, pointO, objectPose);
+    bool foundPointO = FindPointOAndPoseSquare(intersectionsXY, pointO, objectPose);
     if (not foundPointO)
     {
       printf("No point o found!\n");
     }
   }
-  else if (v.size() == 3) // If the laser scanner has found 3 good line fits, we assume it is a square
+  else if (intersectionsXY.size() == 3) // If the laser scanner has found 3 good line fits, we assume it is a square
   {
     // lengths of possible triangles
     vector<double> obj3 = {0.10, 0.40};
