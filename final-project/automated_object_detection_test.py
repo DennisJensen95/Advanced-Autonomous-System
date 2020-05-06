@@ -164,13 +164,25 @@ for j in range(iterations):
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
         time.sleep(5)
-        mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v3'
+        mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v4'
         mrc_process = run_mrc_script(mrc_path)
         time.sleep(3)
         mrc_process.wait()
         mrc_process.terminate()
         ulmsserver.terminate()
         simserver.terminate()
+
+        with open('results_cpp.txt', 'r+') as file:
+            lines = file.read().splitlines()
+            last_line = lines[-1]
+            if last_line == '-1 -1 -1 -1 -1':
+                next_line = True
+            else:
+                next_line = False
+
+        if next_line:
+            with open('results_cpp.txt', 'a+') as file:
+                file.write('\n')
 
 os.rename('results_cpp.txt', 'results_cpp_done.txt')
 os.rename('results_python.txt', 'results_python_done.txt')
