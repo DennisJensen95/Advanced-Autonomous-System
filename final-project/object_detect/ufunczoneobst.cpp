@@ -65,7 +65,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   determineObject = msg->tag.getAttValue("determine", value, MVL);
   findObject = msg->tag.getAttValue("findobject", value, MVL);
 
-  printf(detectObject);
+  printf("%d\n", detectObject);
 
   if (msg->tag.getAttValue("x", val, MVL))
   {
