@@ -328,7 +328,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<ve
   *         bool value stating if the function is successful or not
   * */
 
-  // If the laser scanner has found 4 intersections, we assume it is a square
+  // If the laser scanner has found 4 intersections, we assume it is a rectangle
   if (intersectionsXY.size() == 4)
   { 
     // lengths of possible squares
@@ -381,7 +381,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<ve
       printf("No point o found!\n");
     }
   }
-  else if (intersectionsXY.size() == 3) // If the laser scanner has found 3 good line fits, we assume it is a square
+  else if (intersectionsXY.size() == 3) // If the laser scanner has found 3 intersections, we assume it is a triangle
   {
     // lengths of possible triangles
     vector<double> obj3 = {0.10, 0.40};
