@@ -30,7 +30,7 @@ laser "odopose log=true"
 % mission 3: drive to goal
 
 %first mission is initialized
-mission = 1
+mission = 2
 
 %first guidemark to visit
 gmkno = 2
