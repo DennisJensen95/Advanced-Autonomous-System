@@ -151,7 +151,7 @@ public:
     /*
     * This function implements the top layer structure to determine which object that has been spotted by the laser scanner.
     * 
-    * INPUT:  vector<vector<double>> &v: address of 2-D vector containing alhpa,r parameters of good line fits
+    * INPUT:  vector<vector<double>> &goodLines: address of 2-D vector containing alhpa,r parameters of good line fits
     *         int &ojbect: address of integer value of the detected object (1 to 4)
     *         vector<double> &pointO: address vector containing the coordinates of point o
     *         double &objectPose: address of double containin the pose of the object
@@ -159,7 +159,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DoObjectProcessing(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
+    bool DoObjectProcessing(vector<vector<double>> &goodLines, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
     
     /*
     * This function removes potential duplicates in a 2xN matrix. Elements are considered duplicates if 
@@ -200,16 +200,16 @@ public:
     * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
     * 
     * 
-    * INPUT:  vector<vector<double>> v: address of X,Y coordinates of intersection between lines
+    * INPUT:  vector<vector<double>> goodLines: address of 2-D vector containing alhpa,r parameters of good line fits
+    *         vector<vector<double>> intersectionsXY: address of X,Y coordinates of intersection between lines
     *         int &ojbect: address of integer value of the detected object (1 to 4)
     *         vector<double> &pointO: address vector containing the coordinates of point o
     *         double &objectPose: address of double containin the pose of the object
-    *         vector<vector<double>> lineMat: address of 2-D vector containing alhpa,r parameters of good line fits
     * 
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DetermineObject(vector<vector<double>> &v, int &object, vector<double> &pointO, double &objectPose, vector<vector<double>> &lineMat, double &objectSSD);
+    bool DetermineObject(vector<vector<double>> &goodLines, vector<vector<double>> &intersectionsXY, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
     
     /*
     * INPUT:  vector<double> p1: 1-D vector of doubles describing a point location
@@ -232,28 +232,27 @@ public:
     /*
     * This function implements the basic structure to find the location of point o and the pose of a triangle.
     * 
-    * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
-    *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+    * INPUT:  vector<vector<double>> goodLines: 2-D vector containing alhpa,r parameters of good line fits
+    *         vector<vector<double>> intersectionsXY: X,Y coordinates of intersection between lines
     *         vector<double> &point: address of vector containing the coordinates of point o
     *         double &objectPose: address of double containin the pose of the object
     * 
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseTriangle(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseTriangle(vector<vector<double>> goodLines, vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose);
 
     /*
     * This function implements the basic structure to find the location of point o and the pose of a rectangle.
     * 
-    * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
-    *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
+    * INPUT:  vector<vector<double>> intersectionsXY: X,Y coordinates of intersection between lines
     *         vector<double> &point: address of vector containing the coordinates of point o
     *         double &objectPose: address of double containin the pose of the object
     * 
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseSquare(vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose);
 
     /*
     * INPUT:  vector<double> a: 1-D vector of doubles describing a point location.
