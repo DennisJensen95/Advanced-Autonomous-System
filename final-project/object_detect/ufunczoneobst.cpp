@@ -143,6 +143,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   }
   else if (detectObject)
   {
+    printf("DETECT ENTERED!\n");
     // Get laser data
     data = getScan(msg, (ULaserData *)extra);
 
