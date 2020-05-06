@@ -174,8 +174,30 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     double objectPose = 0;
     double objectSSD = 0;
 
+    // remove duplicate line parameters and print what was found
+    RemoveDuplicates(goodLineFitsWorldCoordinates);
+    printf("\nFinal line parameters (world):\n");
+    printMat(goodLineFitsWorldCoordinates);
+    
     // perform object processing
     bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose, objectSSD);
+
+    uint itr = 0;
+    while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
+      if (objectSSD > 0.005){
+        vector<vector<double>> newGoodLines(goodLineFitsWorldCoordinates);
+        newGoodLines.erase(newGoodLines.begin()+itr); // delete element
+
+        FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
+
+      }
+      else{
+        break;
+      }
+
+      itr++;
+    }
+
     if (FoundObject)
     {
       // print result
@@ -269,10 +291,6 @@ bool UFunczoneobst::DoObjectProcessing(vector<vector<double>> &goodLines, int &o
   // we need atleast three lines for anything useful
   if (goodLines.size() > 2)
   {
-    // remove duplicate line parameters and print what was found
-    RemoveDuplicates(goodLines);
-    printf("\nFinal line parameters (world):\n");
-    printMat(goodLines);
     
     // find the intersections between the lines
     vector<vector<double>> intersectionsXY;
