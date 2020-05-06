@@ -42,7 +42,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   bool ask4help;
   bool detectObject = false;
   bool determineObject = false;
-  bool findObject = false;
   const int MVL = 30;
   char val[MRL];
   char value[MVL];
@@ -63,7 +62,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   ask4help = msg->tag.getAttValue("help", value, MVL);
   detectObject = msg->tag.getAttValue("detect", value, MVL);
   determineObject = msg->tag.getAttValue("determine", value, MVL);
-  findObject = msg->tag.getAttValue("findobject", value, MVL);
 
   if (msg->tag.getAttValue("x", val, MVL))
   {
@@ -87,59 +85,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     sendText("device=N        Laser device to use (see: SCANGET help)\n");
     sendText("see also: SCANGET and SCANSET\n");
     sendHelpDone();
-  }
-  else if (findObject)
-  {
-    data = getScan(msg, (ULaserData *)extra);
-
-    // Get laser data
-    if (data->isValid())
-    {
-      // create vector with robot pose (x,y,th) in world given by the caller
-      vector<double> poseW;
-      poseW.push_back(xo);
-      poseW.push_back(yo);
-      poseW.push_back(tho);
-      // find the pose of the laser scanner in world
-      transform(poseW);
-
-
-      //vector<double> r;
-      //vector<double> th;
-      vector<double> x;
-      vector<double> y;
-      for (int i = 0; i < data->getRangeCnt(); i++)
-      {
-        double range = data->getRangeMeter(i);
-        double angle = data->getAngleRad(i);
-        double xx = cos(angle) * range;
-        double yy = sin(angle) * range;
-        transform(poseW, xx, yy);
-        if (xx >= 0.95 && xx <= 3.05 && yy >= 0.95 && yy <= 2.05 && range > 0.03)
-        {
-            //r.push_back(range);
-            //th.push_back(angle);
-            x.push_back(xx);
-            y.push_back(yy);
-        }
-      }
-
-      /*printf("x:\n");
-      printVec(x);
-      printf("y:\n");
-      printVec(y);
-      printf("\n");*/
-
-      double xmean = accumulate(x.begin(), x.end(), 0.0) / x.size();
-      double ymean = accumulate(y.begin(), y.end(), 0.0) / y.size();
-
-      printf("Approximate position (x,y):\t\t(%.2f,%.2f)\n", xmean, ymean);
-
-      /* SMRCL reply format */
-      snprintf(reply, MRL, "<laser l0=\"%g\" l1=\"%g\" />\n", xmean, ymean);
-      // send this string as the reply to the client
-      sendMsg(msg, reply);
-    }
   }
   else if (detectObject)
   {
@@ -469,7 +414,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &v, int &object, vect
 bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> v, vector<vector<double>> matXY, vector<double> &point, double &objectPose)
 {
   /*
-  * This function implements the basic structure to find the location of point o and the pose of a triangle.
+  * This function implements the basic structure to find the location of point o and the pose of a rectangle.
   * 
   * INPUT:  vector<vector<double>> v: 2-D vector containing alhpa,r parameters of good line fits
   *         vector<vector<double>> matXY: X,Y coordinates of intersection between lines
@@ -1000,7 +945,7 @@ void UFunczoneobst::printMat(vector<vector<double>> &result)
 
 float UFunczoneobst::round(float var)
 {
-  /* Credit: https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
+  /* Reference: https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
   *
   * 
   * 37.66666 * 100 =3766.66

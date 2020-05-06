@@ -16,6 +16,11 @@ laser "resetplanner"
 laser "scanget"
 laser "resetlocalizer" %do we need this?
 
+% For logging purposes
+laser "scanset logopen"
+laser "scanset log=1"
+laser "odopose log=true"
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%MISSION%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,10 +30,10 @@ laser "resetlocalizer" %do we need this?
 % mission 3: drive to goal
 
 %first mission is initialized
-mission = 2
+mission = 1
 
 %first guidemark to visit
-gmkno = 13
+gmkno = 2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%CONSTANTS%%%%%%%%%%%%%%%%%%%
@@ -695,6 +700,10 @@ label "missionerror"
 
 label "finish"
 stop
+
+% closing logging
+laser "scanset logclose"
+laser "odopose log=false"
 
 % OOOOOOH KILL EM"
 % DRIVE FINISHED
