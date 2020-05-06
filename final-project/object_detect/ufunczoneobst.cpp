@@ -65,6 +65,8 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   determineObject = msg->tag.getAttValue("determine", value, MVL);
   findObject = msg->tag.getAttValue("findobject", value, MVL);
 
+  printf(detectObject);
+
   if (msg->tag.getAttValue("x", val, MVL))
   {
     xo = strtod(val, NULL);
@@ -143,7 +145,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
   }
   else if (detectObject)
   {
-    printf("DETECT ENTERED!\n");
     // Get laser data
     data = getScan(msg, (ULaserData *)extra);
 
