@@ -156,6 +156,9 @@ for j in range(iterations):
         with open('./388auto', 'w+') as file:
             file.write(map_environ)
 
+        with open('.results_cpp.txt', 'a+') as file:
+            file.write(f'-1 -1 -1 -1 -1')
+
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
         time.sleep(5)
