@@ -182,23 +182,19 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     // perform object processing
     bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose, objectSSD);
 
-    // vector<vector<double>> newGoodLines;
-    // uint itr = 0;
-    // while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
-    //   if (objectSSD > 0.005){
-    //     printf("1\n");
-    //     newGoodLines = goodLineFitsWorldCoordinates;
-    //     printMat(newGoodLines);
-    //     newGoodLines.erase(newGoodLines.begin()+itr); // delete element
-    //     printMat(newGoodLines);
-    //     FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
-    //     printf("2\n");
-    //   }
-    //   else{
-    //     break;
-    //   }
-    //   itr++;
-    // }
+    vector<vector<double>> newGoodLines; // variable to store reduced goodLineFits matrix
+    uint itr = 0;
+    while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
+      if (objectSSD > 0.005){
+        newGoodLines = goodLineFitsWorldCoordinates;
+        newGoodLines.erase(newGoodLines.begin()+itr); // delete element
+        FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
+      }
+      else{
+        break;
+      }
+      itr++;
+    }
 
     if (FoundObject)
     {
@@ -551,7 +547,7 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> goodLines, 
         int idx;
         double biggest = 0;
         double dist;
-        for (uint k = 0; k < goodLines.size(); k++)
+        for (uint k = 0; k < intersectionsXY.size(); k++)
         {
           dist = CalcDistanceBetweenPoints(point, intersectionsXY[k]);
           if (dist > biggest)
