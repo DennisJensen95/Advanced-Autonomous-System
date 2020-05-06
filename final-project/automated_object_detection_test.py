@@ -27,8 +27,7 @@ def run_mrc_script(mrc_script_path):
     Run mrc script
     :return: Subprocess running mission script
     """
-    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'],
-                       stdout=PIPE, stderr=PIPE, universal_newlines=True)
+    mrc_script = Popen(['mrc', '-s8000', f'{mrc_script_path}'], universal_newlines=True)
     return mrc_script
 
 def rotate(origin_angle, point):
@@ -159,7 +158,7 @@ for j in range(iterations):
         with open('./388auto', 'w+') as file:
             file.write(map_environ)
 
-        with open('.results_cpp.txt', 'a+') as file:
+        with open('results_cpp.txt', 'a+') as file:
             file.write(f'-1 -1 -1 -1 -1')
 
         ulmsserver = open_ulmsserver()
