@@ -182,23 +182,23 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     // perform object processing
     bool FoundObject = DoObjectProcessing(goodLineFitsWorldCoordinates, object, pointO, objectPose, objectSSD);
 
-    vector<vector<double>> newGoodLines;
-    uint itr = 0;
-    while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
-      if (objectSSD > 0.005){
-        printf("1\n");
-        newGoodLines = goodLineFitsWorldCoordinates;
-        printMat(newGoodLines);
-        newGoodLines.erase(newGoodLines.begin()+itr); // delete element
-        printMat(newGoodLines);
-        FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
-        printf("2\n");
-      }
-      else{
-        break;
-      }
-      itr++;
-    }
+    // vector<vector<double>> newGoodLines;
+    // uint itr = 0;
+    // while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
+    //   if (objectSSD > 0.005){
+    //     printf("1\n");
+    //     newGoodLines = goodLineFitsWorldCoordinates;
+    //     printMat(newGoodLines);
+    //     newGoodLines.erase(newGoodLines.begin()+itr); // delete element
+    //     printMat(newGoodLines);
+    //     FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
+    //     printf("2\n");
+    //   }
+    //   else{
+    //     break;
+    //   }
+    //   itr++;
+    // }
 
     if (FoundObject)
     {
