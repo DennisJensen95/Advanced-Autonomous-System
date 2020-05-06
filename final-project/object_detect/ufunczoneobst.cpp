@@ -979,7 +979,6 @@ void WriteResult2File(int object, vector<double> pointO, double objectPose, doub
   
   string line; // used to store line read from line
   
-  int count = 0;
   while(getline(fin, line)){
     
     if (not fin.eof()){
