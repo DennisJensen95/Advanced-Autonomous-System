@@ -189,7 +189,6 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
         newGoodLines.erase(newGoodLines.begin()+itr); // delete element
 
         FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
-
       }
       else{
         break;
