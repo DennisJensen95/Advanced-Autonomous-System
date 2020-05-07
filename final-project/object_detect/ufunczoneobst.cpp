@@ -172,7 +172,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     int object = 0;
     vector<double> pointO = {0,0};
     double objectPose = 0;
-    double objectSSD = 0;
+    double objectSSD = 1000;
 
     // remove duplicate line parameters and print what was found
     RemoveDuplicates(goodLineFitsWorldCoordinates);
@@ -185,7 +185,9 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     vector<vector<double>> newGoodLines; // variable to store reduced goodLineFits matrix
     uint itr = 0;
     while(itr < goodLineFitsWorldCoordinates.size() && goodLineFitsWorldCoordinates.size() > 3){
-      if (objectSSD > 0.005){
+      if (objectSSD > 0.0005){
+        pointO = {0,0}; // make sure to reset the point o location
+
         newGoodLines = goodLineFitsWorldCoordinates;
         newGoodLines.erase(newGoodLines.begin()+itr); // delete element
         FoundObject = DoObjectProcessing(newGoodLines, object, pointO, objectPose, objectSSD);
@@ -360,7 +362,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<ve
     lengths[0] = temp1;
     lengths[1] = temp2;
 
-    printVec(lengths);
+    // printVec(lengths);
 
     // use SSD to determine which object we are dealing with
     if (CalcSSD(lengths, obj1) < CalcSSD(lengths, obj2))
@@ -440,6 +442,7 @@ bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> intersections
   *         bool value stating if the function is successful or not
   * */
   // vector to store initial point to calculate pose
+
   vector<double> point1 = {0, 0};
   double smallest = 10000;
 
