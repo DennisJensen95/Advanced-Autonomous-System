@@ -606,6 +606,7 @@ wait 1
 laser "zoneobst determine"
 wait 3
 
+goto "finish"
 
 mission = mission + 1
 goto "start"
