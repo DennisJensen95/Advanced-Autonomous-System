@@ -127,7 +127,7 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
-os.chdir('./../../')
+os.chdir('./../../test/')
 
 if os.path.exists('results_python.txt'):
     os.remove('results_python.txt')
@@ -164,7 +164,7 @@ for j in range(iterations):
         ulmsserver = open_ulmsserver()
         simserver = open_simserver()
         time.sleep(5)
-        mrc_path = 'Advanced-Autonomous-System/final-project/final_project_v4'
+        mrc_path = '../Advanced-Autonomous-System/final-project/final_project_v4'
         mrc_process = run_mrc_script(mrc_path)
         time.sleep(3)
         mrc_process.wait()
