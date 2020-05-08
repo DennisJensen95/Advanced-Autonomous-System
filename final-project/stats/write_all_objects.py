@@ -101,16 +101,16 @@ map = f'0.0     0.0     1.8     0.0     bottom left\n' \
       f'2.0     3.7     2.0     4.3     maze middle vertical\n' \
       f'0.9     4.3     3.1     4.3     maze top\n'
 
-os.chdir('./../../../test/')
+files_py = sorted(glob.glob('results_2/res*pyt*.txt'))
 
 map_environ = map
-if os.path.exists('388auto'):
-    os.remove('388auto')
+if os.path.exists('./../../../test/388auto'):
+    os.remove('./../../../test/388auto')
 
-with open('./388auto', 'w+') as file:
+with open('./../../../test/388auto', 'w+') as file:
     file.write(map_environ)
 
-files_py = sorted(glob.glob('results_2/res*pyt*.txt'))
+
 
 for j in range(len(files_py)):
     with open(files_py[j], 'r') as file:
@@ -124,6 +124,7 @@ for j in range(len(files_py)):
 
         obj = get_object_from_point_o(object_truth, [point_o_x_truth, point_o_y_truth], orientation_truth)
 
-        with open('./388auto', 'a+') as file:
+
+        with open('./../../../test/388auto', 'a+') as file:
             file.write(obj)
 
