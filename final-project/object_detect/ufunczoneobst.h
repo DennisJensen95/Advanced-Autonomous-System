@@ -68,12 +68,12 @@ public:
     /*
     * Prints the contents of a 1D vector to the console
     * */ 
-    void printVec(vector<double> & result);
+    void printVec(const vector<double> & result);
     
     /*
     * Prints the contents of a 2D vector to the console
     * */
-    void printMat(vector<vector<double>> &result);
+    void printMat(const vector<vector<double>> &result);
 
     /*
     * This function provides the structure to perform a robust least squares approximation of line segments found 
@@ -89,7 +89,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines);
+    bool DoLsqLineProcessing(const vector<double>& x, const vector<double>& y, vector<vector<double>> &lines);
     
     /*
     * This function implements the core algorithm to do least squares approximation of
@@ -101,7 +101,7 @@ public:
     * OUTPUT:
     *         vector<double>: 1-D vector containing alpha,r parameters of the line fit
     * */
-    vector<double> lsqline(vector<double> x, vector<double> y);
+    vector<double> lsqline(const vector<double>& x, const vector<double>& y);
     
     /*
     * This function transforms a line estimate from the laser frame to the world frame
@@ -113,7 +113,7 @@ public:
     * OUTPUT:
     *         vector<double>: alhpa,r parameters of the line in the world frame
     * */
-    vector<double> transline(vector<double> lineL, vector <double> poseW);
+    vector<double> transline(const vector<double>& lineL, const vector<double>& poseW);
     
     /*
     * This function finds the pose of the laser scanner in the world frame using the 
@@ -135,7 +135,7 @@ public:
     *         double &y: address of Y location of a point in the laser frame
     * 
     * */
-    void transform(vector<double> pose, double &x, double &y);
+    void transform(const vector<double>& pose, double &x, double &y);
 
     /* Reference: https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
     *
@@ -181,7 +181,7 @@ public:
     * OUTPUT:
     *         vector<double>: (X,Y) location of the intersection between lines u and v
     * */
-    vector<double> FindIntersection(vector<double> &u, vector<double> &v);
+    vector<double> FindIntersection(const vector<double> &u, const vector<double> &v);
 
     /*
     * This function implements the structure to find a matrix with all intersections between all 
@@ -194,7 +194,7 @@ public:
     * OUTPUT:
     *         vector<vector<double>>: 2-D vector with (X,Y) location of the intersection between lines in v
     * */
-    vector<vector<double>> GetIntersectionMatrix(vector<vector<double>> &v);
+    vector<vector<double>> GetIntersectionMatrix(const vector<vector<double>> &v);
 
     /*
     * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
@@ -218,7 +218,7 @@ public:
     * OUTPUT:
     *         double value giving the euclidian distance between point p1 and p2
     * */
-    double CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2);
+    double CalcDistanceBetweenPoints(const vector<double>& p1, const vector<double>& p2);
 
     /*
     * INPUT:  vector<double> a: 1xN vector of doubles
@@ -227,7 +227,7 @@ public:
     * OUTPUT:
     *         double value giving the SSD measure between vector a and b 
     * */
-    double CalcSSD(vector<double> a, vector<double> b);
+    double CalcSSD(const vector<double>& a, const vector<double>& b);
 
     /*
     * This function implements the basic structure to find the location of point o and the pose of a triangle.
@@ -240,7 +240,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseTriangle(vector<vector<double>> goodLines, vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseTriangle(const vector<vector<double>>& goodLines, const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose);
 
     /*
     * This function implements the basic structure to find the location of point o and the pose of a rectangle.
@@ -252,7 +252,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseSquare(vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseSquare(const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose);
 
     /*
     * INPUT:  vector<double> a: 1-D vector of doubles describing a point location.

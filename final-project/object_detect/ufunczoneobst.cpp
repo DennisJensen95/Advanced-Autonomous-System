@@ -96,6 +96,7 @@ bool UFunczoneobst::handleCommand(UServerInMsg *msg, void *extra)
     {
       // create vector with robot pose (x,y,th) in world given by the caller
       vector<double> poseW;
+      poseW.reserve(3);
       poseW.push_back(xo);
       poseW.push_back(yo);
       poseW.push_back(tho);
@@ -429,7 +430,7 @@ bool UFunczoneobst::DetermineObject(vector<vector<double>> &goodLines, vector<ve
   return true;
 }
 
-bool UFunczoneobst::FindPointOAndPoseSquare(vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose)
+bool UFunczoneobst::FindPointOAndPoseSquare(const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose)
 {
   /*
   * This function implements the basic structure to find the location of point o and the pose of a rectangle.
@@ -504,7 +505,7 @@ double UFunczoneobst::CalcDistToPoint(vector<double> a)
   return sqrt(pow(a[0], 2) + pow(a[1], 2) * 1.0);
 }
 
-bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> goodLines, vector<vector<double>> intersectionsXY, vector<double> &point, double &objectPose)
+bool UFunczoneobst::FindPointOAndPoseTriangle(const vector<vector<double>>& goodLines, const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose)
 {
   /*
   * This function implements the basic structure to find the location of point o and the pose of a triangle.
@@ -569,7 +570,7 @@ bool UFunczoneobst::FindPointOAndPoseTriangle(vector<vector<double>> goodLines, 
   return false;
 }
 
-double UFunczoneobst::CalcSSD(vector<double> a, vector<double> b)
+double UFunczoneobst::CalcSSD(const vector<double>& a, const vector<double>& b)
 {
   /*
   * INPUT:  vector<double> a: 1xN vector of doubles
@@ -593,7 +594,7 @@ double UFunczoneobst::CalcSSD(vector<double> a, vector<double> b)
   return SSD;
 }
 
-double UFunczoneobst::CalcDistanceBetweenPoints(vector<double> p1, vector<double> p2)
+double UFunczoneobst::CalcDistanceBetweenPoints(const vector<double>& p1, const vector<double>& p2)
 {
   /*
   * INPUT:  vector<double> p1: 1-D vector of doubles describing a point location
@@ -605,7 +606,7 @@ double UFunczoneobst::CalcDistanceBetweenPoints(vector<double> p1, vector<double
   return sqrt(pow(p2[0] - p1[0], 2) + pow(p2[1] - p1[1], 2) * 1.0);
 }
 
-vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double>> &v)
+vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(const vector<vector<double>> &v)
 {
   /*
   * This function implements the structure to find a matrix with all intersections between all 
@@ -618,7 +619,11 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
   * OUTPUT:
   *         vector<vector<double>>: 2-D vector with (X,Y) location of the intersection between lines in v
   * */
+  
+  // preallocate memory
   vector<vector<double>> intersections;
+  intersections.reserve(v.size()-1);
+  
   for (uint i = 0; i < v.size() - 1; i++)
   {
     for (uint j = i + 1; j < v.size(); j++)
@@ -635,7 +640,7 @@ vector<vector<double>> UFunczoneobst::GetIntersectionMatrix(vector<vector<double
   return intersections;
 }
 
-vector<double> UFunczoneobst::FindIntersection(vector<double> &u, vector<double> &v)
+vector<double> UFunczoneobst::FindIntersection(const vector<double> &u, const vector<double> &v)
 {
   /*
   * This function implements the core algorithm to find the (x,y) location of the intersection
@@ -715,7 +720,7 @@ void UFunczoneobst::RemoveDuplicates(vector<vector<double>> &v)
   }
 }
 
-bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vector<vector<double>> &lines)
+bool UFunczoneobst::DoLsqLineProcessing(const vector<double>& x, const vector<double>& y, vector<vector<double>> &lines)
 {
   /*
   * This function provides the structure to perform a robust least squares approximation of line segments found 
@@ -744,6 +749,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
     if (n > part * 2)
     {
       vector<vector<double>> lineMat;
+      lineMat.reserve(part);
 
       // extract line segments and do least squares estimation for each segment
       for (int i = 0; i < part; i++)
@@ -808,7 +814,7 @@ bool UFunczoneobst::DoLsqLineProcessing(vector<double> x, vector<double> y, vect
   return false;
 }
 
-vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y)
+vector<double> UFunczoneobst::lsqline(const vector<double>& x, const vector<double>& y)
 {
   /*
   * This function implements the core algorithm to do least squares approximation of
@@ -863,13 +869,14 @@ vector<double> UFunczoneobst::lsqline(vector<double> x, vector<double> y)
   a = atan2(sin(a),cos(a));
 
   vector<double> line;
+  line.reserve(2);
   line.push_back(a);
   line.push_back(r);
 
   return line;
 }
 
-vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> poseW)
+vector<double> UFunczoneobst::transline(const vector<double>& lineL, const vector<double>& poseW)
 {
   /*
   * This function transforms a line estimate from the laser frame to the world frame
@@ -899,13 +906,14 @@ vector<double> UFunczoneobst::transline(vector<double> lineL, vector<double> pos
   }
 
   vector<double> lineW;
+  lineW.reserve(2);
   lineW.push_back(a);
   lineW.push_back(r);
 
   return lineW;
 }
 
-void UFunczoneobst::transform(vector<double> pose, double &x, double &y)
+void UFunczoneobst::transform(const vector<double>& pose, double &x, double &y)
 {
   /*
   * This function converts a set of (x,y) points from the laser frame to the 
@@ -942,7 +950,7 @@ void UFunczoneobst::transform(vector<double> &pose)
   pose[1] = sin(pose[2]) * 0.26 + pose[1];
 }
 
-void UFunczoneobst::printVec(vector<double> &result)
+void UFunczoneobst::printVec(const vector<double> &result)
 {
   for (unsigned int i = 0; i < result.size(); i++)
   {
@@ -951,7 +959,7 @@ void UFunczoneobst::printVec(vector<double> &result)
   cout << endl;
 }
 
-void UFunczoneobst::printMat(vector<vector<double>> &result)
+void UFunczoneobst::printMat(const vector<vector<double>> &result)
 {
   for (const vector<double> &v : result)
   {
