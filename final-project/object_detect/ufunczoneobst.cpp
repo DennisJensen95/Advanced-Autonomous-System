@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ufunczoneobst.h"
 
+using namespace std;
+
 #ifdef LIBRARY_OPEN_NEEDED
 
 /**

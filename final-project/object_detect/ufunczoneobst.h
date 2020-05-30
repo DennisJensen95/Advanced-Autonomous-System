@@ -28,8 +28,6 @@
 #include <fstream>
 #include <string>
 
-using namespace std;
-
 #define PI 3.14159265
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -63,17 +61,17 @@ public:
   
   private:
     // variable to store good line fits
-    vector<vector<double>> goodLineFitsWorldCoordinates;
+    std::vector<std::vector<double>> goodLineFitsWorldCoordinates;
 
     /*
     * Prints the contents of a 1D vector to the console
     * */ 
-    void printVec(const vector<double> & result);
+    void printVec(const std::vector<double> & result);
     
     /*
     * Prints the contents of a 2D vector to the console
     * */
-    void printMat(const vector<vector<double>> &result);
+    void printMat(const std::vector<std::vector<double>> &result);
 
     /*
     * This function provides the structure to perform a robust least squares approximation of line segments found 
@@ -89,7 +87,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DoLsqLineProcessing(const vector<double>& x, const vector<double>& y, vector<vector<double>> &lines);
+    bool DoLsqLineProcessing(const std::vector<double>& x, const std::vector<double>& y, std::vector<std::vector<double>> &lines);
     
     /*
     * This function implements the core algorithm to do least squares approximation of
@@ -101,7 +99,7 @@ public:
     * OUTPUT:
     *         vector<double>: 1-D vector containing alpha,r parameters of the line fit
     * */
-    vector<double> lsqline(const vector<double>& x, const vector<double>& y);
+    std::vector<double> lsqline(const std::vector<double>& x, const std::vector<double>& y);
     
     /*
     * This function transforms a line estimate from the laser frame to the world frame
@@ -113,7 +111,7 @@ public:
     * OUTPUT:
     *         vector<double>: alhpa,r parameters of the line in the world frame
     * */
-    vector<double> transline(const vector<double>& lineL, const vector<double>& poseW);
+    std::vector<double> transline(const std::vector<double>& lineL, const std::vector<double>& poseW);
     
     /*
     * This function finds the pose of the laser scanner in the world frame using the 
@@ -123,7 +121,7 @@ public:
     * INPUT:  vector<double> pose: address of (x,y,th) pose of the robot in the world frame to be transformed to laser pose in world
     * 
     * */
-    void transform(vector<double> &pose);
+    void transform(std::vector<double> &pose);
     
     /*
     * This function converts a set of (x,y) points from the laser frame to the 
@@ -135,7 +133,7 @@ public:
     *         double &y: address of Y location of a point in the laser frame
     * 
     * */
-    void transform(const vector<double>& pose, double &x, double &y);
+    void transform(const std::vector<double>& pose, double &x, double &y);
 
     /* Reference: https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
     *
@@ -159,7 +157,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DoObjectProcessing(vector<vector<double>> &goodLines, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
+    bool DoObjectProcessing(std::vector<std::vector<double>> &goodLines, int &object, std::vector<double> &pointO, double &objectPose, double &objectSSD);
     
     /*
     * This function removes potential duplicates in a 2xN matrix. Elements are considered duplicates if 
@@ -169,7 +167,7 @@ public:
     * INPUT:  vector<vector<double>> &v: address of 2xN vector where each row is a pair of associated parameters
     * 
     * */
-    void RemoveDuplicates(vector<vector<double>> &v);
+    void RemoveDuplicates(std::vector<std::vector<double>> &v);
 
     /*
     * This function implements the core algorithm to find the (x,y) location of the intersection
@@ -181,7 +179,7 @@ public:
     * OUTPUT:
     *         vector<double>: (X,Y) location of the intersection between lines u and v
     * */
-    vector<double> FindIntersection(const vector<double> &u, const vector<double> &v);
+    std::vector<double> FindIntersection(const std::vector<double> &u, const std::vector<double> &v);
 
     /*
     * This function implements the structure to find a matrix with all intersections between all 
@@ -194,7 +192,7 @@ public:
     * OUTPUT:
     *         vector<vector<double>>: 2-D vector with (X,Y) location of the intersection between lines in v
     * */
-    vector<vector<double>> GetIntersectionMatrix(const vector<vector<double>> &v);
+    std::vector<std::vector<double>> GetIntersectionMatrix(const std::vector<std::vector<double>> &v);
 
     /*
     * This function implements the underlying structure to determine which object that has been spotted by the laser scanner.
@@ -209,7 +207,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool DetermineObject(vector<vector<double>> &goodLines, vector<vector<double>> &intersectionsXY, int &object, vector<double> &pointO, double &objectPose, double &objectSSD);
+    bool DetermineObject(std::vector<std::vector<double>> &goodLines, std::vector<std::vector<double>> &intersectionsXY, int &object, std::vector<double> &pointO, double &objectPose, double &objectSSD);
     
     /*
     * INPUT:  vector<double> p1: 1-D vector of doubles describing a point location
@@ -218,7 +216,7 @@ public:
     * OUTPUT:
     *         double value giving the euclidian distance between point p1 and p2
     * */
-    double CalcDistanceBetweenPoints(const vector<double>& p1, const vector<double>& p2);
+    double CalcDistanceBetweenPoints(const std::vector<double>& p1, const std::vector<double>& p2);
 
     /*
     * INPUT:  vector<double> a: 1xN vector of doubles
@@ -227,7 +225,7 @@ public:
     * OUTPUT:
     *         double value giving the SSD measure between vector a and b 
     * */
-    double CalcSSD(const vector<double>& a, const vector<double>& b);
+    double CalcSSD(const std::vector<double>& a, const std::vector<double>& b);
 
     /*
     * This function implements the basic structure to find the location of point o and the pose of a triangle.
@@ -240,7 +238,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseTriangle(const vector<vector<double>>& goodLines, const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseTriangle(const std::vector<std::vector<double>>& goodLines, const std::vector<std::vector<double>>& intersectionsXY, std::vector<double> &point, double &objectPose);
 
     /*
     * This function implements the basic structure to find the location of point o and the pose of a rectangle.
@@ -252,7 +250,7 @@ public:
     * OUTPUT:
     *         bool value stating if the function is successful or not
     * */
-    bool FindPointOAndPoseSquare(const vector<vector<double>>& intersectionsXY, vector<double> &point, double &objectPose);
+    bool FindPointOAndPoseSquare(const std::vector<std::vector<double>>& intersectionsXY, std::vector<double> &point, double &objectPose);
 
     /*
     * INPUT:  vector<double> a: 1-D vector of doubles describing a point location.
@@ -260,12 +258,12 @@ public:
     * OUTPUT:
     *         double value giving the distance from Origo to the point described by a.
     * */
-    double CalcDistToPoint(vector<double> a);
+    double CalcDistToPoint(std::vector<double> a);
 
     /*
     * Create file with the result of the object detection
     * */
-    void WriteResult2File(int object, vector<double> pointO, double objectPose, double objectSSD);
+    void WriteResult2File(int object, std::vector<double> pointO, double objectPose, double objectSSD);
 };
 
 
